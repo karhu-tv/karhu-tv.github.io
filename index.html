@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarhuTV — Broadcast Tools</title>
+<meta name="description" content="KarhuTV builds precision broadcast engineering tools. Free utilities for working broadcast engineers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0a0a0b;
+    --bg2:       #111114;
+    --bg3:       #18181c;
+    --border:    #242428;
+    --text:      #e8e8ea;
+    --muted:     #6b6b72;
+    --accent:    #e8502a;
+    --accent2:   #f0a020;
+    --mono:      'DM Mono', monospace;
+    --sans:      'Syne', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10,10,11,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .hero-headline {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    max-width: 900px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-body {
+    max-width: 520px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.45s;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover {
+    background: #d44020;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--muted);
+  }
+
+  /* ── Stat strip ── */
+  .stat-strip {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--bg2);
+  }
+
+  .stat {
+    padding: 40px 48px;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-value {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 40px;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-value span { color: var(--accent); }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Section ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    padding: 96px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 48px);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .section-body {
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  /* ── Tool cards ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .tool-card {
+    background: var(--bg2);
+    padding: 40px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .tool-card:hover { background: var(--bg3); }
+  .tool-card:hover::before { transform: scaleX(1); }
+
+  .tool-card.coming-soon {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .tool-name {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tool-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+
+  .tool-badge.soon {
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  .tool-desc {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .tool-meta {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .tool-meta span { color: var(--accent2); }
+
+  /* ── Philosophy ── */
+  .philosophy {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .philosophy-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .philosophy-point {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .philosophy-point:first-child { padding-top: 0; }
+  .philosophy-point:last-child { border-bottom: none; }
+
+  .point-num {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding-top: 4px;
+  }
+
+  .point-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .point-body {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .philosophy-aside {
+    position: sticky;
+    top: 96px;
+  }
+
+  .terminal {
+    background: #0d0d10;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .terminal-dot:first-child { background: #e8502a44; }
+
+  .terminal-title {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-left: 8px;
+  }
+
+  .terminal-body {
+    padding: 24px;
+    line-height: 2;
+  }
+
+  .t-comment { color: #4a4a52; }
+  .t-cmd { color: var(--accent2); }
+  .t-path { color: #6b8ed6; }
+  .t-out { color: #7ec880; }
+  .t-label { color: var(--muted); }
+  .t-val { color: var(--text); }
+  .t-warn { color: var(--accent); }
+  .t-prompt { color: var(--accent); }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--text); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .stat-strip { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .section-inner { padding: 64px 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; gap: 48px; }
+    .philosophy-aside { position: static; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark"></div>
+    Karhu<span style="color:var(--accent)">TV</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <p class="hero-eyebrow">Broadcast Engineering Tools</p>
+  <h1 class="hero-headline">Built for<br>engineers who<br><em>care about</em><br>correctness.</h1>
+  <p class="hero-body">
+    KarhuTV makes precision tools for broadcast engineers.
+    Free utilities that do exactly what they say,
+    with output you can verify and results you can trust.
+  </p>
+  <div class="hero-actions">
+    <a href="/tools.html" class="btn-primary">↓ &nbsp;Get the tools</a>
+    <a href="mailto:otso@karhu.tv" class="btn-secondary">Get in touch</a>
+  </div>
+</section>
+
+<!-- Stat strip -->
+<div class="stat-strip">
+  <div class="stat">
+    <div class="stat-value">MXF<span>.</span></div>
+    <div class="stat-label">AS-11 UK DPP sidecar parsing — programme metadata, audio config, rights</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">R128<span>.</span></div>
+    <div class="stat-label">EBU R128 loudness analysis — Ofcom compliance, verified against ffprobe</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">Free<span>.</span></div>
+    <div class="stat-label">All opx-* tools — no account, no licence, no strings</div>
+  </div>
+</div>
+
+<!-- Tools section -->
+<section>
+  <div class="section-inner">
+    <p class="section-label">opx-* tools</p>
+    <h2 class="section-title">Free tools for<br>working engineers.</h2>
+    <p class="section-body">
+      Binary-only. Linux and Windows. No installation required beyond FFmpeg.
+      Built on the same codebase as our commercial products —
+      these are not demos, they are the real thing.
+    </p>
+
+    <div class="tools-grid">
+      <a href="/tools.html#opx-probe" class="tool-card">
+        <div class="tool-name">
+          opx-probe
+          <span class="tool-badge">Available</span>
+        </div>
+        <p class="tool-desc">
+          Fast media file inspector. Container, codec, frame rate,
+          audio config, MXF AS-11 sidecar. Preflight against a house format.
+          JSON output for scripting. No ffprobe shell-out — direct libavformat.
+        </p>
+        <div class="tool-meta">
+          <div>Linux <span>·</span> Windows</div>
+          <div>v0.1</div>
+        </div>
+      </a>
+
+      <div class="tool-card coming-soon">
+        <div class="tool-name">
+          opx-loudness
+          <span class="tool-badge soon">Coming soon</span>
+        </div>
+        <p class="tool-desc">
+          EBU R128 loudness analysis. Integrated, short-term, momentary,
+          and true peak. Verified against ffprobe. Ofcom compliance checking.
+        </p>
+        <div class="tool-meta">
+          <div>Linux <span>·</span> Windows</div>
+          <div>—</div>
+        </div>
+      </div>
+
+      <div class="tool-card coming-soon">
+        <div class="tool-name">
+          opx-drift
+          <span class="tool-badge soon">Coming soon</span>
+        </div>
+        <p class="tool-desc">
+          Clock drift analyser. Measure and log timing deviation
+          on SDI and IP streams. Compare against TAI reference.
+        </p>
+        <div class="tool-meta">
+          <div>Linux <span>·</span> Windows</div>
+          <div>—</div>
+        </div>
+      </div>
+
+      <div class="tool-card coming-soon">
+        <div class="tool-name">
+          opx-verify
+          <span class="tool-badge soon">Coming soon</span>
+        </div>
+        <p class="tool-desc">
+          As-run log verifier. Validates hash-chained playout logs,
+          checks R128 compliance, subtitle quota, and SCTE-35 splice accuracy.
+        </p>
+        <div class="tool-meta">
+          <div>Linux <span>·</span> Windows</div>
+          <div>—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy">
+  <div class="section-inner">
+    <div class="philosophy-grid">
+      <div>
+        <p class="section-label">Philosophy</p>
+        <h2 class="section-title">The broadcast industry is not expensive because the technology is overly complex.</h2>
+        <div class="philosophy-points">
+          <div class="philosophy-point">
+            <span class="point-num">01</span>
+            <div>
+              <div class="point-title">Correctness is verifiable</div>
+              <p class="point-body">Every tool we ship produces output you can check. Loudness values verified against ffprobe. File metadata against the spec. Preflight results with typed failure reasons and scriptable exit codes. If we say it's correct, you can confirm it.</p>
+            </div>
+          </div>
+          <div class="philosophy-point">
+            <span class="point-num">02</span>
+            <div>
+              <div class="point-title">No artificial complexity</div>
+              <p class="point-body">Incumbent broadcast vendors profit from complexity they created. Opaque formats, proprietary workflows, support contracts that maintain lock-in rather than solve problems. We build tools that are transparent about what they do and why.</p>
+            </div>
+          </div>
+          <div class="philosophy-point">
+            <span class="point-num">03</span>
+            <div>
+              <div class="point-title">Engineers first</div>
+              <p class="point-body">These tools are built by a broadcast engineer for broadcast engineers. The output format, the exit codes, the JSON schema — designed for people who will script these into pipelines at 2am before a morning transmission.</p>
+            </div>
+          </div>
+          <div class="philosophy-point">
+            <span class="point-num">04</span>
+            <div>
+              <div class="point-title">Output is the argument</div>
+              <p class="point-body">We do not publish white papers or sales decks. We ship binaries. Run them on your content. The results speak.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="philosophy-aside">
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <span class="terminal-title">opx-probe — terminal</span>
+          </div>
+          <div class="terminal-body">
+<span class="t-prompt">$</span> <span class="t-cmd">opx-probe</span> <span class="t-path">programme_ep3.mxf</span> <span class="t-cmd">--house</span> <span class="t-val">1080i50</span><br>
+<br>
+<span class="t-label">opx-probe  programme_ep3.mxf</span><br>
+<span class="t-label">────────────────────────────────────</span><br>
+<span class="t-label">Duration   </span><span class="t-val">48:22.080</span><br>
+<br>
+<span class="t-label">Video</span><br>
+<span class="t-label">  Codec      </span><span class="t-val">MPEG-2 Video  (id 12)</span><br>
+<span class="t-label">  Frame rate </span><span class="t-val">25 fps</span><br>
+<span class="t-label">  Resolution </span><span class="t-val">1920×1080</span><br>
+<span class="t-label">  Frames     </span><span class="t-val">72,552</span><br>
+<br>
+<span class="t-label">Audio</span><br>
+<span class="t-label">  Codec      </span><span class="t-val">PCM s24le  (id 86020)</span><br>
+<span class="t-label">  Sample rate </span><span class="t-val">48000 Hz</span><br>
+<span class="t-label">  Channels   </span><span class="t-val">2</span><br>
+<br>
+<span class="t-label">MXF</span><br>
+<span class="t-label">  Audio streams  </span><span class="t-val">4</span><br>
+<span class="t-label">  AS-11 sidecar  </span><span class="t-out">present</span><br>
+<span class="t-label">  Programme      </span><span class="t-val">Series Title S01E03</span><br>
+<span class="t-label">  Audio layout   </span><span class="t-val">stereo_and_dual_mono</span><br>
+<br>
+<span class="t-label">────────────────────────────────────</span><br>
+<span class="t-label">Preflight  </span><span class="t-out">✓  PASSED</span><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">
+    <span class="footer-logo">KarhuTV</span>
+    <span class="footer-meta">Bear Media Services Ltd · Trading as KarhuTV · England & Wales</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>

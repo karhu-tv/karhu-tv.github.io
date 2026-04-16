@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>opx-* Tools — KarhuTV</title>
+<meta name="description" content="Free broadcast engineering tools from KarhuTV. opx-probe, opx-loudness, opx-drift and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0a0a0b;
+    --bg2:       #111114;
+    --bg3:       #18181c;
+    --border:    #242428;
+    --text:      #e8e8ea;
+    --muted:     #6b6b72;
+    --accent:    #e8502a;
+    --accent2:   #f0a020;
+    --mono:      'DM Mono', monospace;
+    --sans:      'Syne', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10,10,11,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+  }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+  /* ── Page header ── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 64px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .page-body {
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* ── Tool detail ── */
+  .tool-section {
+    position: relative;
+    z-index: 1;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tool-section.unavailable { opacity: 0.5; }
+
+  .tool-header {
+    padding: 48px 48px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .tool-title-block {}
+
+  .tool-name {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .tool-tagline {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .tool-status-block {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .status-badge {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .status-badge.soon {
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  .tool-version {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .tool-body {
+    padding: 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .tool-desc-full {
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  .feature-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--muted);
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .feature-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .feature-list li:last-child { border-bottom: none; }
+
+  /* ── Download block ── */
+  .download-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+
+  .download-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .download-platform {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    transition: border-color 0.2s, background 0.2s;
+    gap: 12px;
+  }
+
+  .download-btn:hover {
+    border-color: var(--accent);
+    background: var(--bg);
+  }
+
+  .download-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .platform-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .download-btn-meta {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .download-arrow {
+    color: var(--accent);
+    font-size: 16px;
+  }
+
+  .download-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .download-note a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+
+  .download-note a:hover { text-decoration: underline; }
+
+  /* ── Usage block ── */
+  .usage-block {
+    margin-top: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+  }
+
+  .usage-bar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .usage-body {
+    padding: 20px 24px;
+    font-size: 13px;
+    line-height: 2;
+    overflow-x: auto;
+  }
+
+  .t-comment { color: #4a4a52; }
+  .t-cmd { color: var(--accent2); }
+  .t-path { color: #6b8ed6; }
+  .t-out { color: #7ec880; }
+  .t-label { color: var(--muted); }
+  .t-val { color: var(--text); }
+  .t-warn { color: var(--accent); }
+  .t-prompt { color: var(--accent); }
+  .t-flag { color: #b07ec8; }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left { display: flex; align-items: center; gap: 16px; }
+  .footer-logo { font-family: var(--sans); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
+  .footer-meta { font-size: 12px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; list-style: none; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .page-header { padding: 100px 24px 48px; }
+    .tool-header { padding: 32px 24px 0; }
+    .tool-body { padding: 32px 24px; grid-template-columns: 1fr; gap: 40px; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark"></div>
+    Karhu<span style="color:var(--accent)">TV</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/tools.html" class="active">Tools</a></li>
+    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="page-eyebrow">opx-* suite</p>
+  <h1 class="page-title">Free broadcast<br>engineering tools.</h1>
+  <p class="page-body">
+    Binary-only releases for Linux and Windows. No account required.
+    No licence. No telemetry. Built on the same codebase as our commercial products.
+  </p>
+</div>
+
+<!-- opx-probe -->
+<div class="tool-section" id="opx-probe">
+  <div class="tool-header">
+    <div class="tool-title-block">
+      <div class="tool-name">opx-probe</div>
+      <div class="tool-tagline">Fast media file inspector — container, codec, frame rate, AS-11 sidecar, preflight</div>
+    </div>
+    <div class="tool-status-block">
+      <div class="status-badge">Available</div>
+      <div class="tool-version">v0.1 · April 2026</div>
+    </div>
+  </div>
+
+  <div class="tool-body">
+    <div>
+      <p class="tool-desc-full">
+        opx-probe reads media files directly via libavformat — no shell-out to ffprobe,
+        no subprocess overhead. It returns container duration, video codec and frame rate,
+        audio configuration, MXF AS-11 sidecar metadata, and edit list detection.
+        Run preflight against a house format to validate a file before ingest.
+        JSON output for scripting and pipeline integration.
+      </p>
+
+      <ul class="feature-list">
+        <li>Container and stream inspection — H.264, H.265, MPEG-2, ProRes, DNxHD</li>
+        <li>MXF OP1a with AS-11 UK DPP sidecar parsing — programme title, audio layout, rights expiry</li>
+        <li>Preflight validation against house format — frame rate, sample rate, edit list, VFR detection</li>
+        <li>JSON output for scripting and pipeline integration</li>
+        <li>Exit codes: 0 = clean, 1 = preflight fail, 2 = probe error</li>
+        <li>No installation — single binary, requires FFmpeg libraries</li>
+      </ul>
+
+      <div class="usage-block">
+        <div class="usage-bar">usage examples</div>
+        <div class="usage-body">
+<span class="t-comment"># Inspect a file</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-probe</span> <span class="t-path">programme.mxf</span><br>
+<br>
+<span class="t-comment"># Preflight against house format</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-probe</span> <span class="t-path">clip.mp4</span> <span class="t-flag">--house</span> <span class="t-val">1080p50</span><br>
+<br>
+<span class="t-comment"># JSON output for scripting</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-probe</span> <span class="t-path">clip.mp4</span> <span class="t-flag">--json</span> | jq .video.frame_rate_label<br>
+<br>
+<span class="t-comment"># House formats: 1080p50, 1080p25, 1080p2997, 1080p30,</span><br>
+<span class="t-comment">#               1080p24, 1080p2398, 1080i50, 1080i5994,</span><br>
+<span class="t-comment">#               720p50, 720p25</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="download-block">
+        <div class="download-title">Download opx-probe v0.1</div>
+        <div class="download-platform">
+          <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz"
+             class="download-btn">
+            <div class="download-btn-left">
+              <span class="platform-icon">🐧</span>
+              <div>
+                <div>Linux x86_64</div>
+                <div class="download-btn-meta">tar.gz · Ubuntu 22.04+</div>
+              </div>
+            </div>
+            <span class="download-arrow">↓</span>
+          </a>
+          <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-windows-x86_64.zip"
+             class="download-btn">
+            <div class="download-btn-left">
+              <span class="platform-icon">⊞</span>
+              <div>
+                <div>Windows x86_64</div>
+                <div class="download-btn-meta">zip · Windows 10+, FFmpeg bundled</div>
+              </div>
+            </div>
+            <span class="download-arrow">↓</span>
+          </a>
+        </div>
+        <div class="download-note">
+          <strong>Linux:</strong> requires FFmpeg 6.x —
+          <code>sudo apt install ffmpeg</code> on Ubuntu/Debian.<br><br>
+          <strong>Windows:</strong> FFmpeg DLLs bundled in the zip.
+          Extract and run — no installation required.<br><br>
+          Source code is not published.
+          <a href="https://github.com/karhu-tv/opx-probe/releases">All releases on GitHub →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- opx-loudness -->
+<div class="tool-section unavailable" id="opx-loudness">
+  <div class="tool-header">
+    <div class="tool-title-block">
+      <div class="tool-name">opx-loudness</div>
+      <div class="tool-tagline">EBU R128 loudness analysis — integrated, short-term, momentary, true peak, Ofcom compliance</div>
+    </div>
+    <div class="tool-status-block">
+      <div class="status-badge soon">Coming soon</div>
+    </div>
+  </div>
+  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
+    EBU R128 loudness metering with Ofcom compliance checking. Verified against ffprobe.
+    Per-channel analysis. In development.
+  </div>
+</div>
+
+<!-- opx-drift -->
+<div class="tool-section unavailable" id="opx-drift">
+  <div class="tool-header">
+    <div class="tool-title-block">
+      <div class="tool-name">opx-drift</div>
+      <div class="tool-tagline">Clock drift analyser — measure timing deviation on SDI and IP streams against TAI reference</div>
+    </div>
+    <div class="tool-status-block">
+      <div class="status-badge soon">Coming soon</div>
+    </div>
+  </div>
+  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
+    Measure and log timing deviation. Compare playout clock against TAI reference.
+    Expose NTP jitter. In development.
+  </div>
+</div>
+
+<!-- opx-verify -->
+<div class="tool-section unavailable" id="opx-verify">
+  <div class="tool-header">
+    <div class="tool-title-block">
+      <div class="tool-name">opx-verify</div>
+      <div class="tool-tagline">As-run log verifier — hash-chain validation, R128 compliance, subtitle quota, SCTE-35 accuracy</div>
+    </div>
+    <div class="tool-status-block">
+      <div class="status-badge soon">Coming soon</div>
+    </div>
+  </div>
+  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
+    Validate cryptographically chained playout logs. Verify R128 compliance and subtitle quota
+    from the as-run record. In development.
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    <span class="footer-logo">KarhuTV</span>
+    <span class="footer-meta">Bear Media Services Ltd · Trading as KarhuTV · England & Wales</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/tools.html">Tools</a></li>
+    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>
