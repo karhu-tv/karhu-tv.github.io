@@ -496,19 +496,84 @@
 </div>
 
 <!-- opx-drift -->
-<div class="tool-section unavailable" id="opx-drift">
+<div class="tool-section" id="opx-drift">
   <div class="tool-header">
     <div class="tool-title-block">
       <div class="tool-name">opx-drift</div>
-      <div class="tool-tagline">Clock drift analyser — measure timing deviation on SDI and IP streams against TAI reference</div>
+      <div class="tool-tagline">Media timeline drift — PTS deviation and audio/video differential, EBU R37 quoted</div>
     </div>
     <div class="tool-status-block">
-      <div class="status-badge soon">Coming soon</div>
+      <div class="status-badge">Available</div>
+      <div class="tool-version">v0.2 &middot; July 2026</div>
     </div>
   </div>
-  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
-    Measure and log timing deviation. Compare playout clock against TAI reference.
-    Expose NTP jitter. In development.
+
+  <div class="tool-body">
+    <div>
+      <p class="tool-desc-full">
+        Does this file&rsquo;s presentation timeline hold together? Two questions, two modes.
+        <strong>file</strong> measures PTS deviation against the stream&rsquo;s own declared
+        rate. <strong>sync</strong> measures the audio-versus-video differential and quotes it
+        against EBU R37. The frame period is resolved as an exact rational and never floated,
+        so a reported deviation is not an artefact of the measurement. Each track in a
+        differential is measured against <em>its own</em> declaration, so the common-mode term
+        subtracts out.
+      </p>
+
+      <ul class="feature-list">
+        <li>PTS drift against an exact rational timeline &mdash; steps of &plusmn;1 period are dropped or repeated frames</li>
+        <li>Audio/video differential with EBU R37 (+40 / &minus;60 ms) &mdash; asymmetric, so the sign selects the bound</li>
+        <li>Two files &mdash; their video timelines compared against each other</li>
+        <li>Quantisation floor printed with every report; a deviation below it is reported as unmeasurable, never as zero</li>
+        <li>JSON output for scripting and pipeline integration</li>
+        <li>Exit codes: 0 = no discontinuities, 1 = discontinuities detected, 2 = error</li>
+      </ul>
+
+      <div class="usage-block">
+        <div class="usage-bar">usage examples</div>
+        <div class="usage-body">
+<span class="t-comment"># Lip sync, with EBU R37 bounds</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-drift</span> <span class="t-cmd">sync</span> <span class="t-path">programme.mxf</span><br>
+<br>
+<span class="t-comment"># PTS drift of a recorded stream</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-drift</span> <span class="t-cmd">file</span> <span class="t-path">capture.ts</span><br>
+<br>
+<span class="t-comment"># Analyse a 30 fps file as though it were 29.97</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">opx-drift</span> <span class="t-cmd">file</span> <span class="t-path">capture.mp4</span> <span class="t-flag">--rate</span> <span class="t-val">30000/1001</span><br>
+<br>
+<span class="t-comment"># The differential is the finding, not the slope</span><br>
+<span class="t-label">  differential </span><span class="t-val">-1.412 ppm</span><span class="t-label"> (+ = audio ahead)</span><br>
+<span class="t-label">  guard 24.259 ppm (3&times; the 8.086 ppm slope floor)</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="download-block">
+        <div class="download-title">Download opx-drift v0.2</div>
+        <div class="download-platform">
+          <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz"
+             class="download-btn">
+            <div class="download-btn-left">
+              <span class="platform-icon">&#128039;</span>
+              <div>
+                <div>Linux x86_64</div>
+                <div class="download-btn-meta">tar.gz &middot; Ubuntu 22.04+</div>
+              </div>
+            </div>
+            <span class="download-arrow">&darr;</span>
+          </a>
+        </div>
+        <div class="download-note">
+          <strong>Linux:</strong> requires FFmpeg 6.x &mdash;
+          <code>sudo apt install ffmpeg</code> on Ubuntu/Debian.<br><br>
+          <strong>Read the note under a sync report before quoting a number.</strong>
+          A common-mode slope is a coherent retime, not a sync fault.<br><br>
+          Source code is not published.
+          <a href="https://github.com/karhu-tv/opx-drift/releases">All releases on GitHub &rarr;</a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
