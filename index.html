@@ -1,747 +1,941 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KarhuTV — Broadcast Tools</title>
-<meta name="description" content="KarhuTV builds precision broadcast engineering tools. Free utilities for working broadcast engineers.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:        #0a0a0b;
-    --bg2:       #111114;
-    --bg3:       #18181c;
-    --border:    #242428;
-    --text:      #e8e8ea;
-    --muted:     #6b6b72;
-    --accent:    #e8502a;
-    --accent2:   #f0a020;
-    --mono:      'DM Mono', monospace;
-    --sans:      'Syne', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── Grid overlay ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── Nav ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 48px;
-    height: 64px;
-    background: rgba(10,10,11,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .nav-logo-mark {
-    width: 28px;
-    height: 28px;
-    background: var(--accent);
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    flex-shrink: 0;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--text); }
-
-  /* ── Hero ── */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 120px 48px 80px;
-    z-index: 1;
-  }
-
-  .hero-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.1s;
-  }
-
-  .hero-headline {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: clamp(48px, 7vw, 96px);
-    line-height: 0.95;
-    letter-spacing: -0.04em;
-    max-width: 900px;
-    margin-bottom: 40px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.2s;
-  }
-
-  .hero-headline em {
-    font-style: normal;
-    color: var(--accent);
-  }
-
-  .hero-body {
-    max-width: 520px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 56px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.35s;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.45s;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--accent);
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 24px;
-    font-family: var(--mono);
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: background 0.2s, transform 0.15s;
-  }
-
-  .btn-primary:hover {
-    background: #d44020;
-    transform: translateY(-1px);
-  }
-
-  .btn-secondary {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .btn-secondary:hover {
-    color: var(--text);
-    border-color: var(--muted);
-  }
-
-  /* ── Stat strip ── */
-  .stat-strip {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    background: var(--bg2);
-  }
-
-  .stat {
-    padding: 40px 48px;
-    border-right: 1px solid var(--border);
-  }
-
-  .stat:last-child { border-right: none; }
-
-  .stat-value {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 40px;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-
-  .stat-value span { color: var(--accent); }
-
-  .stat-label {
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  /* ── Section ── */
-  section {
-    position: relative;
-    z-index: 1;
-  }
-
-  .section-inner {
-    padding: 96px 48px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .section-label {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 80px;
-  }
-
-  .section-title {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: clamp(28px, 4vw, 48px);
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-
-  .section-body {
-    color: var(--muted);
-    max-width: 560px;
-    line-height: 1.7;
-    margin-bottom: 56px;
-  }
-
-  /* ── Tool cards ── */
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-
-  .tool-card {
-    background: var(--bg2);
-    padding: 40px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    transition: background 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .tool-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-
-  .tool-card:hover { background: var(--bg3); }
-  .tool-card:hover::before { transform: scaleX(1); }
-
-  .tool-card.coming-soon {
-    opacity: 0.5;
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .tool-name {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 22px;
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .tool-badge {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-  }
-
-  .tool-badge.soon {
-    border-color: var(--border);
-    color: var(--muted);
-  }
-
-  .tool-desc {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.6;
-    flex: 1;
-  }
-
-  .tool-meta {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    display: flex;
-    gap: 16px;
-  }
-
-  .tool-meta span { color: var(--accent2); }
-
-  /* ── Philosophy ── */
-  .philosophy {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .philosophy-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-
-  .philosophy-points {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .philosophy-point {
-    padding: 32px 0;
-    border-bottom: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-
-  .philosophy-point:first-child { padding-top: 0; }
-  .philosophy-point:last-child { border-bottom: none; }
-
-  .point-num {
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    padding-top: 4px;
-  }
-
-  .point-title {
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-
-  .point-body {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.65;
-  }
-
-  .philosophy-aside {
-    position: sticky;
-    top: 96px;
-  }
-
-  .terminal {
-    background: #0d0d10;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    overflow: hidden;
-  }
-
-  .terminal-bar {
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .terminal-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--border);
-  }
-
-  .terminal-dot:first-child { background: #e8502a44; }
-
-  .terminal-title {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    margin-left: 8px;
-  }
-
-  .terminal-body {
-    padding: 24px;
-    line-height: 2;
-  }
-
-  .t-comment { color: #4a4a52; }
-  .t-cmd { color: var(--accent2); }
-  .t-path { color: #6b8ed6; }
-  .t-out { color: #7ec880; }
-  .t-label { color: var(--muted); }
-  .t-val { color: var(--text); }
-  .t-warn { color: var(--accent); }
-  .t-prompt { color: var(--accent); }
-
-  /* ── Footer ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--border);
-    padding: 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .footer-logo {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: 16px;
-    letter-spacing: -0.02em;
-  }
-
-  .footer-meta {
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 24px;
-    list-style: none;
-  }
-
-  .footer-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--text); }
-
-  /* ── Animations ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    nav { padding: 0 24px; }
-    .hero { padding: 100px 24px 60px; }
-    .stat-strip { grid-template-columns: 1fr; }
-    .stat { border-right: none; border-bottom: 1px solid var(--border); }
-    .section-inner { padding: 64px 24px; }
-    .philosophy-grid { grid-template-columns: 1fr; gap: 48px; }
-    .philosophy-aside { position: static; }
-    footer { flex-direction: column; gap: 24px; text-align: center; }
-  }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karhu TV — TAI-disciplined broadcast playout, in software</title>
+<meta name="description" content="Rytmi is a software playout engine — a stock PC and a Blackmagic DeckLink card, disciplined to TAI, with a tamper-evident as-run log built into the timing core. Free tools for broadcast delivery QC.">
+
+<!-- The -v1 in the image filename is LOAD-BEARING. Facebook caches a card by
+     URL and does not re-fetch unless the URL changes, so an edited og-card.png
+     keeps serving the old art to every surface that has already seen it. A new
+     art revision gets a new path: og-card-v2.png, and this tag moves with it.
+
+     Open Graph. tools_brief W-11: without these every LinkedIn share of karhu.tv
+     renders a blank card, and outreach is already in flight.
+     No live counters in any of these strings: a meta tag is not re-rendered by the
+     page's JS, so a frozen "N frames delivered" here would rot the same way the
+     hero prose did. Durable claims only. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/">
+<meta property="og:title" content="Karhu TV — TAI-disciplined broadcast playout, in software">
+<meta property="og:description" content="At 1080p50, a frame is 20 milliseconds. We hold the clock to tens of nanoseconds on a stock PC — and we publish what we don't claim.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: an evidence table and a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+
+<!-- X/Twitter reads og:* as fallback but wants the card type declared. -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Karhu TV — TAI-disciplined broadcast playout, in software">
+<meta name="twitter:description" content="At 1080p50, a frame is 20 milliseconds. We hold the clock to tens of nanoseconds on a stock PC — and we publish what we don't claim.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<link rel="canonical" href="https://karhu.tv/">
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
 </head>
 <body>
+<style>
+  :root {
+    --ground:      #F6F8FA;
+    --ground-2:    #EDF1F5;
+    --ink:         #10151C;
+    --ink-soft:    #4A5663;
+    --ink-faint:   #7B8794;
+    --accent:      #0A5C7A;
+    --accent-soft: #E2EEF3;
+    --warn:        #9A5B0B;
+    --warn-soft:   #F7EEDF;
+    --rule:        #D5DCE4;
+    --rule-soft:   #E6EBF0;
 
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-mark"></div>
-    Karhu<span style="color:var(--accent)">TV</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/tools.html">Tools</a></li>
-    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
-  </ul>
-</nav>
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
 
-<!-- Hero -->
-<section class="hero">
-  <p class="hero-eyebrow">Broadcast Engineering Tools</p>
-  <h1 class="hero-headline">Built for<br>engineers who<br><em>care about</em><br>correctness.</h1>
-  <p class="hero-body">
-    KarhuTV makes precision tools for broadcast engineers.
-    Free utilities that do exactly what they say,
-    with output you can verify and results you can trust.
-  </p>
-  <div class="hero-actions">
-    <a href="/tools.html" class="btn-primary">↓ &nbsp;Get the tools</a>
-    <a href="mailto:otso@karhu.tv" class="btn-secondary">Get in touch</a>
-  </div>
-</section>
+    --measure: 64ch;
+    --pad: clamp(1.25rem, 4vw, 3.5rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+    --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+    --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+  }
+  :root[data-theme="light"] {
+    --ground: #F6F8FA; --ground-2: #EDF1F5; --ink: #10151C; --ink-soft: #4A5663;
+    --ink-faint: #7B8794; --accent: #0A5C7A; --accent-soft: #E2EEF3;
+    --warn: #9A5B0B; --warn-soft: #F7EEDF; --rule: #D5DCE4; --rule-soft: #E6EBF0;
+  }
 
-<!-- Stat strip -->
-<div class="stat-strip">
-  <div class="stat">
-    <div class="stat-value">MXF<span>.</span></div>
-    <div class="stat-label">AS-11 UK DPP sidecar parsing — programme metadata, audio config, rights</div>
-  </div>
-  <div class="stat">
-    <div class="stat-value">R128<span>.</span></div>
-    <div class="stat-label">EBU R128 loudness analysis — Ofcom compliance, verified against ffprobe</div>
-  </div>
-  <div class="stat">
-    <div class="stat-value">Free<span>.</span></div>
-    <div class="stat-label">All opx-* tools — no account, no licence, no strings</div>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0 0 .75rem;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.015em; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2.125rem); line-height: 1.15; letter-spacing: -.01em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p { margin: 0; max-width: var(--measure); }
+  .lede { font-size: 1.125rem; color: var(--ink-soft); }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ── proposal banner ─────────────────────────────────────────── */
+  .flag {
+    background: var(--accent); color: var(--ground);
+    font-family: var(--mono); font-size: .75rem; letter-spacing: .08em;
+    padding: .55rem var(--pad);
+  }
+  :root[data-theme="dark"] .flag, :root:not([data-theme]) .flag { color: #06131A; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .flag { color: #06131A; } }
+
+  /* ── masthead ────────────────────────────────────────────────── */
+  header.top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap;
+    padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
+  }
+  .logo { display: flex; align-items: center; gap: .625rem; }
+  .logo-mark { display: block; }
+  .logo-word {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em;
+  }
+  .logo-word span { color: var(--accent); }
+  nav { display: flex; gap: 1.5rem; font-size: .875rem; }
+  nav a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent; }
+  nav a:hover, nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── hero: the instrument reports a value ────────────────────── */
+  .hero { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
+  .hero-grid { display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: 1fr; }
+  @media (min-width: 62rem) { .hero-grid { grid-template-columns: 1.15fr .85fr; align-items: start; } }
+  .hero h1 { margin-bottom: 1.25rem; }
+  .hero .lede { margin-bottom: 1.75rem; }
+
+  .readout {
+    border: 1px solid var(--rule); background: var(--ground-2);
+    padding: 1.5rem; display: flex; flex-direction: column; gap: 1.125rem;
+  }
+  .readout-row { display: flex; flex-direction: column; gap: .3rem; }
+  .readout-val {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1; letter-spacing: -.02em;
+    color: var(--accent);
+  }
+  .readout-val small { font-size: .45em; color: var(--ink-faint); letter-spacing: 0; margin-left: .35em; }
+  .readout-lab { font-size: .8125rem; color: var(--ink-soft); }
+  .readout-src {
+    font-family: var(--mono); font-size: .6875rem; color: var(--ink-faint);
+    padding-top: 1rem; border-top: 1px solid var(--rule); line-height: 1.5;
+  }
+
+  .live-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+    flex-wrap:wrap; }
+
+  /* Tally. Facility idiom, but it says SOAK LIVE and not ON AIR — this is a bench,
+     and a lamp implying a live transmission would be the overclaim the register
+     exists to prevent. Semantic colour, deliberately outside the accent palette. */
+  .tally { display:inline-flex; align-items:center; gap:.5rem;
+    border:1px solid var(--rule); background:var(--ground);
+    padding:.32rem .6rem .32rem .5rem; }
+  .lamp { width:.6rem; height:.6rem; border-radius:50%;
+    background:#3B4149; box-shadow:inset 0 0 0 1px rgba(0,0,0,.35); }
+  .tally-txt { font-family:var(--mono); font-size:.625rem; letter-spacing:.14em;
+    color:var(--ink-faint); }
+  .tally.on { border-color:#C8322D; }
+  .tally.on .lamp { background:#E0453F; box-shadow:0 0 7px 1px rgba(224,69,63,.75);
+    animation:breathe 3.2s ease-in-out infinite; }
+  .tally.on .tally-txt { color:#C8322D; }
+  :root[data-theme="dark"] .tally.on .tally-txt { color:#F2736D; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .tally.on .tally-txt { color:#F2736D; }
+  }
+  @keyframes breathe { 0%,100% { opacity:1; } 50% { opacity:.62; } }
+  @media (prefers-reduced-motion: reduce) { .tally.on .lamp { animation:none; } }
+  .freshness { font-family:var(--mono); font-size:.6875rem; letter-spacing:.06em; }
+  .freshness.ok { color: var(--accent); }
+  .freshness.stale { color: var(--warn); }
+  .lrow { display:flex; flex-direction:column; gap:.15rem; padding:.7rem 0; border-bottom:1px solid var(--rule-soft); }
+  .lrow:last-child { border-bottom:0; }
+  .lval { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:1.5rem;
+          line-height:1.1; color:var(--accent); }
+  .lval.absent { color: var(--ink-faint); }
+  /* Historical figures must never be mistakable for live ones: muted, not accent. */
+  .lval.hist { color: var(--ink-soft); }
+  #live-rows.historic .lsrc { color: var(--ink-soft); }
+  .llab { font-size:.8125rem; color:var(--ink); }
+  .lsrc { font-family:var(--mono); font-size:.625rem; color:var(--ink-faint); line-height:1.45; }
+  /* ── scale bar: ns against a frame ───────────────────────────── */
+  .scale { margin-top: 1.25rem; }
+  .scale-track {
+    position: relative; height: 34px; border: 1px solid var(--rule);
+    background: var(--ground); overflow: hidden;
+  }
+  .scale-fill { position: absolute; inset: 0 auto 0 0; width: 0.00875%; min-width: 2px; background: var(--accent); }
+  .scale-cap { display: flex; justify-content: space-between; margin-top: .4rem;
+    font-family: var(--mono); font-size: .6875rem; color: var(--ink-faint); }
+
+  /* ── sections ────────────────────────────────────────────────── */
+  section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
+  .sec-head { margin-bottom: 2rem; }
+  .sec-head p { margin-top: .75rem; color: var(--ink-soft); }
+
+  .two { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; }
+  @media (min-width: 55rem) { .two { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ── evidence table ──────────────────────────────────────────── */
+  .tbl-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .875rem; min-width: 34rem; }
+  th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); border-bottom: 1px solid var(--rule); font-weight: 400;
+  }
+  td.v { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+  td.src { font-family: var(--mono); font-size: .75rem; color: var(--ink-faint); }
+
+  /* ── claim register ──────────────────────────────────────────── */
+  #register {
+    background: var(--warn-soft);
+    padding-left: clamp(1.25rem, 3vw, 2.5rem);
+    padding-right: clamp(1.25rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--warn);
+    border-bottom: 1px solid var(--warn);
+  }
+  #register .sec-head h2 { color: var(--warn); }
+  #register .sec-head p { max-width: 68ch; }
+  .reg { display: flex; flex-direction: column; gap: 2.5rem; margin-top: .5rem; }
+  .band-lab {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--warn); margin: 0 0 1.25rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--warn);
+  }
+  .reg-band { display: flex; flex-direction: column; }
+  .reg-item {
+    display: flex; flex-direction: column; gap: .5rem;
+    padding: 1.25rem 0; border-bottom: 1px solid var(--rule-soft);
+  }
+  .reg-band .reg-item:last-child { border-bottom: 0; padding-bottom: 0; }
+  .reg-item h3 { color: var(--ink); }
+  .reg-item h3::before { content: "✕"; color: var(--warn); font-family: var(--mono); margin-right: .6rem; font-size: .85em; }
+  .reg-why { color: var(--ink-soft); font-size: .9375rem; max-width: 70ch; }
+  .reg-earn { font-size: .875rem; color: var(--ink-faint); max-width: 70ch; }
+  .reg-earn span {
+    font-family: var(--mono); font-size: .8125rem; color: var(--warn);
+    letter-spacing: .04em; margin-right: .4rem;
+  }
+  .matrix { display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+    border: 1px solid var(--rule); margin: .35rem 0 .25rem; font-size: .875rem; }
+  .mx-row { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--rule); }
+  @media (min-width: 46rem) { .mx-row { grid-template-columns: 13rem 1fr 1fr; } }
+  .mx-row > * { background: var(--warn-soft); padding: .6rem .8rem; }
+  .mx-head > * { font-family: var(--mono); font-size: .6875rem; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--ink-faint); }
+  .mx-row [role="rowheader"] { color: var(--ink); }
+  .ok::before { content: "✓ "; color: var(--accent); font-family: var(--mono); }
+  .no::before { content: "✕ "; color: var(--warn); font-family: var(--mono); }
+  .maybe::before { content: "~ "; color: var(--ink-faint); font-family: var(--mono); }
+  .ok, .no, .maybe { color: var(--ink-soft); }
+  .reg-foot {
+    margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--warn);
+    font-size: .9375rem; color: var(--ink-soft); max-width: 70ch;
+  }
+  @media (min-width: 62rem) { .reg-item { display: grid; grid-template-columns: 15rem 1fr; gap: .5rem 2rem; }
+    .reg-item h3 { grid-row: span 2; } }
+
+  /* ── tools ───────────────────────────────────────────────────── */
+  .tools { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 48rem) { .tools { grid-template-columns: repeat(2, 1fr); } }
+  .tool { background: var(--ground); padding: 1.5rem; display: flex; flex-direction: column; gap: .6rem; }
+  .tool-top { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+  .tool-name { font-family: var(--mono); font-size: 1rem; color: var(--ink); }
+  .tag {
+    font-family: var(--mono); font-size: .625rem; letter-spacing: .1em; text-transform: uppercase;
+    padding: .2rem .5rem; border: 1px solid var(--rule); color: var(--ink-faint); white-space: nowrap;
+  }
+  .tag.live { color: var(--accent); border-color: var(--accent); }
+  .tool p { font-size: .9375rem; color: var(--ink-soft); }
+
+  footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-faint); font-size: .875rem; }
+  footer a { color: var(--accent); }
+  .note { font-size: .875rem; color: var(--ink-soft); }
+  .note code, .inline-code { font-family: var(--mono); font-size: .9em; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="logo">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span>
+    </div>
+    <nav>
+      <a href="#rytmi">Rytmi</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#tools">Tools</a>
+      <a href="#register">What we don't claim</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Broadcast playout · Karhu TV</p>
+        <h1>At 1080p50, a frame is 20 milliseconds. <span id="h1-tail">Our clock error is measured in nanoseconds.</span></h1>
+        <p class="lede">
+          <strong>Karhu&nbsp;TV</strong> builds <strong>Rytmi</strong> — a software playout engine that turns a stock
+          PC and a Blackmagic DeckLink card into a TAI-disciplined SDI playout chain, with a
+          tamper-evident as-run log built into the timing core rather than bolted on
+          afterwards. The free <span class="inline-code">opx-*</span> tools below are the
+          instruments we wrote to prove it correct.
+          <!-- #lede-soak is REWRITTEN FROM THE LIVE SNAPSHOT by render(). The static text
+               below is the no-JS fallback and is deliberately DATED, past-tense: an undated
+               copy of a live counter in prose was exactly how this sentence rotted within
+               hours of being typed (it read 7,296,650 while the panel beside it said
+               7,656,700). A dated figure stays true; an undated one is stale on arrival. -->
+          <span id="lede-soak">By 2 August 2026 the reference unit had delivered
+          <strong>7,656,700 frames</strong> in its then-current soak with
+          <strong>none late</strong>.</span>
+        </p>
+        <div class="scale">
+          <div class="scale-track"><div class="scale-fill" id="scale-fill"></div></div>
+          <div class="scale-cap">
+            <span>0 ns</span>
+            <span id="scale-mid"></span>
+            <span id="scale-frame">one frame · 1080p50 · 20,000,000 ns</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="readout" id="live">
+        <div class="live-head">
+          <div class="tally" id="tally" role="status" aria-live="polite">
+            <span class="lamp" aria-hidden="true"></span>
+            <span class="tally-txt">SOAK LIVE</span>
+          </div>
+          <span class="freshness" id="fresh"></span>
+        </div>
+        <div id="live-rows"></div>
+        <p class="readout-src" id="live-src"></p>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Tools section -->
-<section>
-  <div class="section-inner">
-    <p class="section-label">opx-* tools</p>
-    <h2 class="section-title">Free tools for<br>working engineers.</h2>
-    <p class="section-body">
-      Binary-only. Linux and Windows. No installation required beyond FFmpeg.
-      Built on the same codebase as our commercial products —
-      these are not demos, they are the real thing.
+<div class="wrap">
+  <section id="rytmi">
+    <div class="sec-head">
+      <p class="eyebrow">What we actually make</p>
+      <h2>Rytmi is a playout engine, in software. Syke is its clock.</h2>
+    </div>
+    <div class="two">
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <p>
+          There are two conventional places to take playout timing from, and both leave the
+          card's own clock unmeasured. Pace from the host and you assume the SDI card agrees
+          with it; lock to house sync and you assume the reference will always be there. Either
+          way nobody is watching the crystal in the card, and it is a few parts per million off
+          — ours by about −3.7 ppm through 1 Aug 2026, which is one slipped frame every hour and
+          a half or so if nothing corrects
+          for it.
+        </p>
+        <p>
+          <strong>Syke</strong> paces from <strong>TAI</strong> — a monotonic timescale with no
+          leap seconds — and measures the card's drift continuously rather than assuming it away.
+          Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
+          an absolute instant, not an offset from whenever the process happened to start.
+        </p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <p>
+          The as-run log is a <strong>hash chain</strong>. Each record commits to the one before it,
+          blocks are sealed and fsynced, and rotated day files are verifiable across boundaries.
+          Compliance isn't a report generated later from something that might have been edited —
+          it's structural.
+        </p>
+        <p>
+          <strong>Which is why losing house sync doesn't cost you your time base.</strong> Take
+          the second of those approaches and the reference is your timing authority, so when it
+          goes you are left on an uncorrected crystal. Syke's authority is TAI — and Rytmi's is
+          Syke's — so the card's rate error is a measured quantity rather than an assumption;
+          we predict its consequences to within 1 %. Genlock is something we accept, not
+          something we depend on: the design rule from the start was that the clock must not
+          rely on it, and the reference unit runs free with zero late frames.
+        </p>
+        <p>
+          <strong>And it is software, not an appliance.</strong> The machine behind every
+          figure on this page is a stock Intel desktop and a DeckLink card any broadcast
+          dealer stocks. The nanoseconds come from measurement, not from custom silicon —
+          the engine treats every clock in the box as something to verify rather than trust,
+          which is why it holds time on hardware you can buy, replace, and keep spares for.
+          When a card fails, you swap a card — not a channel appliance.
+        </p>
+        <p class="note">
+          Four independent SDI outputs per card. Runs on Ubuntu. Binary-only, under NDA — the
+          timing core is the company, so it isn't published. Everything below it is.
+        </p>
+        <p>
+          <strong>One price, everything enabled, bought once.</strong> There is no feature
+          matrix, no per-channel tier, no per-output unlock and no annual renewal: the licence
+          is perpetual and the software you install is the whole software. We price this way
+          because the alternative — charging separately for the things a playout system already
+          has to do — makes the vendor's incentives point away from the operator's. It also
+          means the number we quote is the number, which is not universally true in this
+          market.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="evidence">
+    <div class="sec-head">
+      <p class="eyebrow">Evidence</p>
+      <h2>Every number here has a log behind it</h2>
+      <p>Nothing on this page is a target, a projection, or a figure from a datasheet. Each row is
+        something we measured on hardware and can show you the capture for.</p>
+    </div>
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr><th>Measurement</th><th>Result</th><th>How it was established</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Late frames, pre-registered null test</td>
+            <td class="v">0</td>
+            <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed</td>
+          </tr>
+          <tr>
+            <td>Frame underruns</td>
+            <td class="v">0</td>
+            <td class="src">same test, 30 Jul 2026; the priming after each scheduled restart is excluded and stated</td>
+          </tr>
+          <tr>
+            <td>Clock phase, typical (mean magnitude)</td>
+            <td class="v">45 ns</td>
+            <td class="src">mean of |phase| per tick, one 4,552 s window, 2 Aug 2026 &mdash; the live panel above reports the current value of this same quantity</td>
+          </tr>
+          <tr>
+            <td>Clock phase, median of the per-second peak</td>
+            <td class="v">175 ns</td>
+            <td class="src">a different quantity from the row above: worst tick in each second, then the median of those; p99 1,060 ns. Same 4,552 s window, 2 Aug 2026</td>
+          </tr>
+          <tr>
+            <td>Worst single tick, per run</td>
+            <td class="v">944&ndash;3,091 ns</td>
+            <td class="src">29 of the 33 runs since 28 Jul 2026. Four exceeded it &mdash; 39&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s and 1.35&nbsp;ms &mdash; every one of them while the same machine was running local builds and tests. Cause still open; host load is now recorded alongside so the next one can be attributed rather than reconstructed. We publish the four rather than the 29</td>
+          </tr>
+          <tr>
+            <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
+            <td class="v">578&times;</td>
+            <td class="src">the fix deployed 28 Jul 2026. Median worst tick per run, 865,037&nbsp;&rarr;&nbsp;1,496&nbsp;ns; 9 runs before, 7 after, no overlap between the two sets. Runs were a uniform 12&nbsp;h at the time, which is what makes them comparable; that cadence has since been retired. Observational, not a controlled A/B &mdash; the controlled test on that fix measured late frames, not phase. Restricted to full-length runs on both sides: the figure is a latched maximum, so mixing in short ones flattered it to 693&times;</td>
+          </tr>
+          <tr>
+            <td>As-run records checked for tampering</td>
+            <td class="v">&ge;&nbsp;44,300,073</td>
+            <td class="src">as of 28 Jul 2026; 0 false positives, six forgery vectors closed. Cumulative, so this is a floor too</td>
+          </tr>
+          <tr>
+            <td>Card crystal error vs TAI</td>
+            <td class="v">−3.7 ppm</td>
+            <td class="src">median over 26 Jul–1 Aug 2026, and dated because it is not a constant: the crystal is temperature-sensitive, and this is measured against CLOCK_TAI, which NTP disciplines — so a clock correction is arithmetically indistinguishable from crystal drift in it</td>
+          </tr>
+          <tr>
+            <td>Time-to-slip prediction from that drift</td>
+            <td class="v">1.007×</td>
+            <td class="src">observed ÷ predicted, median over 14 runs to 31 Jul 2026. A model fit, so it moves as runs accumulate &mdash; what is claimed is that the model tracks, not that this digit is fixed</td>
+          </tr>
+          <tr>
+            <td>Longest continuous engine run</td>
+            <td class="v">&ge;&nbsp;39 h</td>
+            <td class="src">19&ndash;21 Jul 2026, from the as-run chain rather than from memory. A floor, not a current reading &mdash; it only ever grows, and the live panel above carries the run in progress</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="register">
+    <div class="sec-head">
+      <p class="eyebrow" style="color:var(--warn)">The register</p>
+      <h2>What we don't claim, why, and what would earn it</h2>
+      <p>
+        In April we decided internally not to ship HEVC. The website went on advertising it for
+        three more months. Nobody caught it, because nothing was watching — and a claim nobody
+        is watching is indistinguishable from a lie to the customer who relies on it.
+      </p>
+      <p style="margin-top:.9rem">
+        This is what we keep instead of that habit. Every row is a thing we could plausibly say
+        and don't. It is on the public site rather than in an internal file, because a register
+        that lives where customers can't read it is the same failure with better manners.
+      </p>
+    </div>
+
+    <div class="reg">
+      <div class="reg-band">
+        <p class="band-lab">Licensing</p>
+        <div class="reg-item">
+          <h3>HEVC / H.265 support</h3>
+          <p class="reg-why">Out of scope on patent-licensing grounds since April 2026. Not
+            claimed, not tested, not marketed.</p>
+          <p class="reg-earn"><span>Would earn it:</span> an MPEG-LA licence and a hardware test
+            pass. Neither is planned.</p>
+        </div>
+      </div>
+
+      <div class="reg-band">
+        <p class="band-lab">Measured — but only as far as our own instruments reach</p>
+
+        <div class="reg-item">
+          <h3>Glass-to-glass latency</h3>
+          <p class="reg-why">We've measured the engine-side component over 200 trials. It is a
+            <em>lower bound</em>: it stops at the point the frame enters the handoff queue, and
+            the card pipeline beyond that point adds at least 60&nbsp;ms this number does not
+            include. Quoting it as glass-to-glass would understate our own latency by an
+            unknown margin.</p>
+          <p class="reg-earn"><span>Would earn it:</span> a capture rig on the SDI output measuring
+            the round trip end to end.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>&ldquo;Never drops a frame&rdquo;</h3>
+          <p class="reg-why">The card's crystal runs about 3.6&nbsp;ppm slow against TAI, so the
+            engine produces marginally faster than the card consumes. A surplus frame is discarded
+            from the handoff queue roughly <strong>every 90 minutes</strong> at the drift measured through
+            1 Aug 2026 — by design, and at a
+            rate we predict from the live drift to within 1&nbsp;%. The card itself reports zero
+            late and zero dropped frames after start-up. Whether a discarded frame is visible on
+            the wire is <strong>engine-side accounting, not a wire measurement.</strong></p>
+          <p class="reg-earn"><span>Would earn it:</span> the same capture rig. Until then we
+            report what our counters see and say which side of the card they sit on.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Holdover through a reference <em>failure</em></h3>
+          <p class="reg-why">The architecture is built for it and the free-running case is
+            evidenced — we run without a house reference and the drift compensation is measured,
+            not assumed. What we have <em>not</em> exercised is genlock at all: no valid house
+            reference has yet been on this bench — a sync generator is on order — so locked
+            operation and the transition across a reference failure are both unmeasured. The
+            card's genlock-source setting exists in our configuration and is currently read by
+            nothing, and the telemetry that would let us watch the reference state has been
+            written and went on air on 2 Aug 2026; it currently reads <span class="inline-code">unlocked</span>,
+            which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
+            cannot yet tell you what it does locked, or what the first second after a reference
+            failure looks like.</p>
+          <p class="reg-earn"><span>Would earn it:</span> reference state on the API — shipping
+            this week — then a reference on the bench, lock observed, and finally pulling that
+            reference on a live channel and measuring the edge. A morning's work once the
+            generator arrives.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Loudness monitoring on air</h3>
+          <p class="reg-why">We ship a full BS.1770 loudness meter — and it does not run on the
+            SDI path. It reads decoded source audio, upstream of the output mix, so it
+            structurally cannot see a conform error. A number from it would describe the file,
+            not the transmission.</p>
+          <p class="reg-earn"><span>Would earn it:</span> metering the output bed itself, on its
+            own thread. Designed, not yet built.</p>
+        </div>
+      </div>
+
+      <div class="reg-band">
+        <p class="band-lab">Structural, as the system stands today</p>
+
+        <div class="reg-item">
+            <h3>Item-level granularity in the as-run log</h3>
+            <p class="reg-why">The as-run is a tamper-evident hash chain and we stand behind it:
+              44.3 million records checked, no false positives, six forgery vectors closed. It
+              records <strong>one entry per frame</strong>, which makes it exact about what played
+              and when, to the frame. What it does not carry is an <em>item</em> boundary &mdash; so
+              two consecutive plays of the same file read as one continuous run of double the
+              length. <strong>Integrity is proven; item-level granularity is not</strong>, and we
+              would rather tell you which is which than let the first imply the second.</p>
+          <p class="reg-earn"><span>Would earn it:</span> an item-boundary record. The obstacle is
+            that our record format is frozen — adding a field would invalidate every archive
+            written to date — so it needs a versioned format change, done deliberately.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Cross-family rates on one card <em>while genlocked</em></h3>
+          <p class="reg-why">Mixed frame rates are supported and normal — this row is about one
+            specific edge, so here is the whole map rather than a caveat that sounds bigger than
+            it is.</p>
+          <div class="matrix" role="table" aria-label="Frame-rate combinations by sync mode">
+            <div class="mx-row mx-head" role="row">
+              <span role="columnheader">Sync mode</span>
+              <span role="columnheader">Same family &mdash; 50 + 25, or 59.94 + 29.97</span>
+              <span role="columnheader">Cross family &mdash; 50 + 59.94</span>
+            </div>
+            <div class="mx-row" role="row">
+              <span role="rowheader">Genlocked to house reference</span>
+              <span class="maybe" role="cell">By design &mdash; decimated from one tick. Lock itself is untested here; see below.</span>
+              <span class="no" role="cell">No. One REF&nbsp;IN, one PLL, four sub-devices. Physical.</span>
+            </div>
+            <div class="mx-row" role="row">
+              <span role="rowheader">Free-running on internal sync</span>
+              <span class="ok" role="cell">Yes &mdash; and this is the mode the clock was designed for, not a fallback.</span>
+              <span class="maybe" role="cell">Not barred by the hardware &mdash; barred by us. See below.</span>
+            </div>
+          </div>
+          <p class="reg-why">The genlocked <em>no</em> is a physical fact and no software fixes
+            it. The genlocked <em>by design</em> is exactly that — no house reference has been
+            on this bench yet, the same gap the holdover row above names, so that cell is
+            intent rather than measurement until the sync generator arrives. The
+            free-running cell is <strong>our</strong> limit, not the card's: below the master clock
+            the pipeline is already per-channel, and the card derives both families from one
+            crystal happily. What is single is our master tick, and serving 50 and 59.94 from one
+            tick needs 60&nbsp;kHz &mdash; twelve hundred times today's rate. That is a design we
+            have not built, not a law of physics, and we would rather say so than let an
+            engineering choice of ours masquerade as a hardware limit.</p>
+          <p class="reg-earn"><span>Would earn it:</span> genlocked cross-family &mdash; a second
+            card with its own reference. Free-running cross-family &mdash; a faster master tick or
+            independent cadence sources per channel. Ask if you need it; the answer is a schedule,
+            not a no.</p>
+        </div>
+
+      </div>
+
+      <div class="reg-band">
+        <p class="band-lab">Not yet earned</p>
+
+        <div class="reg-item">
+          <h3>Uptime and reliability figures</h3>
+          <p class="reg-why">Our internal threshold for saying &ldquo;reliable&rdquo; is 90 days
+            continuous. The longest run we could evidence from the as-run chain as of
+            <strong>1 August 2026</strong> was <strong>39 hours</strong>. That figure is dated on
+            purpose: runs get longer, and a number stated as current would be wrong the next time
+            one does. What does not move is the argument — 39 hours is not 90 days, and until it
+            is we do not use the word.</p>
+          <p class="reg-earn"><span>Would earn it:</span> 90 days. There is no shortcut and we
+            won't paraphrase our way to one.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>ATSC A/85 loudness conformance</h3>
+          <p class="reg-why">A/85 assesses the <em>anchor element</em> — dialogue — not integrated
+            programme loudness, which is what our meter measures. For dialogue-sparse content the
+            two differ materially. The 2026 revision also requires true peak to be measured before
+            encoding, which a delivered file no longer permits. Our tool therefore returns
+            <span class="inline-code">INCONCLUSIVE</span> for A/85, and it is impossible for it to
+            return a pass: the refusal is enforced in code, before any number is compared.</p>
+          <p class="reg-earn"><span>Would earn it:</span> dialogue-gated measurement. A different
+            algorithm, not a threshold change.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="reg-foot">
+      If a claim you need isn't here and isn't on the evidence table, ask — the answer will be a
+      measurement, a date, or &ldquo;we don't know yet&rdquo;.
     </p>
+  </section>
 
-    <div class="tools-grid">
-      <a href="/tools.html#opx-probe" class="tool-card">
-        <div class="tool-name">
-          opx-probe
-          <span class="tool-badge">Available</span>
-        </div>
-        <p class="tool-desc">
-          Fast media file inspector. Container, codec, frame rate,
-          audio config, MXF AS-11 sidecar. Preflight against a house format.
-          JSON output for scripting. No ffprobe shell-out — direct libavformat.
-        </p>
-        <div class="tool-meta">
-          <div>Linux <span>·</span> Windows</div>
-          <div>v0.2</div>
-        </div>
-      </a>
-
-      <div class="tool-card coming-soon">
-        <div class="tool-name">
-          opx-loudness
-          <span class="tool-badge soon">Coming soon</span>
-        </div>
-        <p class="tool-desc">
-          EBU R128 loudness analysis. Integrated, short-term, momentary,
-          and true peak. Verified against ffprobe. Ofcom compliance checking.
-        </p>
-        <div class="tool-meta">
-          <div>Linux <span>·</span> Windows</div>
-          <div>—</div>
-        </div>
+  <section id="tools">
+    <div class="sec-head">
+      <p class="eyebrow">Tools</p>
+      <h2>The instruments, and what else runs on the clock</h2>
+      <p>The <span class="inline-code">opx-*</span> tools exist because we needed them to prove
+        Rytmi correct. They're free, binary-only, Linux and Windows. Published checksums;
+        <span class="inline-code">--version</span> on every one, because that's the first thing a
+        support conversation asks. The last card is neither an instrument nor finished — it is
+        here because it shares Rytmi's timing code, and we would rather show it early than
+        announce it late.</p>
+    </div>
+    <div class="tools">
+      <div class="tool">
+        <div class="tool-top"><span class="tool-name">opx-probe</span><span class="tag live">v0.2 · available</span></div>
+        <p><strong>What is this file?</strong> Container, codec, exact rational frame rate,
+          audio config, MXF sidecar. And <span class="inline-code">--house</span> pre-flights it
+          against your delivery spec, exiting non-zero if it won't conform.</p>
       </div>
-
-      <a href="/tools.html#opx-drift" class="tool-card">
-        <div class="tool-name">
-          opx-drift
-          <span class="tool-badge">Available</span>
-        </div>
-        <p class="tool-desc">
-          Media timeline drift. PTS deviation against a file's own declared rate,
-          and audio-versus-video differential with EBU R37 quoted. Exact rational
-          arithmetic — the frame period is never floated.
-        </p>
-        <div class="tool-meta">
-          <div>Linux <span>·</span> Windows</div>
-          <div>v0.2</div>
-        </div>
-      </a>
-
-      <div class="tool-card coming-soon">
-        <div class="tool-name">
-          opx-verify
-          <span class="tool-badge soon">Coming soon</span>
-        </div>
-        <p class="tool-desc">
-          As-run log verifier. Validates hash-chained playout logs,
-          checks R128 compliance, subtitle quota, and SCTE-35 splice accuracy.
-        </p>
-        <div class="tool-meta">
-          <div>Linux <span>·</span> Windows</div>
-          <div>—</div>
-        </div>
+      <div class="tool">
+        <div class="tool-top"><span class="tool-name">opx-drift</span><span class="tag live">v0.2.1 · available</span></div>
+        <p><strong>Is its timeline sane?</strong> PTS drift and A/V sync from exact rational
+          arithmetic — 29.97 is 30000/1001, and rounding it is how drift gets designed in.</p>
+      </div>
+      <div class="tool">
+        <div class="tool-top"><span class="tool-name">opx-loudness</span><span class="tag">in progress</span></div>
+        <p><strong>Is it deliverable?</strong> EBU R128 and Free TV OP-59, with the thresholds read
+          from the issuing bodies' own documents rather than a summary. Says
+          <span class="inline-code">INCONCLUSIVE</span> where it can't honestly say pass.</p>
+      </div>
+      <div class="tool">
+        <div class="tool-top"><span class="tool-name">opx-verify</span><span class="tag">in progress</span></div>
+        <p><strong>Is the compliance chain intact?</strong> Verifies a hash-chained as-run archive
+          across day-file boundaries and restarts. A single file can't check what it continues.</p>
+      </div>
+      <div class="tool">
+        <div class="tool-top"><span class="tool-name">Karhu&nbsp;Player</span><span class="tag">in development &middot; not released</span></div>
+        <p><strong>A media player for people who have to trust the timecode.</strong> Built for
+          broadcast use rather than adapted to it, with EBU&nbsp;R128 loudness metering in the
+          engine rather than bolted on. <strong>It shares Rytmi's timing crate</strong> — TAI time
+          sourcing, exact rational frame arithmetic and the precision sleep are the same code, not
+          a reimplementation, and every ported item carries a provenance record naming its origin
+          in the engine.</p>
+        <p class="note" style="margin-top:.4rem">Work in progress and <strong>not available</strong>
+          — no download, no date. It is listed because it exists and because a player that says
+          29.97 when the file says 30000/1001 is the problem it was written to stop being.</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Philosophy -->
-<section class="philosophy">
-  <div class="section-inner">
-    <div class="philosophy-grid">
-      <div>
-        <p class="section-label">Philosophy</p>
-        <h2 class="section-title">The broadcast industry is not expensive because the technology is overly complex.</h2>
-        <div class="philosophy-points">
-          <div class="philosophy-point">
-            <span class="point-num">01</span>
-            <div>
-              <div class="point-title">Correctness is verifiable</div>
-              <p class="point-body">Every tool we ship produces output you can check. Loudness values verified against ffprobe. File metadata against the spec. Preflight results with typed failure reasons and scriptable exit codes. If we say it's correct, you can confirm it.</p>
-            </div>
-          </div>
-          <div class="philosophy-point">
-            <span class="point-num">02</span>
-            <div>
-              <div class="point-title">No artificial complexity</div>
-              <p class="point-body">Incumbent broadcast vendors profit from complexity they created. Opaque formats, proprietary workflows, support contracts that maintain lock-in rather than solve problems. We build tools that are transparent about what they do and why.</p>
-            </div>
-          </div>
-          <div class="philosophy-point">
-            <span class="point-num">03</span>
-            <div>
-              <div class="point-title">Engineers first</div>
-              <p class="point-body">These tools are built by a broadcast engineer for broadcast engineers. The output format, the exit codes, the JSON schema — designed for people who will script these into pipelines at 2am before a morning transmission.</p>
-            </div>
-          </div>
-          <div class="philosophy-point">
-            <span class="point-num">04</span>
-            <div>
-              <div class="point-title">Output is the argument</div>
-              <p class="point-body">We do not publish white papers or sales decks. We ship binaries. Run them on your content. The results speak.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <footer>
+    <p style="max-width:none">
+      Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a><br>
+      <span style="font-size:.8125rem">
+        Proposal mockup. Copy and figures drawn from measured results; every claim here is one the
+        engineering record can support as of 2 August 2026.
+      </span>
+    </p>
+  </footer>
+</div>
 
-      <div class="philosophy-aside">
-        <div class="terminal">
-          <div class="terminal-bar">
-            <div class="terminal-dot"></div>
-            <div class="terminal-dot"></div>
-            <div class="terminal-dot"></div>
-            <span class="terminal-title">opx-probe — terminal</span>
-          </div>
-          <div class="terminal-body">
-<span class="t-prompt">$</span> <span class="t-cmd">opx-probe</span> <span class="t-path">programme_ep3.mxf</span> <span class="t-cmd">--house</span> <span class="t-val">1080i50</span><br>
-<br>
-<span class="t-label">opx-probe  programme_ep3.mxf</span><br>
-<span class="t-label">────────────────────────────────────</span><br>
-<span class="t-label">Duration   </span><span class="t-val">48:22.080</span><br>
-<br>
-<span class="t-label">Video</span><br>
-<span class="t-label">  Codec      </span><span class="t-val">MPEG-2 Video  (id 2)</span><br>
-<span class="t-label">  Frame rate </span><span class="t-val">25 fps</span><br>
-<span class="t-label">  Resolution </span><span class="t-val">1920×1080</span><br>
-<span class="t-label">  Frames     </span><span class="t-val">72,552</span><br>
-<br>
-<span class="t-label">Audio</span><br>
-<span class="t-label">  Codec      </span><span class="t-val">PCM s24le  (id 65548)</span><br>
-<span class="t-label">  Sample rate </span><span class="t-val">48000 Hz</span><br>
-<span class="t-label">  Channels   </span><span class="t-val">2</span><br>
-<br>
-<span class="t-label">MXF</span><br>
-<span class="t-label">  Audio streams  </span><span class="t-val">4</span><br>
-<span class="t-label">  AS-11 sidecar  </span><span class="t-out">present</span><br>
-<span class="t-label">  Programme      </span><span class="t-val">Series Title S01E03</span><br>
-<span class="t-label">  Audio layout   </span><span class="t-val">stereo_and_dual_mono</span><br>
-<br>
-<span class="t-label">────────────────────────────────────</span><br>
-<span class="t-label">Preflight  </span><span class="t-out">✓  PASSED</span><br>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<script>
+(function () {
+  // In production this is: fetch('/soak.json').then(r => r.json())
+  // The Artifact CSP blocks external hosts, so a real snapshot is embedded instead.
+  const SNAPSHOT = {"measured_at": "2026-08-04T13:13:10Z", "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, 1080p50, free-running. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 46.3, "unit": "h", "provenance": "557 samples at 5 min, 100.0 % coverage, across 6 scheduled runs \u2014 elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 8312650, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Clock phase, worst this run", "value": 1452, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 60, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -3.272, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 18, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 39, "unit": "h", "when": "19\u201321 Jul 2026", "provenance": "from the as-run chain, restart to restart \u2014 not from memory"}, {"label": "Longest soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
-<!-- Footer -->
-<footer>
-  <div class="footer-left">
-    <span class="footer-logo">KarhuTV</span>
-    <span class="footer-meta">Bear Media Services Ltd · Trading as KarhuTV · England & Wales</span>
-  </div>
-  <ul class="footer-links">
-    <li><a href="/tools.html">Tools</a></li>
-    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
-  </ul>
-</footer>
+  // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
+  //
+  // GitHub Pages builds this site from `main`. Putting soak.json there would mean a
+  // commit and a full Pages REBUILD every 15 minutes — 96 builds a day against a
+  // documented soft limit near 10 an hour. So the pusher force-pushes a throwaway
+  // `soak-data` branch that is NOT the build source, and the page reads it directly.
+  // raw.githubusercontent.com sends `access-control-allow-origin: *` (verified with
+  // curl, not assumed) so the cross-origin fetch is allowed, and `cache-control:
+  // max-age=300`, which caps effective freshness at ~5 min however often we poll.
+  //
+  // HONESTY NOTE: this IS a third-party request, to a host that is not karhu.tv. The
+  // page must not claim "no external requests" while making one — that is tools_brief
+  // W-09 exactly, where it asserted no telemetry while pulling webfonts.
+  const SOAK_URL =
+    'https://raw.githubusercontent.com/karhu-tv/karhu-tv.github.io/soak-data/soak.json';
+  const POLL_MS = 60 * 1000;
 
+  // THE RULE. A figure older than this stops being reported as a figure. A marketing
+  // page showing three-week-old numbers as current is the failure this exists to
+  // prevent — the same shape as a stale BNC mapping or an unwatched H.265 claim.
+  //
+  // 1 h against a 15-minute push: four consecutive pushes must fail before the page
+  // stops claiming the figures are current. Was 26 h, which assumed a daily cron and
+  // would have let a dead pusher go unnoticed for more than a day.
+  const STALE_HOURS = 1;
+
+  const fmt = (v, u) => {
+    if (v === null || v === undefined) return '\u2014';
+    const n = typeof v === 'number'
+      ? (Math.abs(v) >= 1000 ? v.toLocaleString('en-GB') : String(v))
+      : String(v);
+    return u ? n + '\u2009' + u : n;
+  };
+
+  function render(snap, ageHours, forceNull) {
+    const stale = ageHours > STALE_HOURS;
+
+    // THE TALLY IS DRIVEN BY THE SAME RULE AS THE FIGURES. It is the most visible
+    // element on the page, so it is the one that must not lie: lit only when the
+    // data is fresh AND the engine actually reported something. A snapshot can be
+    // minutes old and still carry all nulls if the engine was down when it was
+    // taken — that is dark, not live.
+    const anyValue = snap.figures.some(f => f.value !== null && f.value !== undefined);
+    const live = !stale && !forceNull && anyValue;
+    const tally = document.getElementById('tally');
+    tally.className = 'tally' + (live ? ' on' : '');
+    tally.querySelector('.tally-txt').textContent = live ? 'SOAK LIVE' : 'SOAK OFF';
+    tally.setAttribute('aria-label',
+      live ? 'Soak running, figures current' : 'Soak not reporting, figures withheld');
+    const rows = document.getElementById('live-rows');
+    const fresh = document.getElementById('fresh');
+    rows.replaceChildren();
+
+    // WHEN THERE IS NO LIVE SOAK, SHOW THE DURABLE RECORD INSTEAD OF EM DASHES.
+    // Safe for one reason only: every historical figure carries the date it was
+    // established, so it never claims to be now. "39 h, 19-21 Jul 2026" is as true
+    // next year as today. A live figure without a date is the thing that rots — so
+    // the two are rendered differently and cannot be mistaken for one another.
+    const source = live ? snap.figures : (snap.historical || []);
+    rows.className = live ? '' : 'historic';
+
+    for (const f of source) {
+      const el = document.createElement('div');
+      el.className = 'lrow';
+      const v = document.createElement('div');
+      v.className = 'lval' + (live ? '' : ' hist');
+      v.textContent = fmt(f.value, f.unit);
+      const l = document.createElement('div'); l.className = 'llab'; l.textContent = f.label;
+      const s = document.createElement('div'); s.className = 'lsrc';
+      // The date is not decoration. It is what makes showing this honest.
+      s.textContent = live ? f.provenance : f.when + ' \u00B7 ' + f.provenance;
+      el.append(v, l, s);
+      rows.append(el);
+    }
+
+    // Minutes, not hours: with a 15-minute push cadence an hour-granular label would
+    // read "measured moments ago" for its entire healthy life and carry no information.
+    const mins = Math.round(ageHours * 60);
+    fresh.className = 'freshness ' + (stale ? 'stale' : 'ok');
+    fresh.textContent = stale
+      ? 'no soak \u2014 showing the record'
+      : 'measured ' + (mins < 1 ? 'moments'
+                     : mins < 60 ? mins + ' min'
+                     : Math.round(ageHours) + ' h') + ' ago';
+
+    // THE LEDE SENTENCE IS RENDERED, NOT TYPED. The prose copy of the frame counter
+    // went stale within hours of being written \u2014 7,296,650 in the sentence while the
+    // panel beside it said 7,656,700. One source of truth, and the no-JS fallback in
+    // the HTML is dated so it cannot claim to be current.
+    const lede = document.getElementById('lede-soak');
+    const frames = snap.figures.find(f => f.label === 'Frames delivered');
+    const late = snap.figures.find(f => f.label === 'Late frames');
+    lede.replaceChildren();
+    if (live && frames && frames.value != null) {
+      const b1 = document.createElement('strong');
+      b1.textContent = fmt(frames.value, 'frames');
+      lede.append('The reference unit has delivered ', b1, ' in its current soak');
+      if (late && late.value != null) {
+        const b2 = document.createElement('strong');
+        b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
+        lede.append(' with ', b2);
+      }
+      lede.append('.');
+    } else {
+      // No fresh figures: say when the last ones were from, or say nothing numeric.
+      const d = snap.measured_at ? new Date(snap.measured_at) : null;
+      const when = d ? d.toLocaleDateString('en-GB',
+        { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+      const fv = frames && frames.value != null ? frames.value : null;
+      if (when && fv != null) {
+        const b1 = document.createElement('strong');
+        b1.textContent = fmt(fv, 'frames');
+        lede.append('By ' + when + ' the reference unit had delivered ', b1,
+          ' in its then-current soak');
+        if (late && late.value === 0) {
+          const b2 = document.createElement('strong');
+          b2.textContent = 'none late';
+          lede.append(' with ', b2);
+        }
+        lede.append('.');
+      } else {
+        lede.append('Live soak figures return when the lamp is lit.');
+      }
+    }
+
+    // ONE SOURCE OF TRUTH for the phase figure. The scale bar and the headline used
+    // to carry a hand-typed 175 ns while the panel below showed 45 — two different
+    // quantities (median of the per-second PEAK, versus mean magnitude) wearing the
+    // same word "typical", differing 4x. Both are now rendered from the single live
+    // value, so they cannot disagree again.
+    const phase = snap.figures.find(f => f.label === 'Clock phase, typical');
+    const pv = (live && phase && phase.value != null) ? phase.value : null;
+    // A FRAME LENGTH IS FORMAT-SPECIFIC. 20 ms is 1080p50; at 59.94 it is 16.683 ms,
+    // and the engine's own config is per-channel. The headline and this caption both
+    // used to state 20 ms flat, which reads as a universal. The caption is now
+    // rendered FROM the constant so the two cannot drift apart — the same
+    // duplicate-constant trap already hit here with Theil-Sen, read_cpu_temp,
+    // LOCK_TOLERANCE_US and fmtPhase.
+    const FRAME_NS = 20e6, FRAME_FMT = '1080p50';
+    document.getElementById('scale-frame').textContent =
+      'one frame · ' + FRAME_FMT + ' · ' + FRAME_NS.toLocaleString('en-GB') + ' ns';
+    const mid = document.getElementById('scale-mid');
+    const fill = document.getElementById('scale-fill');
+    const tail = document.getElementById('h1-tail');
+    if (pv === null) {
+      mid.textContent = 'typical phase error \u2014';
+      fill.style.width = '2px';
+      tail.textContent = 'Our clock error is measured in nanoseconds.';
+    } else {
+      mid.textContent = 'typical phase error ' + pv.toLocaleString('en-GB') + ' ns';
+      fill.style.width = Math.max(0.15, (pv / FRAME_NS) * 100) + '%';
+      const order = pv < 100 ? 'tens of nanoseconds'
+                  : pv < 1000 ? 'hundreds of nanoseconds'
+                  : 'microseconds';
+      tail.textContent = 'We hold it to ' + order + '.';
+    }
+
+    document.getElementById('live-src').textContent = live
+      ? snap.unit
+      : 'No soak reporting. These are dated records from the engineering log, not '
+        + 'current readings \u2014 each carries the date it was established. '
+        + 'Live figures resume when the lamp does. ' + snap.unit;
+  }
+
+  // `current` starts as the embedded snapshot and is replaced by whatever the fetch
+  // returns. The embedded copy is a FALLBACK, not a default to fall back to silently:
+  // it is stale by construction, so once it ages past STALE_HOURS the page shows the
+  // dated historical record instead of pretending. A failed fetch therefore degrades
+  // to "SOAK OFF", never to a confident stale number.
+  let current = SNAPSHOT;
+  let frozen = null;   // set by the demo buttons; suspends live rendering
+
+  const ageHoursOf = (snap) =>
+    Math.max(0, (Date.now() - new Date(snap.measured_at).getTime()) / 3.6e6);
+
+  // Skip repaints that would change nothing. render() rebuilds the row list and
+  // rewrites the tally's live-region text; doing that every 30 s with identical
+  // content makes some screen readers re-announce an unchanged status and discards
+  // any text selection in the panel. Minute granularity matches the freshness label,
+  // so no visible state can change inside a skipped repaint.
+  let lastPaintKey = null;
+  function paint() {
+    const key = frozen
+      ? 'frozen|' + frozen.age + '|' + (frozen.forceNull ? 1 : 0) + '|' + frozen.snap.measured_at
+      : 'live|' + current.measured_at + '|' + Math.floor(ageHoursOf(current) * 60);
+    if (key === lastPaintKey) return;
+    lastPaintKey = key;
+    if (frozen) render(frozen.snap, frozen.age, frozen.forceNull);
+    else render(current, ageHoursOf(current), false);
+  }
+
+  function refresh() {
+    // cache: 'no-store' on OUR request only; the CDN's own max-age=300 still governs
+    // what the edge hands back, so this cannot be used to hammer GitHub.
+    fetch(SOAK_URL, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
+      .then((snap) => {
+        // A payload with no measured_at cannot be aged, and an un-ageable figure is
+        // exactly what STALE_HOURS exists to catch. Reject it rather than render it.
+        if (!snap || !snap.measured_at) throw new Error('no measured_at');
+        current = snap;
+        paint();
+      })
+      .catch(() => { /* keep the last good snapshot; staleness will retire it */ });
+  }
+
+  paint();
+  refresh();
+  setInterval(refresh, POLL_MS);
+  // Re-paint between fetches so the "measured N h ago" label and the lamp keep
+  // tracking wall-clock even when no new file has arrived.
+  setInterval(paint, 30 * 1000);
+  });
+})();
+</script>
 </body>
 </html>
