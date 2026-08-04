@@ -369,14 +369,6 @@
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start.
         </p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:1rem">
-        <p>
-          The as-run log is a <strong>hash chain</strong>. Each record commits to the one before it,
-          blocks are sealed and fsynced, and rotated day files are verifiable across boundaries.
-          Compliance isn't a report generated later from something that might have been edited —
-          it's structural.
-        </p>
         <p>
           <strong>Which is why losing house sync doesn't cost you your time base.</strong> Take
           the second of those approaches and the reference is your timing authority, so when it
@@ -386,6 +378,14 @@
           something we depend on: the design rule from the start was that the clock must not
           rely on it, and the reference unit runs free with zero late frames.
         </p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <p>
+          The as-run log is a <strong>hash chain</strong>. Each record commits to the one before it,
+          blocks are sealed and fsynced, and rotated day files are verifiable across boundaries.
+          Compliance isn't a report generated later from something that might have been edited —
+          it's structural.
+        </p>
         <p>
           <strong>And it is software, not an appliance.</strong> The machine behind every
           figure on this page is a stock Intel desktop and a DeckLink card any broadcast
@@ -393,10 +393,6 @@
           the engine treats every clock in the box as something to verify rather than trust,
           which is why it holds time on hardware you can buy, replace, and keep spares for.
           When a card fails, you swap a card — not a channel appliance.
-        </p>
-        <p class="note">
-          Four independent SDI outputs per card. Runs on Ubuntu. Binary-only, under NDA — the
-          timing core is the company, so it isn't published. Everything below it is.
         </p>
         <p>
           <strong>One price, everything enabled, bought once.</strong> There is no feature
@@ -406,6 +402,10 @@
           has to do — makes the vendor's incentives point away from the operator's. It also
           means the number we quote is the number, which is not universally true in this
           market.
+        </p>
+        <p class="note">
+          Four independent SDI outputs per card. Runs on Ubuntu. Binary-only, under NDA — the
+          timing core is the company, so it isn't published. Everything below it is.
         </p>
       </div>
     </div>
@@ -934,7 +934,6 @@
   // Re-paint between fetches so the "measured N h ago" label and the lamp keep
   // tracking wall-clock even when no new file has arrived.
   setInterval(paint, 30 * 1000);
-  });
 })();
 </script>
 </body>
