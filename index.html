@@ -176,6 +176,21 @@
      wears the accent (the page's measured-value colour), text stays in ink tokens.
      A gap in the data BREAKS the line — drawing across it would claim a
      measurement nobody made. */
+  /* Underrun timing. The prose says "none since priming"; this lets a reader CHECK
+     it. A RUN-PROPORTIONAL axis, so a mark's position IS how far into the run it
+     happened — the settling window is drawn as a shaded region rather than a legend
+     entry, because it is a region of the axis. Priming marks are muted; anything
+     after the window wears the alarm colour, since that is the only kind that means
+     something. */
+  .urt { margin-top:.45rem; }
+  .urt-lab { font-size:.6875rem; font-family:var(--mono); color:var(--ink-faint);
+             display:flex; justify-content:space-between; gap:1rem; }
+  .urt svg { display:block; width:100%; height:24px; margin-top:.2rem; }
+  .urt .band { fill:var(--ink-faint); opacity:.12; }
+  .urt .axis { stroke:var(--rule-soft); stroke-width:1; }
+  .urt .mk { stroke-width:2; }
+  .urt .mk.prime { stroke:var(--ink-faint); }
+  .urt .mk.real  { stroke:#D2544A; }
   .trends { margin-top:.4rem; border-top:1px solid var(--rule-soft); padding-top:.6rem;
             display:flex; flex-direction:column; gap:.55rem; }
   .trend  { display:grid; grid-template-columns: 11rem 1fr; gap:.75rem; align-items:center; }
@@ -730,7 +745,7 @@
 (function () {
   // In production this is: fetch('/soak.json').then(r => r.json())
   // The Artifact CSP blocks external hosts, so a real snapshot is embedded instead.
-  const SNAPSHOT = {"measured_at": "2026-08-04T21:59:52Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1785880710, 76.0], [1785880770, 62.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1785880710, -3.543], [1785880770, -3.622]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1785880650, 2.513], [1785880710, 14.0], [1785880770, 1.5]]}}, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25i \u00b7 25p \u00b7 29.97p \u00b7 50i \u00b7 50p \u00b7 59.94p across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 0.0, "unit": "h", "provenance": "3 samples at the log's own cadence, 100.0 % coverage, one run \u2014 since 2026-08-04T21:56Z, elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 6000, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 98, "unit": "", "provenance": "98 of decoder start-up priming, all of it in the first 8 s of the run, and NONE since \u2014 the engine latches each run's priming level after a settling window and counts growth beyond it separately, so this split is measured rather than assumed"}, {"label": "Clock phase, worst this run", "value": 1083, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 113, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -3.632, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 0, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 39, "unit": "h", "when": "19\u201321 Jul 2026", "provenance": "from the as-run chain, restart to restart \u2014 not from memory"}, {"label": "Longest soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
+  const SNAPSHOT = {"measured_at": "2026-08-04T22:51:07Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1785863209, 51.5], [1785863425, 51.5], [1785863641, 56.667], [1785863857, 54.5], [1785864074, 63.0], [1785864290, 44.667], [1785864506, 46.0], [1785864722, 61.667], [1785864939, 37.75], [1785865155, 41.75], [1785865371, 54.667], [1785865587, 46.75], [1785865803, 44.0], [1785866020, 42.25], [1785866236, 37.75], [1785866452, 38.667], [1785866668, 41.75], [1785866885, 51.667], [1785867101, 38.0], [1785867317, 41.75], [1785867533, 39.333], [1785867750, 38.5], [1785867966, 52.0], [1785868182, 40.0], [1785868398, 48.25], [1785868615, 47.0], [1785868831, 58.5], [1785869047, 53.0], [1785869263, 57.25], [1785869480, 67.0], [1785869696, 61.333], [1785869912, 49.75], [1785870128, 42.667], [1785870345, 44.25], [1785870561, 42.25], [1785870777, 43.333], [1785870993, 44.75], [1785871209, 47.333], [1785871426, 44.75], [1785871642, 39.0], [1785871858, 43.667], [1785872074, 56.0], [1785872291, 60.333], [1785872507, 57.25], [1785872723, 51.5], [1785872939, 47.667], [1785873156, 45.5], [1785873372, 44.75], [1785873588, 62.667], [1785873804, 61.0], [1785874021, 68.333], [1785874237, 46.25], [1785874453, 44.5], [1785874669, 41.333], [1785874886, 40.5], [1785875102, 39.667], [1785875318, 55.75], [1785875534, 61.5], [1785875751, 60.0], [1785875967, 40.25], [1785876183, 38.0], [1785876399, 41.0], [1785876615, 55.25], [1785876832, 69.0], [1785877048, 66.5], [1785877264, 68.333], [1785877480, 66.75], [1785877697, 80.0], [1785877913, 65.667], [1785878129, 63.0], [1785878345, 67.5], [1785878562, 52.5], [1785878778, 48.0], [1785878994, 51.333], [1785879210, 54.75], [1785879427, 52.0], [1785879643, 56.25], [1785879859, 51.75], [1785880075, 55.333], [1785880292, 67.25], [1785880508, 56.667], [1785880724, 62.667], [1785880940, 59.0], [1785881157, 53.0], [1785881373, 54.0], [1785881589, 44.333], [1785881805, 36.0], [1785882021, 55.25], [1785882238, 41.0], [1785882454, 45.0], [1785882670, 41.333], [1785882886, 49.25], [1785883103, 53.25], [1785883319, 63.333], [1785883535, 64.5], [1785883751, 62.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1785862730, -4.177], [1785862951, -4.248], [1785863173, -4.173], [1785863394, -4.17], [1785863615, -4.153], [1785863836, -4.133], [1785864058, -4.121], [1785864279, -4.097], [1785864500, -4.075], [1785864721, -4.055], [1785864943, -4.024], [1785865164, -3.978], [1785865385, -3.946], [1785865606, -3.928], [1785865828, -3.91], [1785866049, -3.897], [1785866270, -3.883], [1785866491, -3.868], [1785866713, -3.853], [1785866934, -3.841], [1785867155, -3.833], [1785867376, -3.832], [1785867598, -3.832], [1785867819, -3.832], [1785868040, -3.83], [1785868261, -3.829], [1785868483, -3.83], [1785868704, -3.836], [1785868925, -3.886], [1785869146, -3.916], [1785869368, -3.864], [1785869589, -3.836], [1785869810, -3.821], [1785870031, -3.825], [1785870253, -3.853], [1785870474, -3.889], [1785870695, -3.909], [1785870916, -3.928], [1785871138, -3.94], [1785871359, -3.945], [1785871580, -3.947], [1785871801, -3.947], [1785872023, -3.947], [1785872244, -3.943], [1785872465, -3.932], [1785872686, -3.923], [1785872908, -3.913], [1785873129, -3.905], [1785873350, -3.901], [1785873571, -3.894], [1785873793, -3.888], [1785874014, -3.881], [1785874235, -3.877], [1785874456, -3.869], [1785874678, -3.863], [1785874899, -3.856], [1785875120, -3.85], [1785875341, -3.845], [1785875563, -3.838], [1785875784, -3.829], [1785876005, -3.821], [1785876226, -3.814], [1785876448, -3.807], [1785876669, -3.8], [1785876890, -3.689], [1785877111, -3.592], [1785877333, -3.575], [1785877554, -3.536], [1785877775, -3.501], [1785877996, -3.485], [1785878218, -3.476], [1785878439, -3.453], [1785878660, -3.407], [1785878881, -3.432], [1785879103, -3.439], [1785879324, -3.441], [1785879545, -3.449], [1785879766, -3.473], [1785879988, -3.495], [1785880209, -3.508], [1785880430, -3.517], [1785880651, -3.563], [1785880873, -3.617], [1785881094, -3.611], [1785881315, -3.622], [1785881536, -3.644], [1785881758, -3.513], [1785881979, -3.466], [1785882200, -3.439], [1785882421, -3.435], [1785882643, -3.438], [1785882864, -3.516], [1785883085, -3.5], [1785883306, -3.474], [1785883528, -3.509], [1785883749, -3.54]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1785862730, 12.661], [1785862951, 15.246], [1785863173, 14.129], [1785863394, 14.94], [1785863615, 14.072], [1785863836, 13.626], [1785864058, 13.833], [1785864279, 14.0], [1785864500, 15.643], [1785864721, 1.829], [1785864943, 1.0], [1785865164, 0.877], [1785865385, 0.998], [1785865606, 0.628], [1785865828, 0.875], [1785866049, 1.491], [1785866270, 1.125], [1785866491, 0.877], [1785866713, 1.124], [1785866934, 0.997], [1785867155, 1.123], [1785867376, 0.874], [1785867598, 0.998], [1785867819, 1.122], [1785868040, 2.009], [1785868261, 2.323], [1785868483, 2.386], [1785868704, 2.373], [1785868925, 1.16], [1785869146, 1.624], [1785869368, 2.003], [1785869589, 1.167], [1785869810, 1.124], [1785870031, 1.125], [1785870253, 0.875], [1785870474, 1.0], [1785870695, 1.122], [1785870916, 1.246], [1785871138, 0.501], [1785871359, 1.001], [1785871580, 1.246], [1785871801, 1.333], [1785872023, 0.875], [1785872244, 0.878], [1785872465, 1.66], [1785872686, 1.001], [1785872908, 0.876], [1785873129, 1.166], [1785873350, 1.25], [1785873571, 0.999], [1785873793, 1.25], [1785874014, 0.668], [1785874235, 0.876], [1785874456, 1.123], [1785874678, 1.0], [1785874899, 1.249], [1785875120, 1.121], [1785875341, 1.0], [1785875563, 0.628], [1785875784, 0.752], [1785876005, 0.995], [1785876226, 0.876], [1785876448, 0.996], [1785876669, 1.332], [1785876890, 1.373], [1785877111, 4.641], [1785877333, 0.878], [1785877554, 1.333], [1785877775, 1.74], [1785877996, 1.376], [1785878218, 1.335], [1785878439, 1.504], [1785878660, 5.618], [1785878881, 1.328], [1785879103, 1.122], [1785879324, 0.999], [1785879545, 1.328], [1785879766, 0.626], [1785879988, 0.998], [1785880209, 1.496], [1785880430, 1.251], [1785880651, 5.122], [1785880873, 0.876], [1785881094, 1.169], [1785881315, 1.75], [1785881536, 1.994], [1785881758, 2.163], [1785881979, 1.871], [1785882200, 1.501], [1785882421, 0.836], [1785882643, 1.128], [1785882864, 2.113], [1785883085, 3.833], [1785883306, 4.361], [1785883528, 1.495], [1785883749, 1.631]]}}, "underruns": null, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25i \u00b7 25p \u00b7 29.97p \u00b7 50i \u00b7 50p across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 5.9, "unit": "h", "provenance": "356 samples at 1 min, 100.0 % coverage, across 11 runs \u2014 since 2026-08-04T16:57Z, elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 1271150, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 71, "unit": "", "provenance": "71 of decoder start-up priming, all of it in the first 8 s of the run, and NONE since \u2014 the engine latches each run's priming level after a settling window and counts growth beyond it separately, so this split is measured rather than assumed"}, {"label": "Clock phase, worst this run", "value": 1288, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 68, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -3.533, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 0, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 39, "unit": "h", "when": "19\u201321 Jul 2026", "provenance": "from the as-run chain, restart to restart \u2014 not from memory"}, {"label": "Longest soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
   // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
   //
@@ -765,6 +780,55 @@
       : String(v);
     return u ? n + '\u2009' + u : n;
   };
+
+  // Draws WHEN the underruns happened. Returns null rather than an empty axis when
+  // there is nothing to say: an empty timeline reads as "measured, nothing happened",
+  // which is a claim, and missing data is not that claim. The settling window comes
+  // from the ENGINE (settle_secs) — a page hardcoding it would be a second site for a
+  // constant that already has one.
+  function underrunTimeline(u) {
+    if (!u || !u.settle_secs || !Array.isArray(u.events)) return null;
+    const W = 300, H = 24, PAD = 2;
+    const span = Math.max(u.run_secs || 0, u.settle_secs, 1);
+    const sx = (t) => PAD + (W - 2 * PAD) * Math.min(t / span, 1);
+    const NS = 'http://www.w3.org/2000/svg';
+    const mk = (tag, at) => {
+      const e = document.createElementNS(NS, tag);
+      for (const k in at) e.setAttribute(k, at[k]);
+      return e;
+    };
+    const wrap = document.createElement('div');
+    wrap.className = 'urt';
+    const real = u.events.filter((e) => !e.priming);
+    const fmtAgo = (sec) => (sec < 90 ? Math.round(sec) + ' s'
+                          : sec < 5400 ? Math.round(sec / 60) + ' min'
+                          : (sec / 3600).toFixed(1) + ' h');
+    const lab = document.createElement('div');
+    lab.className = 'urt-lab';
+    const left = document.createElement('span');
+    left.textContent = u.settled
+      ? (real.length ? real.length + ' after start-up' : 'none after start-up')
+      : 'still settling';
+    const right = document.createElement('span');
+    right.textContent = fmtAgo(u.run_secs || 0) + ' into the run';
+    lab.append(left, right);
+    const svg = mk('svg', { viewBox: '0 0 ' + W + ' ' + H,
+                            preserveAspectRatio: 'none', role: 'img' });
+    const ttl = document.createElementNS(NS, 'title');
+    ttl.textContent = 'Shaded: the ' + u.settle_secs + ' s decoder start-up window. '
+      + 'Each mark is an underrun, positioned by how far into the run it happened.';
+    svg.append(ttl);
+    const bw = sx(Math.min(u.settle_secs, span)) - PAD;
+    if (bw > 0) svg.append(mk('rect', { class: 'band', x: PAD, y: 2, width: bw, height: H - 4 }));
+    svg.append(mk('line', { class: 'axis', x1: PAD, y1: H - 4, x2: W - PAD, y2: H - 4 }));
+    for (const e of u.events) {
+      const x = sx(e.at);
+      svg.append(mk('line', { class: 'mk ' + (e.priming ? 'prime' : 'real'),
+                              x1: x, y1: 4, x2: x, y2: H - 4 }));
+    }
+    wrap.append(lab, svg);
+    return wrap;
+  }
 
   function render(snap, ageHours, forceNull) {
     const stale = ageHours > STALE_HOURS;
@@ -804,6 +868,15 @@
       // The date is not decoration. It is what makes showing this honest.
       s.textContent = live ? f.provenance : f.when + ' \u00B7 ' + f.provenance;
       el.append(v, l, s);
+      // The underrun row gets its TIMING drawn beneath it. The sentence says "none
+      // since priming"; this lets a reader CHECK that rather than take it — the marks
+      // sit on a run-proportional axis, so where a mark IS answers whether it landed
+      // in start-up or ten minutes ago. Live panel only: the durable record has no
+      // run for a position to be proportional to.
+      if (live && f.label === 'Frame underruns') {
+        const t = underrunTimeline(snap.underruns);
+        if (t) el.append(t);
+      }
       rows.append(el);
     }
 
