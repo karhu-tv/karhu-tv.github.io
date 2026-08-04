@@ -529,7 +529,7 @@
           <p class="reg-why">The architecture is built for it and the free-running case is
             evidenced — we run without a house reference and the drift compensation is measured,
             not assumed. What we have <em>not</em> exercised is genlock at all: no valid house
-            reference has yet been on this bench — a sync generator is on order — so locked
+            reference has yet been on this bench, so locked
             operation and the transition across a reference failure are both unmeasured. The
             card's genlock-source setting exists in our configuration and is currently read by
             nothing, and the telemetry that would let us watch the reference state has been
@@ -537,10 +537,9 @@
             which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
             cannot yet tell you what it does locked, or what the first second after a reference
             failure looks like.</p>
-          <p class="reg-earn"><span>Would earn it:</span> reference state on the API — shipping
-            this week — then a reference on the bench, lock observed, and finally pulling that
-            reference on a live channel and measuring the edge. A morning's work once the
-            generator arrives.</p>
+          <p class="reg-earn"><span>Would earn it:</span> a reference on the bench, lock observed,
+            and then pulling that reference on a live channel and measuring the edge. The
+            telemetry needed to watch it is already on air.</p>
         </div>
 
         <div class="reg-item">
@@ -550,7 +549,7 @@
             structurally cannot see a conform error. A number from it would describe the file,
             not the transmission.</p>
           <p class="reg-earn"><span>Would earn it:</span> metering the output bed itself, on its
-            own thread. Designed, not yet built.</p>
+            own thread. Designed; not built.</p>
         </div>
       </div>
 
@@ -596,7 +595,7 @@
           <p class="reg-why">The genlocked <em>no</em> is a physical fact and no software fixes
             it. The genlocked <em>by design</em> is exactly that — no house reference has been
             on this bench yet, the same gap the holdover row above names, so that cell is
-            intent rather than measurement until the sync generator arrives. The
+            intent rather than measurement until a reference has been on the bench. The
             free-running cell is <strong>our</strong> limit, not the card's: below the master clock
             the pipeline is already per-channel, and the card derives both families from one
             crystal happily. What is single is our master tick, and serving 50 and 59.94 from one
@@ -711,7 +710,7 @@
 (function () {
   // In production this is: fetch('/soak.json').then(r => r.json())
   // The Artifact CSP blocks external hosts, so a real snapshot is embedded instead.
-  const SNAPSHOT = {"measured_at": "2026-08-04T13:13:10Z", "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, 1080p50, free-running. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 46.3, "unit": "h", "provenance": "557 samples at 5 min, 100.0 % coverage, across 6 scheduled runs \u2014 elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 8312650, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Clock phase, worst this run", "value": 1452, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 60, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -3.272, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 18, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 39, "unit": "h", "when": "19\u201321 Jul 2026", "provenance": "from the as-run chain, restart to restart \u2014 not from memory"}, {"label": "Longest soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
+  const SNAPSHOT = {"measured_at": "2026-08-04T14:29:45Z", "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, 1080p50, free-running. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 46.3, "unit": "h", "provenance": "557 samples at 5 min, 100.0 % coverage, across 6 runs \u2014 elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 8312650, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 2, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Clock phase, worst this run", "value": 23454911, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 68, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -3.287, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 19, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 39, "unit": "h", "when": "19\u201321 Jul 2026", "provenance": "from the as-run chain, restart to restart \u2014 not from memory"}, {"label": "Longest soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
   // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
   //
