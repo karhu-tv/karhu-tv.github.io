@@ -433,14 +433,16 @@
           </tr>
           <tr>
             <td>Frame underruns, after start-up priming</td>
-            <td class="v">0</td>
-            <td class="src">same test, 30 Jul 2026 &mdash; but read the caveat, because we
-              found the instrument wanting on 4 Aug 2026: until then this counter published a
-              starvation <em>run-length</em> that reset the moment a frame arrived, so a
-              recovered underrun was invisible to it. It is cumulative now, and it reads about
-              185 from decoder priming at every start, which is why this row says "after
-              start-up". The 0 above is what the old counter reported; we are re-establishing
-              it with the new one rather than leaving a number we no longer trust</td>
+            <td class="v">&mdash;</td>
+            <td class="src">withdrawn 4 Aug 2026, and the empty cell is the point. This row
+              read <em>0</em>, from the 30 Jul null test. On 4 Aug we found the instrument
+              wanting: it published a starvation <em>run-length</em> that reset the moment a
+              frame arrived, so a recovered underrun &mdash; nearly all of them &mdash; was
+              structurally invisible to it. That 0 was not so much false as unearned; the
+              counter could not have reported anything else. It is cumulative now and reads a
+              few hundred from decoder priming at every start, so the bar has moved: what
+              would earn this row back is a completed run in which the counter does not grow
+              <em>after</em> start-up. Until one has run, the honest value is no value</td>
           </tr>
           <tr>
             <td>Clock phase, typical (mean magnitude)</td>
