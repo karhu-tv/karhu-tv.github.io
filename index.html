@@ -97,16 +97,6 @@
   p { margin: 0; max-width: var(--measure); }
   .lede { font-size: 1.125rem; color: var(--ink-soft); }
   .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-
-  /* ── proposal banner ─────────────────────────────────────────── */
-  .flag {
-    background: var(--accent); color: var(--ground);
-    font-family: var(--mono); font-size: .75rem; letter-spacing: .08em;
-    padding: .55rem var(--pad);
-  }
-  :root[data-theme="dark"] .flag, :root:not([data-theme]) .flag { color: #06131A; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .flag { color: #06131A; } }
-
   /* ── masthead ────────────────────────────────────────────────── */
   header.top {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -182,8 +172,7 @@
   .lval.hist { color: var(--ink-soft); }
   #live-rows.historic .lsrc { color: var(--ink-soft); }
   .llab { font-size:.8125rem; color:var(--ink); }
-  .lsrc { font-family:var(--mono); font-size:.625rem; color:var(--ink-faint); line-height:1.45; }
-  /* ── scale bar: ns against a frame ───────────────────────────── */
+  .lsrc { font-family:var(--mono); font-size:.625rem; color:var(--ink-faint); line-height:1.45; }  /* ── scale bar: ns against a frame ───────────────────────────── */
   .scale { margin-top: 1.25rem; }
   .scale-track {
     position: relative; height: 34px; border: 1px solid var(--rule);
@@ -280,6 +269,7 @@
   .note code, .inline-code { font-family: var(--mono); font-size: .9em; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
+
 
 
 <div class="wrap">
@@ -709,8 +699,9 @@
     <p style="max-width:none">
       Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a><br>
       <span style="font-size:.8125rem">
-        Proposal mockup. Copy and figures drawn from measured results; every claim here is one the
-        engineering record can support as of 2 August 2026.
+        Copy and figures drawn from measured results. Every figure here is dated or marked a
+        floor, because a static number for a quantity that moves is wrong the moment it moves;
+        the panel above carries the current readings.
       </span>
     </p>
   </footer>
