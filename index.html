@@ -123,10 +123,21 @@
      hold that neat, because one side changes height at runtime and the other does
      not. Stacked, each gets the full measure and neither has to match the other.
 
-     The prose therefore needs its own reading measure — a full-bleed paragraph at
-     this width would run well past a comfortable line length. */
+     THE MEASURE CAME OFF TOO, 2026-08-07, on the same call. The revert freed the
+     GRID and left the prose capped at 62ch, so the hero still read as split —
+     half-width intro above a full-width panel, which is the layout the revert was
+     meant to end. "Full width" means both edges line up with the panel's, and TWO
+     caps had to go for that: this block's own, and the GLOBAL
+     `p { max-width: var(--measure) }` at the top of the sheet, which would have held
+     the paragraph narrow however wide its parent became. Removing only the block cap
+     is a silent no-op on the one element being complained about — the h1 would have
+     widened and the paragraph would not.
+
+     The cost is stated, not hidden: at 76rem the lede runs past a comfortable
+     reading measure. Operator's call, made twice, on a short block that is read once
+     — this is not the body copy of the page, which keeps its measure. */
   .hero-grid { display: grid; gap: clamp(2rem, 5vw, 3.5rem); grid-template-columns: 1fr; }
-  .hero-grid > :first-child { max-width: 62ch; }
+  .hero-grid p { max-width: none; }
   .hero h1 { margin-bottom: 1.25rem; }
   .hero .lede { margin-bottom: 1.75rem; }
 
