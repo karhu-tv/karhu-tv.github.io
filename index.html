@@ -670,13 +670,23 @@
             free-running cell is <strong>our</strong> limit, not the card's: below the master clock
             the pipeline is already per-channel, and the card derives both families from one
             crystal happily. What is single is our master tick, and serving 50 and 59.94 from one
-            tick needs 60&nbsp;kHz &mdash; twelve hundred times today's rate. That is a design we
-            have not built, not a law of physics, and we would rather say so than let an
-            engineering choice of ours masquerade as a hardware limit.</p>
+            tick needs 60&nbsp;kHz &mdash; twelve hundred times today's rate. That is an
+            engineering choice of ours, not a law of physics, and it is a choice we mean to
+            reverse: <strong>the 60&nbsp;kHz master clock is planned, and this row is written to
+            be deleted.</strong> We would rather say that than let a decision of ours read as a
+            hardware limit.</p>
+          <!-- INTENT, NOT A TIMEFRAME, and the distinction is policy §3 rather than taste.
+               "planned" is a decision — the same construction as the HEVC row's "Neither is
+               planned" — and it carries no date that can slip in public. Do NOT soften this
+               into "not built YET": that exact phrase is in freshness_check.py's TIMEBOUND
+               list and §3 names it as the canonical wrong version, because an adverb makes a
+               promise the sentence never has to keep. Two future-work claims have already
+               rotted on this site ("shipping this week", "a sync generator is on order"),
+               which is why the rule exists at all. -->
           <p class="reg-earn"><span>Would earn it:</span> genlocked cross-family &mdash; a second
-            card with its own reference. Free-running cross-family &mdash; a faster master tick or
-            independent cadence sources per channel. Ask if you need it; the answer is a schedule,
-            not a no.</p>
+            card with its own reference. Free-running cross-family &mdash; the 60&nbsp;kHz master
+            tick, or independent cadence sources per channel. Ask if you need it; the answer is a
+            schedule, not a no.</p>
         </div>
 
       </div>
