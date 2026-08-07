@@ -669,8 +669,13 @@
             intent rather than measurement until a reference has been on the bench. The
             free-running cell is <strong>our</strong> limit, not the card's: below the master clock
             the pipeline is already per-channel, and the card derives both families from one
-            crystal happily. What is single is our master tick, and serving 50 and 59.94 from one
-            tick needs 60&nbsp;kHz &mdash; twelve hundred times today's rate. That is an
+            crystal happily. What is single is our master tick, and one tick has to divide
+            exactly into every rate it serves. <strong>59.94 is not 60</strong> &mdash; it is
+            60000&frasl;1001, and 1001 shares no factor with 60000, so nothing cancels. The
+            smallest tick that lands on both is <strong>60&nbsp;kHz</strong>: 1,200 ticks per
+            50&nbsp;Hz frame, 1,001 per 59.94 &mdash; twelve hundred times today's rate. (Were
+            the second rate an exact 60, it would be 300&nbsp;Hz and this row would not exist;
+            the whole cost is the NTSC 1001.) That is an
             engineering choice of ours, not a law of physics, and it is a choice we mean to
             reverse: <strong>the 60&nbsp;kHz master clock is planned, and this row is written to
             be deleted.</strong> We would rather say that than let a decision of ours read as a
