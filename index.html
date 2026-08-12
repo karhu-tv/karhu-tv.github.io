@@ -994,7 +994,14 @@
         svg.setAttribute('preserveAspectRatio', 'none');
         svg.setAttribute('role', 'img');
         const ttl = document.createElementNS(NS, 'title');
-        ttl.textContent = sdef.label + ' \u2014 last ' + ((x1 - x0) / 3600).toFixed(1)
+        // ONE DURATION, THREE RENDERINGS. This used to be (x1 - x0) / 3600 \u2014 the span
+        // between the first and last BUCKET CENTROID. read_series() downsamples by
+        // time-bucket mean, so that is systematically one bucket short of the window
+        // the chart is drawn from: it read "last 130.0 h" beside "Soak elapsed 131.3 h"
+        // and "131.5 h into the run", three answers to one question. The window is
+        // snap.elapsed_s and every one of the three now renders it.
+        const spanH = (snap.elapsed_s ? snap.elapsed_s / 3600 : (x1 - x0) / 3600);
+        ttl.textContent = sdef.label + ' \u2014 last ' + spanH.toFixed(1)
           + ' h \u00b7 range ' + fmtv(y0) + '\u2013' + fmtv(y1) + ' ' + sdef.unit;
         svg.append(ttl);
         for (const sg of segs) {
