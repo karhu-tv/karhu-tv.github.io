@@ -480,7 +480,32 @@
           <tr>
             <td>Late frames, pre-registered null test</td>
             <td class="v">0</td>
-            <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed</td>
+            <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed. That was a different and shorter test; for the 14-day campaign running now, see the row below</td>
+          </tr>
+          <tr>
+            <td>Late frames, 14-day campaign</td>
+            <td class="v">1</td>
+            <td class="src">as at 12 Aug 2026; the live panel above carries the current
+              figure. The criterion for this campaign was frozen before it started and
+              allows <em>zero</em>, so <strong>the campaign has failed its own
+              test</strong> &mdash; and that is the row, rather than the 130 hours either
+              side of it. What the counter actually means: on one tick out of the fifty in
+              one second, the clock thread woke 567&nbsp;&micro;s after the instant it was
+              scheduled for. The frame was still built and the card's output buffer
+              absorbed it, so nothing reached the SDI output late, missing or out of
+              order. This is an internal timing miss, not a dropped frame, and we would
+              rather explain the difference than let the word do work it hasn't earned.
+              It is one of nine excursions of 380&ndash;567&nbsp;&micro;s across 471,024
+              seconds of the campaign; the other eight fell just under the
+              500&nbsp;&micro;s line this counter trips at, which is itself worth knowing
+              &mdash; the threshold sits inside the cluster rather than clear of it.
+              Ruled out by measurement: NTP steering of the clock, clip junctions, the
+              as-run block seal, thermal, and any engine stall or restart. Ruled in: they
+              repeat every 112.5&nbsp;s within a single item, and all nine fall inside a
+              long MXF decode &mdash; though the same file plays roughly 150 times a
+              campaign and produces them on three, so that is a correlation and not an
+              explanation. Cause not determined. We publish it undetermined rather than
+              attach the tidiest available story to it</td>
           </tr>
           <tr>
             <td>Frame underruns, after start-up priming</td>
@@ -508,7 +533,7 @@
           <tr>
             <td>Worst single tick, per run</td>
             <td class="v">944&ndash;3,091 ns</td>
-            <td class="src">29 of the 33 runs since 28 Jul 2026. Four exceeded it &mdash; 39&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s and 1.35&nbsp;ms &mdash; every one of them while the same machine was running local builds and tests. Cause still open; host load is now recorded alongside so the next one can be attributed rather than reconstructed. We publish the four rather than the 29</td>
+            <td class="src">29 of the 33 runs since 28 Jul 2026. Four exceeded it &mdash; 39&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s and 1.35&nbsp;ms &mdash; each while the same machine was running local builds and tests, and until 12 Aug 2026 this row said local load was the common thread. <strong>It is not.</strong> The 14-day campaign has since produced nine excursions of 380&ndash;567&nbsp;&micro;s on an idle machine with nobody logged in, so local load was a property of those first four rather than the cause of the class. Cause open. Host load is recorded alongside, and since 12 Aug so is every interrupt the clock core takes. We publish the four rather than the 29, and now the nine as well</td>
           </tr>
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
