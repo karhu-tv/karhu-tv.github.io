@@ -526,8 +526,10 @@
               trips at &mdash; which is itself worth knowing, because the threshold sits
               inside the cluster rather than clear of it.
               <strong>Ruled out, each by a measurement that could have said otherwise:</strong>
-              NTP steering of the clock, the as-run block seal, thermal, and any engine
-              stall or restart. <strong>Not ruled out, and not ruled in:</strong> clip
+              the time daemon's own steering &mdash; we read TAI from the kernel and NTP
+              disciplines that clock, so a correction applied to it was a live candidate
+              and had to be excluded by measurement rather than by assertion &mdash; and
+              the as-run block seal, thermal, and any engine stall or restart. <strong>Not ruled out, and not ruled in:</strong> clip
               junctions &mdash; they run every 25&nbsp;s on this schedule, so proximity to
               one carries no information either way, and saying we had excluded them would
               be dressing an untestable up as a result. <strong>Ruled in:</strong> they
@@ -1110,6 +1112,7 @@
     const lede = document.getElementById('lede-soak');
     const frames = snap.figures.find(f => f.label === 'Frames delivered');
     const late = snap.figures.find(f => f.label === 'Late frames');
+    const cardLate = snap.figures.find(f => f.label === 'Card-reported late frames');
     lede.replaceChildren();
     if (live && frames && frames.value != null) {
       const b1 = document.createElement('strong');
@@ -1119,6 +1122,26 @@
         const b2 = document.createElement('strong');
         b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
         lede.append(' with ', b2);
+        // A BARE "1 late" READS AS A DROPPED FRAME AND IT IS NOT ONE. The sentence used
+        // to stop there, so the first non-zero count the page ever published arrived
+        // with no definition attached and the worst reading available — a viewer losing
+        // a frame — was the one a reader would reach for. The term is defined here, at
+        // the first place it appears, and the card's own independent count follows it.
+        //
+        // The card figure is rendered, never typed: it is the same quantity the panel
+        // below publishes, and a second hand-written copy is how the hero went stale the
+        // first time. It is also rendered ONLY when it is genuinely zero — an assertion
+        // that nothing reached the output late must never survive the day it stops
+        // being true, and the fallback prose says nothing rather than something weaker.
+        if (late.value > 0) {
+          lede.append(' — a clock wake that arrived behind schedule, absorbed by the ' +
+                      'card’s output buffer rather than lost from the picture');
+          if (cardLate && cardLate.value === 0) {
+            const b3 = document.createElement('strong');
+            b3.textContent = 'none';
+            lede.append('. The card itself reported ', b3, ' late');
+          }
+        }
       }
       lede.append('.');
     } else {
