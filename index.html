@@ -208,6 +208,12 @@
   .lval.hist { color: var(--ink-soft); }
   #live-rows.historic .lsrc { color: var(--ink-soft); }
   .llab { font-size:.8125rem; color:var(--ink); }
+  /* Scope tag. Recessive on purpose: it is a qualifier on the label, not a value. Its
+     job is to make a future scope mix visible rather than to be read every time. */
+  .lscope { font-size:.625rem; letter-spacing:.06em; text-transform:uppercase;
+            color:var(--ink-faint); border:1px solid var(--rule); border-radius:3px;
+            padding:.05em .35em; white-space:nowrap; vertical-align:.1em; }
+  .lscope.now { color:var(--ink-soft); }
   /* Trend sparklines. Single series each, so the row label IS the legend; the line
      wears the accent (the page's measured-value colour), text stays in ink tokens.
      A gap in the data BREAKS the line — drawing across it would claim a
@@ -324,6 +330,18 @@
   }
   .tag.live { color: var(--accent); border-color: var(--accent); }
   .tool p { font-size: .9375rem; color: var(--ink-soft); }
+  /* Download links. The tools section said "available" for two released binaries and
+     carried no link to either — the page claimed availability without providing access,
+     because this layout orphaned tools.html rather than dropping the buttons on
+     purpose. margin-top:auto pins these to the card's bottom edge so cards of unequal
+     prose length still line their links up. */
+  .tool-dl { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: auto; padding-top: .3rem; }
+  .tool-dl a { font-family: var(--mono); font-size: .75rem; text-decoration: none;
+               color: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
+               padding: .3rem .6rem; white-space: nowrap; }
+  .tool-dl a:hover, .tool-dl a:focus-visible { background: var(--accent); color: var(--ground); }
+  .tool-dl a.alt { color: var(--ink-soft); border-color: var(--rule); }
+  .tool-dl a.alt:hover, .tool-dl a.alt:focus-visible { background: var(--rule); color: var(--ink); }
 
   footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-faint); font-size: .875rem; }
   footer a { color: var(--accent); }
@@ -429,7 +447,9 @@
           Syke's — so the card's rate error is a measured quantity rather than an assumption;
           we predict its consequences to within 1 %. Genlock is something we accept, not
           something we depend on: the design rule from the start was that the clock must not
-          rely on it, and the reference unit runs free with zero late frames.
+          rely on it, and the reference unit runs free &mdash; with the card reporting no late
+          or dropped frames of its own, and the engine's own late-frame count published live
+          in the panel above and explained, when it is not zero, in the table below.
         </p>
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem">
@@ -483,27 +503,37 @@
             <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed. That was a different and shorter test; for the 14-day campaign running now, see the row below</td>
           </tr>
           <tr>
-            <td>Late frames, 14-day campaign</td>
+            <td>Late frames, 14-day campaign &mdash; in progress</td>
             <td class="v">1</td>
-            <td class="src">as at 12 Aug 2026; the live panel above carries the current
-              figure. The criterion for this campaign was frozen before it started and
-              allows <em>zero</em>, so <strong>the campaign has failed its own
-              test</strong> &mdash; and that is the row, rather than the 130 hours either
-              side of it. What the counter actually means: on one tick out of the fifty in
+            <td class="src"><strong>1 as at 12 Aug 2026, on a campaign still
+              running</strong>; the live panel above carries the current figure, for the
+              current run. The late frame itself was <strong>11 Aug, 03:25&nbsp;UTC</strong>,
+              and the panel had it by 03:33 &mdash; eight minutes later, unattended,
+              because that panel is generated from the engine's own counters every
+              fifteen minutes rather than written by hand. The number was public a day
+              before this explanation was, which is the way round we want it. The
+              criterion for this campaign was frozen before it started and allows
+              <em>zero</em>, so <strong>the campaign has failed its own test</strong>
+              &mdash; and that is the row, rather than the clean days either side of it.
+              What the counter actually means: on one tick out of the fifty in
               one second, the clock thread woke 567&nbsp;&micro;s after the instant it was
               scheduled for. The frame was still built and the card's output buffer
               absorbed it, so nothing reached the SDI output late, missing or out of
               order. This is an internal timing miss, not a dropped frame, and we would
               rather explain the difference than let the word do work it hasn't earned.
-              It is one of nine excursions of 380&ndash;567&nbsp;&micro;s across 471,024
-              seconds of the campaign; the other eight fell just under the
-              500&nbsp;&micro;s line this counter trips at, which is itself worth knowing
-              &mdash; the threshold sits inside the cluster rather than clear of it.
-              Ruled out by measurement: NTP steering of the clock, clip junctions, the
-              as-run block seal, thermal, and any engine stall or restart. Ruled in: they
+              Through 12 Aug it is one of nine such excursions, 380&ndash;567&nbsp;&micro;s,
+              and the other eight fell just under the 500&nbsp;&micro;s line this counter
+              trips at &mdash; which is itself worth knowing, because the threshold sits
+              inside the cluster rather than clear of it.
+              <strong>Ruled out, each by a measurement that could have said otherwise:</strong>
+              NTP steering of the clock, the as-run block seal, thermal, and any engine
+              stall or restart. <strong>Not ruled out, and not ruled in:</strong> clip
+              junctions &mdash; they run every 25&nbsp;s on this schedule, so proximity to
+              one carries no information either way, and saying we had excluded them would
+              be dressing an untestable up as a result. <strong>Ruled in:</strong> they
               repeat every 112.5&nbsp;s within a single item, and all nine fall inside a
-              long MXF decode &mdash; though the same file plays roughly 150 times a
-              campaign and produces them on three, so that is a correlation and not an
+              long MXF decode &mdash; though that file had played about 150 times by 12 Aug
+              and produced them on three of those, so it is a correlation and not an
               explanation. Cause not determined. We publish it undetermined rather than
               attach the tidiest available story to it</td>
           </tr>
@@ -515,10 +545,13 @@
               wanting: it published a starvation <em>run-length</em> that reset the moment a
               frame arrived, so a recovered underrun &mdash; nearly all of them &mdash; was
               structurally invisible to it. That 0 was not so much false as unearned; the
-              counter could not have reported anything else. It is cumulative now and reads a
-              few hundred from decoder priming at every start, so the bar has moved: what
-              would earn this row back is a completed run in which the counter does not grow
-              <em>after</em> start-up. Until one has run, the honest value is no value</td>
+              counter could not have reported anything else. It is cumulative now and stands
+              at whatever decoder priming cost that run &mdash; the live panel above carries
+              the figure &mdash; so the bar has moved: what would earn this row back is a
+              completed run in which the counter does not grow <em>after</em> start-up. The
+              campaign now running has done exactly that for over five days, so this row is
+              on course to earn its value back when the run closes. Until it does, the honest
+              value is no value</td>
           </tr>
           <tr>
             <td>Clock phase, typical (mean magnitude)</td>
@@ -533,7 +566,22 @@
           <tr>
             <td>Worst single tick, per run</td>
             <td class="v">944&ndash;3,091 ns</td>
-            <td class="src">29 of the 33 runs since 28 Jul 2026. Four exceeded it &mdash; 39&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s and 1.35&nbsp;ms &mdash; each while the same machine was running local builds and tests, and until 12 Aug 2026 this row said local load was the common thread. <strong>It is not.</strong> The 14-day campaign has since produced nine excursions of 380&ndash;567&nbsp;&micro;s on an idle machine with nobody logged in, so local load was a property of those first four rather than the cause of the class. Cause open. Host load is recorded alongside, and since 12 Aug so is every interrupt the clock core takes. We publish the four rather than the 29, and now the nine as well</td>
+            <td class="src">the typical band, on most runs since 28 Jul 2026. <strong>Every
+              run that exceeded it, through 12 Aug 2026:</strong> 39&nbsp;&micro;s,
+              331&nbsp;&micro;s, 434&nbsp;&micro;s, 567&nbsp;&micro;s, 1.21&nbsp;ms,
+              1.35&nbsp;ms, <strong>4.93&nbsp;ms</strong> and <strong>23.45&nbsp;ms</strong>.
+              That last one is <em>longer than a frame</em>, and on a page whose first line is
+              that a frame is 20&nbsp;milliseconds it is the number you should want from us:
+              it happened on 4 Aug, it came with two starved decoder frames rather than a
+              clock fault &mdash; the phase figure is the consequence of a repeated frame,
+              not its cause &mdash; and it is the reason the underrun instrument two rows up
+              was rebuilt and its old value withdrawn. Until 12 Aug this row listed only the
+              first four and said local build load was the common thread. <strong>Both were
+              wrong:</strong> the list was nine days stale and omitted the two largest, and
+              the 14-day campaign has since produced nine excursions of 380&ndash;567&nbsp;&micro;s
+              on an idle machine with nobody logged in, so local load was a property of those
+              first four rather than the cause of the class. Cause open. Host load is recorded
+              alongside, and since 12 Aug so is every interrupt the clock core takes</td>
           </tr>
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
@@ -609,7 +657,7 @@
 
         <div class="reg-item">
           <h3>&ldquo;Never drops a frame&rdquo;</h3>
-          <p class="reg-why">The card's crystal runs about 3.6&nbsp;ppm slow against TAI, so the
+          <p class="reg-why">The card's crystal runs about 3.7&nbsp;ppm slow against TAI, so the
             engine produces marginally faster than the card consumes. A surplus frame is discarded
             from the handoff queue roughly <strong>every 90 minutes</strong> at the drift measured through
             1 Aug 2026 — by design, and at a
@@ -773,11 +821,13 @@
         <p><strong>What is this file?</strong> Container, codec, exact rational frame rate,
           audio config, MXF sidecar. And <span class="inline-code">--house</span> pre-flights it
           against your delivery spec, exiting non-zero if it won't conform.</p>
+        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-windows-x86_64.zip">Windows&nbsp;x86-64</a><a class="alt" href="https://github.com/karhu-tv/opx-probe/releases">All releases &amp; checksums</a></p>
       </div>
       <div class="tool">
         <div class="tool-top"><span class="tool-name">opx-drift</span><span class="tag live">v0.2.1 · available</span></div>
         <p><strong>Is its timeline sane?</strong> PTS drift and A/V sync from exact rational
           arithmetic — 29.97 is 30000/1001, and rounding it is how drift gets designed in.</p>
+        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-windows-x86_64.zip">Windows&nbsp;x86-64</a><a class="alt" href="https://github.com/karhu-tv/opx-drift/releases">All releases &amp; checksums</a></p>
       </div>
       <div class="tool">
         <div class="tool-top"><span class="tool-name">opx-loudness</span><span class="tag">in progress</span></div>
@@ -940,6 +990,19 @@
       v.className = 'lval' + (live ? '' : ' hist');
       v.textContent = fmt(f.value, f.unit);
       const l = document.createElement('div'); l.className = 'llab'; l.textContent = f.label;
+      // SCOPE, ON EVERY ROW. This panel used to interleave three per-run figures with
+      // three campaign sums and say nothing about which was which. With one unbroken
+      // run every figure coincides, so the mixing was invisible — it would first have
+      // shown itself at a restart, as "0 late frames" against a multi-million campaign
+      // total. The panel is now this run only, and the tag is what keeps it honest:
+      // if a campaign figure is ever added back, it will have to wear a label that
+      // does not match its neighbours.
+      if (live && f.scope) {
+        const sc = document.createElement('span');
+        sc.className = 'lscope' + (f.scope === 'now' ? ' now' : '');
+        sc.textContent = f.scope === 'now' ? 'now' : 'this run';
+        l.append(' ', sc);
+      }
       const s = document.createElement('div'); s.className = 'lsrc';
       // The date is not decoration. It is what makes showing this honest.
       s.textContent = live ? f.provenance : f.when + ' \u00B7 ' + f.provenance;
@@ -1069,9 +1132,16 @@
         b1.textContent = fmt(fv, 'frames');
         lede.append('By ' + when + ' the reference unit had delivered ', b1,
           ' in its then-current soak');
-        if (late && late.value === 0) {
+        // ASYMMETRIC DISCLOSURE, FIXED 2026-08-12. This branch used to render the
+        // clause only when the count was ZERO and silently omit it otherwise — so the
+        // first time soak.json went stale with a non-zero count, the hero would have
+        // read "...had delivered 23,000,000+ frames" and simply not mentioned the late
+        // frame the evidence table below discusses at length. The bad news must not be
+        // the only case that can go missing; the live branch above already renders
+        // both, and this one now matches it.
+        if (late && late.value != null) {
           const b2 = document.createElement('strong');
-          b2.textContent = 'none late';
+          b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
           lede.append(' with ', b2);
         }
         lede.append('.');
