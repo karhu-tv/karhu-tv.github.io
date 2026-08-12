@@ -550,10 +550,10 @@
               counter could not have reported anything else. It is cumulative now and stands
               at whatever decoder priming cost that run &mdash; the live panel above carries
               the figure &mdash; so the bar has moved: what would earn this row back is a
-              completed run in which the counter does not grow <em>after</em> start-up. The
-              campaign now running has done exactly that for over five days, so this row is
-              on course to earn its value back when the run closes. Until it does, the honest
-              value is no value</td>
+              completed run in which the counter does not grow <em>after</em> start-up. As at
+              12 Aug 2026 the running campaign had gone five days with no post-priming
+              growth, so the row is on course to earn its value back when a run completes.
+              Until one does, the honest value is no value</td>
           </tr>
           <tr>
             <td>Clock phase, typical (mean magnitude)</td>
@@ -568,10 +568,17 @@
           <tr>
             <td>Worst single tick, per run</td>
             <td class="v">944&ndash;3,091 ns</td>
-            <td class="src">the typical band, on most runs since 28 Jul 2026. <strong>Every
-              run that exceeded it, through 12 Aug 2026:</strong> 39&nbsp;&micro;s,
-              331&nbsp;&micro;s, 434&nbsp;&micro;s, 567&nbsp;&micro;s, 1.21&nbsp;ms,
-              1.35&nbsp;ms, <strong>4.93&nbsp;ms</strong> and <strong>23.45&nbsp;ms</strong>.
+            <td class="src">the typical band, on most runs since the fsync fix of 28 Jul 2026.
+              <strong>Every run that exceeded it, through 12 Aug 2026:</strong>
+              39&nbsp;&micro;s, 198&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s,
+              567&nbsp;&micro;s, 1.21&nbsp;ms, 1.35&nbsp;ms,
+              <strong>4.93&nbsp;ms</strong> and <strong>23.45&nbsp;ms</strong> &mdash;
+              nine, and this list was checked against the log by re-derivation on
+              12 Aug after its previous version claimed &ldquo;every&rdquo; while
+              missing one (198&nbsp;&micro;s, an eight-minute run during the 4 Aug
+              deploy restarts). Two further runs on 28 Jul itself exceeded the band
+              <em>before</em> the fix landed at 22:52&nbsp;UTC that day and are the
+              previous era&rsquo;s numbers, not this row&rsquo;s.
               That last one is <em>longer than a frame</em>, and on a page whose first line is
               that a frame is 20&nbsp;milliseconds it is the number you should want from us:
               it happened on 4 Aug, it came with two starved decoder frames rather than a
@@ -588,7 +595,7 @@
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
             <td class="v">578&times;</td>
-            <td class="src">the fix deployed 28 Jul 2026. Median worst tick per run, 865,037&nbsp;&rarr;&nbsp;1,496&nbsp;ns; 9 runs before, 7 after, no overlap between the two sets. Runs were a uniform 12&nbsp;h at the time, which is what makes them comparable; that cadence has since been retired. Observational, not a controlled A/B &mdash; the controlled test on that fix measured late frames, not phase. Restricted to full-length runs on both sides: the figure is a latched maximum, so mixing in short ones flattered it to 693&times;</td>
+            <td class="src">the fix deployed 28 Jul 2026. Median worst tick per run, 865,037&nbsp;&rarr;&nbsp;1,496&nbsp;ns; 9 runs before, 7 after, no overlap between the two sets. Runs were a uniform 12&nbsp;h at the time, which is what makes them comparable; that cadence has since been retired. Observational, not a controlled A/B &mdash; the controlled test on that fix measured late frames, not phase. Restricted to full-length runs on both sides &mdash; the figure is a latched maximum, so mixing in short ones flattered it to 693&times; &mdash; and the after-set excludes one further full-length run, 2 Aug, whose 434&nbsp;&micro;s peak is the build-load excursion the &ldquo;Worst single tick&rdquo; row lists; leaving it in changes the median not at all and the 578&times; barely, but saying &ldquo;no overlap&rdquo; without saying so would be a quiet cherry-pick</td>
           </tr>
           <tr>
             <td>As-run records checked for tampering</td>
@@ -679,7 +686,7 @@
             operation and the transition across a reference failure are both unmeasured. The
             card's genlock-source setting exists in our configuration and is currently read by
             nothing, and the telemetry that would let us watch the reference state has been
-            written and went on air on 2 Aug 2026; it currently reads <span class="inline-code">unlocked</span>,
+            written and went on air on 2 Aug 2026; as at 12 Aug 2026 it reads <span class="inline-code">unlocked</span>,
             which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
             cannot yet tell you what it does locked, or what the first second after a reference
             failure looks like.</p>
@@ -1002,7 +1009,12 @@
       if (live && f.scope) {
         const sc = document.createElement('span');
         sc.className = 'lscope' + (f.scope === 'now' ? ' now' : '');
-        sc.textContent = f.scope === 'now' ? 'now' : 'this run';
+        // Unknown scopes render VERBATIM, never as 'this run' — the tag exists so a
+        // figure with a new scope looks different from its neighbours, and a fallback
+        // dressing it as 'this run' would defeat exactly that protection.
+        sc.textContent = f.scope === 'now' ? 'now'
+                       : f.scope === 'run' ? 'this run'
+                       : String(f.scope);
         l.append(' ', sc);
       }
       const s = document.createElement('div'); s.className = 'lsrc';
