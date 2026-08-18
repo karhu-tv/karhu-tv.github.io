@@ -179,6 +179,18 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .tally.on .tally-txt { color:#F2736D; }
   }
+  /* NO SIGNAL IS A THIRD STATE AND MUST NOT LOOK LIKE EITHER OF THE OTHER TWO.
+     Not the red on-air lamp, and not the grey "we looked and the soak is dark" — it
+     says the page could not REACH the feed, which is a statement about the connection
+     and not about the engine. Amber, semantic, deliberately outside the accent palette,
+     and deliberately NOT breathing: a pulsing lamp reads as on-air. */
+  .tally.nosig { border-color:#8A6A16; }
+  .tally.nosig .lamp { background:#C08A1E; box-shadow:0 0 6px 1px rgba(192,138,30,.5); }
+  .tally.nosig .tally-txt { color:#8A6A16; }
+  :root[data-theme="dark"] .tally.nosig .tally-txt { color:#E0A93C; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .tally.nosig .tally-txt { color:#E0A93C; }
+  }
   @keyframes breathe { 0%,100% { opacity:1; } 50% { opacity:.62; } }
   @media (prefers-reduced-motion: reduce) { .tally.on .lamp { animation:none; } }
   .freshness { font-family:var(--mono); font-size:.6875rem; letter-spacing:.06em; }
@@ -965,7 +977,7 @@
     return wrap;
   }
 
-  function render(snap, ageHours, forceNull) {
+  function render(snap, ageHours, forceNull, feed) {
     const stale = ageHours > STALE_HOURS;
 
     // THE TALLY IS DRIVEN BY THE SAME RULE AS THE FIGURES. It is the most visible
@@ -975,11 +987,50 @@
     // taken — that is dark, not live.
     const anyValue = snap.figures.some(f => f.value !== null && f.value !== undefined);
     const live = !stale && !forceNull && anyValue;
+
+    // THREE STATES, NOT TWO — and the third one is why this block exists.
+    //
+    // On 2026-08-17 this page displayed "SOAK OFF" and the aria-label "Soak not
+    // reporting" for about two and a half hours while the engine was running
+    // perfectly, every push was succeeding, and soak.json was sitting on GitHub
+    // half a minute old. raw.githubusercontent.com was answering 429 and 503 through
+    // a GitHub incident, the fetch was failing, and the page fell back to the
+    // build-time snapshot — which is stale by construction, so it aged out and the
+    // tally went dark.
+    //
+    // The rendering was doing what it was built to do: refuse to show a confident
+    // stale number. The LIE was in the words. "Soak not reporting" is a claim about
+    // OUR ENGINE, and it was made on evidence about SOMEBODY ELSE'S NETWORK. That is
+    // the site's own writing policy §2 — a label is a claim — and it is the same
+    // absent-is-not-zero rule the engine side has been applying since acpitz.
+    //
+    // So the two cases are now separated by WHAT WE ACTUALLY OBSERVED:
+    //   we read the file and it does not show a running soak  -> SOAK OFF   (supported)
+    //   we could not read the file at all                     -> NO SIGNAL (claims nothing)
+    // "NO SIGNAL" is the broadcast word on purpose: a monitor showing it is telling you
+    // the receiver cannot see a source, never that the source is off.
+    const state = live ? 'live'
+                : feed === 'ok' ? 'off'
+                : feed === 'pending' ? 'checking'
+                : 'nosignal';
+    const TALLY = {
+      live:     { cls: ' on',     txt: 'SOAK LIVE',
+                  aria: 'Soak running, figures current' },
+      off:      { cls: '',        txt: 'SOAK OFF',
+                  aria: 'Soak not reporting, figures withheld' },
+      // Claims nothing about the soak, because nothing about the soak was observed.
+      nosignal: { cls: ' nosig',  txt: 'NO SIGNAL',
+                  aria: 'Live figures unavailable — the data feed could not be reached. '
+                      + 'This is not a statement about whether the soak is running.' },
+      // Before the first fetch has settled we have not looked yet, and saying so beats
+      // both alternatives: SOAK OFF would be false and NO SIGNAL would be premature.
+      checking: { cls: '',        txt: 'CHECKING',
+                  aria: 'Checking for current figures' },
+    }[state];
     const tally = document.getElementById('tally');
-    tally.className = 'tally' + (live ? ' on' : '');
-    tally.querySelector('.tally-txt').textContent = live ? 'SOAK LIVE' : 'SOAK OFF';
-    tally.setAttribute('aria-label',
-      live ? 'Soak running, figures current' : 'Soak not reporting, figures withheld');
+    tally.className = 'tally' + TALLY.cls;
+    tally.querySelector('.tally-txt').textContent = TALLY.txt;
+    tally.setAttribute('aria-label', TALLY.aria);
     const rows = document.getElementById('live-rows');
     const fresh = document.getElementById('fresh');
     rows.replaceChildren();
@@ -1217,11 +1268,22 @@
       tail.textContent = 'We hold it to ' + order + '.';
     }
 
-    document.getElementById('live-src').textContent = live
-      ? snap.unit
-      : 'No soak reporting. These are dated records from the engineering log, not '
-        + 'current readings \u2014 each carries the date it was established. '
-        + 'Live figures resume when the lamp does. ' + snap.unit;
+    // The prose carries the same three-way split as the tally, for the same reason:
+    // "No soak reporting" is a claim about the engine and must only be made when the
+    // feed was actually READ. The dated records are shown in every non-live state \u2014
+    // they are honest in all of them, because each one carries the date it was
+    // established \u2014 but the sentence introducing them is not interchangeable.
+    const DATED = 'These are dated records from the engineering log, not current '
+                + 'readings \u2014 each carries the date it was established. ';
+    const SRC = {
+      live:     snap.unit,
+      off:      'No soak reporting. ' + DATED + 'Live figures resume when the lamp does. '
+                + snap.unit,
+      nosignal: 'The live feed could not be reached, so this page cannot say whether the '
+                + 'soak is running. ' + DATED + snap.unit,
+      checking: 'Fetching the current figures. ' + DATED + snap.unit,
+    }[state];
+    document.getElementById('live-src').textContent = SRC;
   }
 
   // `current` starts as the embedded snapshot and is replaced by whatever the fetch
@@ -1231,6 +1293,13 @@
   // to "SOAK OFF", never to a confident stale number.
   let current = SNAPSHOT;
   let frozen = null;   // set by the demo buttons; suspends live rendering
+  // WHAT THE LAST FETCH ACTUALLY DID — 'pending' until one has settled, then 'ok' or
+  // 'unreachable'. Without this the page cannot tell "we read the file and the soak is
+  // dark" from "we never got the file", and on 2026-08-17 it reported the second as the
+  // first for two and a half hours. It is deliberately about the FETCH and not about
+  // the data: a successful fetch of a stale file is still 'ok', because we read it, and
+  // "the published file has stopped moving" is a claim we can support.
+  let feed = 'pending';
 
   const ageHoursOf = (snap) =>
     Math.max(0, (Date.now() - new Date(snap.measured_at).getTime()) / 3.6e6);
@@ -1242,13 +1311,19 @@
   // so no visible state can change inside a skipped repaint.
   let lastPaintKey = null;
   function paint() {
+    // `feed` IS PART OF THE KEY. It has to be: the whole point of the state is that it
+    // changes what the tally says while the snapshot and its age stay exactly the same,
+    // so a key without it would skip the repaint and the page would keep displaying the
+    // previous claim — the repaint-skip silently reintroducing the bug this change fixes.
     const key = frozen
-      ? 'frozen|' + frozen.age + '|' + (frozen.forceNull ? 1 : 0) + '|' + frozen.snap.measured_at
-      : 'live|' + current.measured_at + '|' + Math.floor(ageHoursOf(current) * 60);
+      ? 'frozen|' + frozen.age + '|' + (frozen.forceNull ? 1 : 0) + '|'
+        + (frozen.feed || 'ok') + '|' + frozen.snap.measured_at
+      : 'live|' + feed + '|' + current.measured_at + '|'
+        + Math.floor(ageHoursOf(current) * 60);
     if (key === lastPaintKey) return;
     lastPaintKey = key;
-    if (frozen) render(frozen.snap, frozen.age, frozen.forceNull);
-    else render(current, ageHoursOf(current), false);
+    if (frozen) render(frozen.snap, frozen.age, frozen.forceNull, frozen.feed || 'ok');
+    else render(current, ageHoursOf(current), false, feed);
   }
 
   function refresh() {
@@ -1261,9 +1336,15 @@
         // exactly what STALE_HOURS exists to catch. Reject it rather than render it.
         if (!snap || !snap.measured_at) throw new Error('no measured_at');
         current = snap;
+        feed = 'ok';
         paint();
       })
-      .catch(() => { /* keep the last good snapshot; staleness will retire it */ });
+      // Keep the last good snapshot — staleness still retires it — but RECORD that the
+      // fetch failed, and repaint. Before this, the catch was silent and the page went
+      // on rendering "SOAK OFF": a network failure wearing the words of an engine
+      // failure. A payload that arrives but cannot be aged lands here too, and that is
+      // correct — an un-ageable file is one we could not usefully read.
+      .catch(() => { feed = 'unreachable'; paint(); });
   }
 
   paint();
