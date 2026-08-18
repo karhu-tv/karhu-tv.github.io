@@ -516,27 +516,43 @@
           </tr>
           <tr>
             <td>Late frames, 14-day campaign &mdash; in progress</td>
-            <td class="v">1</td>
-            <td class="src"><strong>1 as at 12 Aug 2026, on a campaign still
+            <td class="v">2</td>
+            <td class="src"><strong>2 as at 18 Aug 2026, on a campaign still
               running</strong>; the live panel above carries the current figure, for the
-              current run. The late frame itself was <strong>11 Aug, 03:25&nbsp;UTC</strong>,
-              and the panel had it by 03:33 &mdash; eight minutes later, unattended,
-              because that panel is generated from the engine's own counters every
-              fifteen minutes rather than written by hand. The number was public a day
-              before this explanation was, which is the way round we want it. The
-              criterion for this campaign was frozen before it started and allows
+              current run. Both events: <strong>11 Aug, 03:25&nbsp;UTC</strong>
+              (567&nbsp;&micro;s) and <strong>15 Aug, 08:50&nbsp;UTC</strong>
+              (570&nbsp;&micro;s). The panel had the first by 03:33 &mdash; eight minutes
+              later, unattended, because that panel is generated from the engine's own
+              counters every fifteen minutes rather than written by hand. <strong>We did
+              not notice the second for two days.</strong> The panel published it within
+              minutes, as it is built to; nobody was reading the panel. That is worth
+              saying plainly, because the automation and the attention are different
+              claims and only the first one held. The criterion for this campaign was
+              frozen before it started and allows
               <em>zero</em>, so <strong>the campaign has failed its own test</strong>
               &mdash; and that is the row, rather than the clean days either side of it.
+              The second event does not change that verdict; the first had already
+              decided it.
               What the counter actually means: on one tick out of the fifty in
               one second, the clock thread woke 567&nbsp;&micro;s after the instant it was
               scheduled for. The frame was still built and the card's output buffer
               absorbed it, so nothing reached the SDI output late, missing or out of
               order. This is an internal timing miss, not a dropped frame, and we would
               rather explain the difference than let the word do work it hasn't earned.
-              Through 12 Aug it is one of nine such excursions, 380&ndash;567&nbsp;&micro;s,
-              and the other eight fell just under the 500&nbsp;&micro;s line this counter
-              trips at &mdash; which is itself worth knowing, because the threshold sits
-              inside the cluster rather than clear of it.
+              Re-derived over the whole campaign to 17 Aug, the two are members of a
+              population of <strong>67</strong> excursions of 380&nbsp;&micro;s or more
+              &mdash; not the nine this row reported through 12 Aug, and still growing,
+              because the campaign is still running. They are all in the
+              same direction (the clock thread always wakes <em>late</em>, never early),
+              and 65 of the 67 sit in a tight band of 380&ndash;450&nbsp;&micro;s, median
+              415. <strong>This corrects what we published here before.</strong> On nine
+              samples we said the 500&nbsp;&micro;s line that trips this counter sat
+              <em>inside</em> the cluster; on 67 it does not. The two late frames stand
+              116&nbsp;&micro;s clear of the highest of the other 65, with nothing in
+              between &mdash; so they are not simply the members that happened to cross an
+              arbitrary line, and the threshold is not what made them count. That is a
+              worse result than the one it replaces, in the sense that it removes an easy
+              explanation, and it is the one the data supports.
               <strong>Ruled out, each by a measurement that could have said otherwise:</strong>
               the time daemon's own steering &mdash; we read TAI from the kernel and NTP
               disciplines that clock, so a correction applied to it was a live candidate
@@ -544,11 +560,20 @@
               the as-run block seal, thermal, and any engine stall or restart. <strong>Not ruled out, and not ruled in:</strong> clip
               junctions &mdash; they run every 25&nbsp;s on this schedule, so proximity to
               one carries no information either way, and saying we had excluded them would
-              be dressing an untestable up as a result. <strong>Ruled in:</strong> they
-              repeat every 112.5&nbsp;s within a single item, and all nine fall inside a
-              long MXF decode &mdash; though that file had played about 150 times by 12 Aug
-              and produced them on three of those, so it is a correlation and not an
-              explanation. Cause not determined. We publish it undetermined rather than
+              be dressing an untestable up as a result. <strong>Ruled in:</strong> the
+              112.5&nbsp;s recurrence, and it is now much harder to argue with than it was
+              on nine samples. The 67 arrive in 23 bursts of one to five, and
+              <em>every</em> gap inside a burst is 112 or 113&nbsp;s, or exactly twice that
+              where a beat is missed &mdash; 44 gaps, no other value, none. A metronome
+              that regular is not local load, and the magnitudes are indistinguishable
+              between the bursts that fall in working hours and those at 02:00 and
+              05:00&nbsp;local with nobody logged in (median 416 against 411&nbsp;&micro;s).
+              <strong>Not re-derived, and so not claimed:</strong> the observation that all
+              nine of the original excursions fell inside one long MXF decode was
+              established on those nine and has not been checked against the other 58. It
+              may still hold; we have not looked, and we would rather say so than let a
+              finding quietly inherit a larger sample than it was measured on. Cause not
+              determined. We publish it undetermined rather than
               attach the tidiest available story to it</td>
           </tr>
           <tr>
@@ -563,9 +588,11 @@
               at whatever decoder priming cost that run &mdash; the live panel above carries
               the figure &mdash; so the bar has moved: what would earn this row back is a
               completed run in which the counter does not grow <em>after</em> start-up. As at
-              12 Aug 2026 the running campaign had gone five days with no post-priming
-              growth, so the row is on course to earn its value back when a run completes.
-              Until one does, the honest value is no value</td>
+              18 Aug 2026 the running campaign had gone <strong>eleven and a half days</strong>
+              with no post-priming growth, so the row is on course to earn its value back when
+              a run completes. Until one does, the honest value is no value &mdash; and note
+              that this row stays empty while the campaign two rows up has already
+              <em>failed</em>, which is the point of scoring them separately</td>
           </tr>
           <tr>
             <td>Clock phase, typical (mean magnitude)</td>
@@ -581,9 +608,9 @@
             <td>Worst single tick, per run</td>
             <td class="v">944&ndash;3,091 ns</td>
             <td class="src">the typical band, on most runs since the fsync fix of 28 Jul 2026.
-              <strong>Every run that exceeded it, through 12 Aug 2026:</strong>
+              <strong>Every run that exceeded it, through 18 Aug 2026:</strong>
               39&nbsp;&micro;s, 198&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s,
-              567&nbsp;&micro;s, 1.21&nbsp;ms, 1.35&nbsp;ms,
+              570&nbsp;&micro;s, 1.21&nbsp;ms, 1.35&nbsp;ms,
               <strong>4.93&nbsp;ms</strong> and <strong>23.45&nbsp;ms</strong> &mdash;
               nine, and this list was checked against the log by re-derivation on
               12 Aug after its previous version claimed &ldquo;every&rdquo; while
@@ -599,9 +626,12 @@
               was rebuilt and that row now shows no value at all. Until 12 Aug this row listed only the
               first four and said local build load was the common thread. <strong>Both were
               wrong:</strong> the list was nine days stale and omitted the two largest, and
-              the 14-day campaign has since produced nine excursions of 380&ndash;567&nbsp;&micro;s
-              on an idle machine with nobody logged in, so local load was a property of those
-              first four rather than the cause of the class. Cause open. Host load is recorded
+              the 14-day campaign has since produced <strong>67</strong> excursions of
+              380&nbsp;&micro;s or more, in both attended and unattended hours and at
+              indistinguishable magnitudes, so local load was a property of those
+              first four rather than the cause of the class. The entry above moved
+              567&nbsp;&rarr;&nbsp;570&nbsp;&micro;s on 15 Aug: it is this one run's
+              latched worst tick, and the run is still going. Cause open. Host load is recorded
               alongside, and since 12 Aug so is every interrupt the clock core takes</td>
           </tr>
           <tr>
@@ -698,8 +728,9 @@
             operation and the transition across a reference failure are both unmeasured. The
             card's genlock-source setting exists in our configuration and is currently read by
             nothing, and the telemetry that would let us watch the reference state has been
-            written and went on air on 2 Aug 2026; as at 12 Aug 2026 it reads <span class="inline-code">unlocked</span>,
-            which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
+            written and went on air on 2 Aug 2026; as at 18 Aug 2026 it reads <span class="inline-code">unlocked</span>,
+            and has done in every one of more than 22,000 samples since it began publishing
+            &mdash; which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
             cannot yet tell you what it does locked, or what the first second after a reference
             failure looks like.</p>
           <p class="reg-earn"><span>Would earn it:</span> a reference on the bench, lock observed,
