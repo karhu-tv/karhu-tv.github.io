@@ -512,14 +512,14 @@
           <tr>
             <td>Late frames, pre-registered null test</td>
             <td class="v">0</td>
-            <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed. That was a different and shorter test; for the 14-day campaign running now, see the row below</td>
+            <td class="src">adjudicated 30 Jul 2026. 35.8 h &mdash; three consecutive epochs spanning two scheduled restarts; 1 Hz sampling, 99.98 % coverage, criteria frozen before any data existed. That was a different and shorter test; for the 14-day campaign, which has since concluded, see the row below</td>
           </tr>
           <tr>
-            <td>Late frames, 14-day campaign &mdash; in progress</td>
+            <td>Late frames, 14-day campaign &mdash; concluded</td>
             <td class="v">2</td>
-            <td class="src"><strong>2 as at 18 Aug 2026, on a campaign still
-              running</strong>; the live panel above carries the current figure, for the
-              current run. Both events: <strong>11 Aug, 03:25&nbsp;UTC</strong>
+            <td class="src"><strong>2 across the full fourteen days.</strong> The campaign ran to its
+              frozen end and the engine was then stopped deliberately, at
+              2026-08-20T23:16:43&nbsp;UTC, after 339&nbsp;h unbroken. Both events: <strong>11 Aug, 03:25&nbsp;UTC</strong>
               (567&nbsp;&micro;s) and <strong>15 Aug, 08:50&nbsp;UTC</strong>
               (570&nbsp;&micro;s). The panel had the first by 03:33 &mdash; eight minutes
               later, unattended, because that panel is generated from the engine's own
@@ -539,16 +539,16 @@
               absorbed it, so nothing reached the SDI output late, missing or out of
               order. This is an internal timing miss, not a dropped frame, and we would
               rather explain the difference than let the word do work it hasn't earned.
-              Re-derived over the whole campaign to 17 Aug, the two are members of a
-              population of <strong>67</strong> excursions of 380&nbsp;&micro;s or more
-              &mdash; not the nine this row reported through 12 Aug, and still growing,
-              because the campaign is still running. They are all in the
+              Re-derived over the whole campaign after it ended, the two are members of a
+              final population of <strong>109</strong> excursions of 380&nbsp;&micro;s or
+              more &mdash; not the nine this row reported through 12 Aug, and not the 67
+              it reported through 17 Aug while the run was still going. They are all in the
               same direction (the clock thread always wakes <em>late</em>, never early),
-              and 65 of the 67 sit in a tight band of 380&ndash;450&nbsp;&micro;s, median
-              415. <strong>This corrects what we published here before.</strong> On nine
+              and 106 of the 109 sit in a tight band of 380&ndash;450&nbsp;&micro;s, median
+              413. <strong>This corrects what we published here before.</strong> On nine
               samples we said the 500&nbsp;&micro;s line that trips this counter sat
-              <em>inside</em> the cluster; on 67 it does not. The two late frames stand
-              116&nbsp;&micro;s clear of the highest of the other 65, with nothing in
+              <em>inside</em> the cluster; on 109 it does not. The two late frames stand
+              116&nbsp;&micro;s clear of the highest of the other 107, with nothing in
               between &mdash; so they are not simply the members that happened to cross an
               arbitrary line, and the threshold is not what made them count. That is a
               worse result than the one it replaces, in the sense that it removes an easy
@@ -586,11 +586,16 @@
               structurally invisible to it. That 0 was not so much false as unearned; the
               counter could not have reported anything else. It is cumulative now and stands
               at whatever decoder priming cost that run &mdash; the live panel above carries
-              the figure &mdash; so the bar has moved: what would earn this row back is a
-              completed run in which the counter does not grow <em>after</em> start-up. As at
-              18 Aug 2026 the running campaign had gone <strong>eleven and a half days</strong>
-              with no post-priming growth, so the row is on course to earn its value back when
-              a run completes. Until one does, the honest value is no value &mdash; and note
+              the figure whenever a soak is running &mdash; so the bar has moved: what would earn this row back is a
+              completed run in which the counter does not grow <em>after</em> start-up. A run
+              has now completed, and <strong>that bar is met</strong>: across the 14-day run
+              the counter read 71 &mdash; all of it decoder priming, inside the first eight
+              seconds &mdash; and then did not move again for <strong>339 hours</strong>, in
+              all 20,363 samples of it. The cell stays empty until the fix that produced that
+              number has run somewhere other than the bench that found the bug, because the
+              value it would publish is a zero and a zero is exactly what this row was wrong
+              about the first time. Earning it back needs one more thing than a good result,
+              and note
               that this row stays empty while the campaign two rows up has already
               <em>failed</em>, which is the point of scoring them separately</td>
           </tr>
@@ -626,12 +631,15 @@
               was rebuilt and that row now shows no value at all. Until 12 Aug this row listed only the
               first four and said local build load was the common thread. <strong>Both were
               wrong:</strong> the list was nine days stale and omitted the two largest, and
-              the 14-day campaign has since produced <strong>67</strong> excursions of
+              the 14-day campaign produced <strong>109</strong> excursions of
               380&nbsp;&micro;s or more, in both attended and unattended hours and at
               indistinguishable magnitudes, so local load was a property of those
               first four rather than the cause of the class. The entry above moved
-              567&nbsp;&rarr;&nbsp;570&nbsp;&micro;s on 15 Aug: it is this one run's
-              latched worst tick, and the run is still going. Cause open. Host load is recorded
+              567&nbsp;&rarr;&nbsp;570&nbsp;&micro;s on 15 Aug: it is that one run's
+              latched worst tick, and 570&nbsp;&micro;s is where it finished. Exactly two
+              of the 109 exceeded 500&nbsp;&micro;s, which is the threshold the late-frame
+              counter itself uses &mdash; so the two counters agree without being wired
+              together. Cause open. Host load is recorded
               alongside, and since 12 Aug so is every interrupt the clock core takes</td>
           </tr>
           <tr>
@@ -656,8 +664,8 @@
           </tr>
           <tr>
             <td>Longest continuous engine run</td>
-            <td class="v">&ge;&nbsp;308 h</td>
-            <td class="src">6&ndash;19 Aug 2026 and still running, so a floor rather than a final figure. Derived two ways that agree to within one sampling interval: the supervisor reports no restart since 2026-08-06T19:53:26Z, and the drift log shows no frame-counter reset across 18,537 consecutive samples. The live panel above carries the run in progress</td>
+            <td class="v">339 h</td>
+            <td class="src">6&ndash;20 Aug 2026 &mdash; a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within seven seconds: the supervisor reports no restart across 2026-08-06T19:53:26Z&ndash;23:16:43Z (339.39 h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.39 h), and the 1&nbsp;Hz diagnostic line spans the same (339.39 h). Rounded down to whole hours</td>
           </tr>
         </tbody>
       </table>
@@ -828,10 +836,12 @@
           <h3>Uptime and reliability figures</h3>
           <p class="reg-why">Our internal threshold for saying &ldquo;reliable&rdquo; is 90 days
             continuous. The longest run we could evidence from the as-run chain as of
-            <strong>1 August 2026</strong> was <strong>39 hours</strong>. That figure is dated on
-            purpose: runs get longer, and a number stated as current would be wrong the next time
-            one does. What does not move is the argument — 39 hours is not 90 days, and until it
-            is we do not use the word.</p>
+            <strong>21 August 2026</strong> is <strong>339 hours</strong> &mdash; just over
+            fourteen days. That figure is dated on purpose: runs get longer, and a number
+            stated as current would be wrong the next time one does. It said 39 hours until
+            today, which was true when written on 1 August and had been beaten twice before
+            anyone re-derived it. What does not move is the argument — 339 hours is not 90
+            days, and until it is we do not use the word.</p>
           <p class="reg-earn"><span>Would earn it:</span> 90 days. There is no shortcut and we
             won't paraphrase our way to one.</p>
         </div>
@@ -923,7 +933,7 @@
 (function () {
   // In production this is: fetch('/soak.json').then(r => r.json())
   // The Artifact CSP blocks external hosts, so a real snapshot is embedded instead.
-  const SNAPSHOT = {"measured_at": "2026-08-06T20:32:59Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1786046370, 86.0], [1786046430, 73.0], [1786046490, 60.0], [1786046550, 53.0], [1786046610, 44.0], [1786046670, 48.0], [1786046730, 53.0], [1786046790, 27.0], [1786046850, 142.0], [1786046910, 28.0], [1786046970, 39.0], [1786047030, 43.0], [1786047090, 37.0], [1786047150, 54.0], [1786047210, 62.0], [1786047270, 37.0], [1786047330, 39.0], [1786047390, 36.0], [1786047450, 67.0], [1786047510, 39.0], [1786047570, 47.0], [1786047630, 36.0], [1786047690, 46.0], [1786047750, 46.0], [1786047810, 55.0], [1786047870, 33.0], [1786047930, 41.0], [1786047990, 51.0], [1786048050, 54.0], [1786048110, 46.0], [1786048170, 73.0], [1786048230, 42.0], [1786048290, 57.0], [1786048350, 36.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1786046370, 3.364], [1786046430, 1.553], [1786046490, -0.208], [1786046550, -0.818], [1786046610, -1.158], [1786046670, -1.331], [1786046730, -1.486], [1786046790, -1.575], [1786046850, -1.632], [1786046910, -1.675], [1786046970, -1.705], [1786047030, -1.733], [1786047090, -1.755], [1786047150, -1.789], [1786047210, -1.839], [1786047270, -1.891], [1786047330, -1.934], [1786047390, -1.97], [1786047450, -2.005], [1786047510, -2.033], [1786047570, -2.062], [1786047630, -2.091], [1786047690, -2.116], [1786047750, -2.141], [1786047810, -2.167], [1786047870, -2.187], [1786047930, -2.221], [1786047990, -2.275], [1786048050, -2.326], [1786048110, -2.373], [1786048170, -2.417], [1786048230, -2.433], [1786048290, -2.45], [1786048350, -2.467]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1786046370, 2.0], [1786046430, 1.5], [1786046490, 8.04], [1786046550, 1.98], [1786046610, 1.493], [1786046670, 1.493], [1786046730, 0.5], [1786046790, 0.0], [1786046850, 4.975], [1786046910, 0.0], [1786046970, 0.503], [1786047030, 1.0], [1786047090, 1.005], [1786047150, 1.0], [1786047210, 1.5], [1786047270, 1.005], [1786047330, 1.493], [1786047390, 0.5], [1786047450, 0.505], [1786047510, 0.503], [1786047570, 1.0], [1786047630, 1.493], [1786047690, 0.505], [1786047750, 1.0], [1786047810, 1.0], [1786047870, 1.5], [1786047930, 1.0], [1786047990, 1.0], [1786048050, 1.0], [1786048110, 1.493], [1786048170, 1.0], [1786048230, 1.0], [1786048290, 1.0], [1786048350, 2.0]]}}, "underruns": {"run_secs": 2373, "settle_secs": 120, "settled": true, "baseline": 71, "since_baseline": 0, "events": [{"at": 7, "delta": 50, "priming": true}, {"at": 8, "delta": 21, "priming": true}]}, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25p \u00b7 25i \u00b7 29.97p \u00b7 50p \u00b7 50i across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 0.6, "unit": "h", "provenance": "34 samples at 1 min, 100.0 % coverage, one run \u2014 since 2026-08-06T19:58Z, elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 115400, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 71, "unit": "", "provenance": "71 of decoder start-up priming, all of it in the first 8 s of the run, and NONE since \u2014 the engine latches each run's priming level after a settling window and counts growth beyond it separately, so this split is measured rather than assumed"}, {"label": "Clock phase, worst this run", "value": 1241, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 44, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -2.481, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 0, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 308, "unit": "h", "when": "6\u201319 Aug 2026, still running", "provenance": "one unbroken run since 2026-08-06T19:53:26Z, derived two ways that agree to within one sampling interval: the supervisor reports NRestarts=0 since that timestamp (308.94 h), and the drift log shows no frame-counter reset across 18,537 consecutive samples (308.93 h). Rounded DOWN because the run has not ended \u2014 a floor, not a final figure"}, {"label": "Longest adjudicated soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts. A longer campaign is in flight and is not yet adjudicated, so it does not appear here"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
+  const SNAPSHOT = {"measured_at": "2026-08-06T20:32:59Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1786046370, 86.0], [1786046430, 73.0], [1786046490, 60.0], [1786046550, 53.0], [1786046610, 44.0], [1786046670, 48.0], [1786046730, 53.0], [1786046790, 27.0], [1786046850, 142.0], [1786046910, 28.0], [1786046970, 39.0], [1786047030, 43.0], [1786047090, 37.0], [1786047150, 54.0], [1786047210, 62.0], [1786047270, 37.0], [1786047330, 39.0], [1786047390, 36.0], [1786047450, 67.0], [1786047510, 39.0], [1786047570, 47.0], [1786047630, 36.0], [1786047690, 46.0], [1786047750, 46.0], [1786047810, 55.0], [1786047870, 33.0], [1786047930, 41.0], [1786047990, 51.0], [1786048050, 54.0], [1786048110, 46.0], [1786048170, 73.0], [1786048230, 42.0], [1786048290, 57.0], [1786048350, 36.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1786046370, 3.364], [1786046430, 1.553], [1786046490, -0.208], [1786046550, -0.818], [1786046610, -1.158], [1786046670, -1.331], [1786046730, -1.486], [1786046790, -1.575], [1786046850, -1.632], [1786046910, -1.675], [1786046970, -1.705], [1786047030, -1.733], [1786047090, -1.755], [1786047150, -1.789], [1786047210, -1.839], [1786047270, -1.891], [1786047330, -1.934], [1786047390, -1.97], [1786047450, -2.005], [1786047510, -2.033], [1786047570, -2.062], [1786047630, -2.091], [1786047690, -2.116], [1786047750, -2.141], [1786047810, -2.167], [1786047870, -2.187], [1786047930, -2.221], [1786047990, -2.275], [1786048050, -2.326], [1786048110, -2.373], [1786048170, -2.417], [1786048230, -2.433], [1786048290, -2.45], [1786048350, -2.467]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1786046370, 2.0], [1786046430, 1.5], [1786046490, 8.04], [1786046550, 1.98], [1786046610, 1.493], [1786046670, 1.493], [1786046730, 0.5], [1786046790, 0.0], [1786046850, 4.975], [1786046910, 0.0], [1786046970, 0.503], [1786047030, 1.0], [1786047090, 1.005], [1786047150, 1.0], [1786047210, 1.5], [1786047270, 1.005], [1786047330, 1.493], [1786047390, 0.5], [1786047450, 0.505], [1786047510, 0.503], [1786047570, 1.0], [1786047630, 1.493], [1786047690, 0.505], [1786047750, 1.0], [1786047810, 1.0], [1786047870, 1.5], [1786047930, 1.0], [1786047990, 1.0], [1786048050, 1.0], [1786048110, 1.493], [1786048170, 1.0], [1786048230, 1.0], [1786048290, 1.0], [1786048350, 2.0]]}}, "underruns": {"run_secs": 2373, "settle_secs": 120, "settled": true, "baseline": 71, "since_baseline": 0, "events": [{"at": 7, "delta": 50, "priming": true}, {"at": 8, "delta": 21, "priming": true}]}, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25p \u00b7 25i \u00b7 29.97p \u00b7 50p \u00b7 50i across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": 0.6, "unit": "h", "provenance": "34 samples at 1 min, 100.0 % coverage, one run \u2014 since 2026-08-06T19:58Z, elapsed operation, not one unbroken run"}, {"label": "Frames delivered", "value": 115400, "unit": "", "provenance": "summed per run \u2014 the counter resets at each restart, so max() would under-count by 70 %. This is the denominator for the two figures below"}, {"label": "Late frames", "value": 0, "unit": "", "provenance": "engine counter, this run"}, {"label": "Frame underruns", "value": 71, "unit": "", "provenance": "71 of decoder start-up priming, all of it in the first 8 s of the run, and NONE since \u2014 the engine latches each run's priming level after a settling window and counts growth beyond it separately, so this split is measured rather than assumed"}, {"label": "Clock phase, worst this run", "value": 1241, "unit": "ns", "provenance": "worst single tick since this run began, never reset \u2014 29 of the 33 runs since 28 Jul 2026 landed 944\u20133,091 ns; the four that did not were all under local build load"}, {"label": "Clock phase, typical", "value": 44, "unit": "ns", "provenance": "mean magnitude \u2014 not the signed mean, which cancels"}, {"label": "Card crystal error vs TAI", "value": -2.481, "unit": "ppm", "provenance": "measured continuously; the figure the drift compensation is built on"}, {"label": "Frames shed by drift compensation", "value": 0, "unit": "", "provenance": "surplus frames discarded from the handoff queue, by design"}], "historical": [{"label": "Longest continuous engine run", "value": 339, "unit": "h", "when": "6\u201320 Aug 2026, ended", "provenance": "one unbroken run, 2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, ended deliberately at the close of the 14-day campaign. Derived three independent ways that agree to within seven seconds: the supervisor reports NRestarts=0 across the whole span (339.39 h), the engine's own frame counter reached 61,088,850 at 50 fps (339.39 h), and the 1 Hz diagnostic line spans the same (339.39 h). Rounded DOWN to whole hours \u2014 a final figure, not a floor"}, {"label": "Longest multi-run soak campaign", "value": 80.3, "unit": "h", "when": "adjudicated 26 Jul 2026", "provenance": "multi-run; spans scheduled restarts, which is what distinguishes it from the single-run record above. The 14-day campaign that has since concluded was one unbroken run and is that row, not this one"}, {"label": "Frames delivered, that run", "value": 61088850, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the engine's own frame counter at the moment it was stopped; at 50 fps it is also the third derivation of the 339 h above, agreeing with the other two to within seven seconds"}, {"label": "Late frames, that run", "value": 2, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the campaign's frozen criterion allowed ZERO, so it failed its own test \u2014 published because a criterion you only quote when it passes is not a criterion. Both were internal timing misses: the frame was still built and the card's buffer absorbed it, so nothing reached SDI late, missing or out of order. 2 of 61,088,850"}, {"label": "Worst single tick, that run", "value": 569759, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "latched maximum, never reset. 0.03 of one 20 ms frame. It belongs to a population of 109 excursions of 380 \u00b5s or more across the fortnight, all in the same direction; cause open and under investigation"}, {"label": "As-run records checked for tampering", "value": 44300073, "unit": "", "when": "28 Jul 2026", "provenance": "0 false positives; six forgery vectors closed"}, {"label": "Worst-case clock phase, cut by one fix", "value": 578, "unit": "\u00d7", "when": "28 Jul 2026", "provenance": "median worst tick per 12 h epoch, 865,037 \u2192 1,496 ns; 9 epochs before, 7 after, no overlap between the two sets. Observational, not a controlled A/B"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
   // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
   //
