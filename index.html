@@ -245,6 +245,25 @@
   .urt .mk { stroke-width:2; }
   .urt .mk.prime { stroke:var(--ink-faint); }
   .urt .mk.real  { stroke:#D2544A; }
+  /* Phase distribution. The ladder was published only inside a provenance string,
+     which is .625rem in the faintest ink on the page — technically present and
+     genuinely unreadable. A shape wants a shape. Log axis, because the data spans
+     four decades and a linear one would collapse everything below the maximum
+     into the left edge, which is exactly the misreading the row exists to prevent. */
+  .pdist { margin-top:.5rem; }
+  .pdist-lab { font-size:.6875rem; font-family:var(--mono); color:var(--ink-faint);
+               display:flex; justify-content:space-between; gap:.75rem; }
+  .pdist-ax { position:relative; height:30px; margin-top:.4rem; }
+  .pdist-ax::after { content:''; position:absolute; left:0; right:0; bottom:10px;
+                     height:1px; background:var(--rule-soft); }
+  .pdist-dec { position:absolute; bottom:0; font-size:.5625rem; font-family:var(--mono);
+               color:var(--ink-faint); transform:translateX(-50%); white-space:nowrap; }
+  .pdist-mk { position:absolute; bottom:10px; width:2px; height:12px;
+              background:var(--ink-soft); }
+  .pdist-mk.worst { background:#D2544A; height:16px; }
+  .pdist-vals { font-family:var(--mono); font-size:.6875rem; color:var(--ink-soft);
+                margin-top:.35rem; line-height:1.6; }
+  .pdist-vals b { color:var(--ink); font-weight:600; }
   .trends { margin-top:.4rem; border-top:1px solid var(--rule-soft); padding-top:.6rem;
             display:flex; flex-direction:column; gap:.55rem; }
   .trend  { display:grid; grid-template-columns: 11rem 1fr; gap:.75rem; align-items:center; }
@@ -984,6 +1003,91 @@
   // which is a claim, and missing data is not that claim. The settling window comes
   // from the ENGINE (settle_secs) — a page hardcoding it would be a second site for a
   // constant that already has one.
+  // The per-second worst-tick distribution, drawn. A latched maximum is the least
+  // representative number a run produces and 570 us alone invites the reader to take
+  // it as the shape; the shape is a tight cluster four decades below one frame with a
+  // visibly EMPTY decade before the tail. That gap is the whole finding and no single
+  // number can carry it.
+  //
+  // The axis is DERIVED from the data, never hardcoded: adding a step or changing a
+  // value moves the drawing with it, so the picture cannot quietly stop matching the
+  // numbers printed underneath it.
+  function phaseLadder(pd) {
+    if (!pd || !Array.isArray(pd.steps) || pd.steps.length === 0) return null;
+    const vals = pd.steps.map((x) => x && x.ns).filter((n) => typeof n === 'number' && n > 0);
+    if (vals.length === 0) return null;
+    const L10 = (x) => Math.log(x) / Math.LN10;
+    const lo = Math.pow(10, Math.floor(L10(Math.min.apply(null, vals))));
+    const hi = Math.pow(10, Math.ceil(L10(Math.max.apply(null, vals))));
+    const span = L10(hi) - L10(lo);
+    // A single-decade span would divide by zero; fall back to the numbers alone
+    // rather than drawing an axis that means nothing.
+    const pos = (v) => (span > 0 ? ((L10(v) - L10(lo)) / span) * 100 : 0);
+    const int = (n) => Number(n).toLocaleString('en-GB');
+    const ns = (n) => (n >= 1e6 ? (n / 1e6) + ' ms'
+                     : n >= 1e3 ? (n / 1e3) + ' \u00B5s'
+                     : n + ' ns');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'pdist';
+
+    const lab = document.createElement('div');
+    lab.className = 'pdist-lab';
+    const l = document.createElement('span');
+    l.textContent = pd.what || 'distribution';
+    const r = document.createElement('span');
+    r.textContent = pd.samples ? int(pd.samples) + ' samples' : '';
+    lab.append(l, r);
+    wrap.append(lab);
+
+    const ax = document.createElement('div');
+    ax.className = 'pdist-ax';
+    for (let d = lo; d <= hi; d *= 10) {
+      const t = document.createElement('span');
+      t.className = 'pdist-dec';
+      t.style.left = pos(d) + '%';
+      t.textContent = ns(d);
+      ax.append(t);
+    }
+    for (let i = 0; i < pd.steps.length; i++) {
+      const st = pd.steps[i];
+      if (!st || typeof st.ns !== 'number') continue;
+      const m = document.createElement('span');
+      m.className = 'pdist-mk' + (i === pd.steps.length - 1 ? ' worst' : '');
+      m.style.left = pos(st.ns) + '%';
+      m.setAttribute('title', st.label + ' \u2014 ' + int(st.ns) + ' ns');
+      ax.append(m);
+    }
+    wrap.append(ax);
+
+    const out = document.createElement('div');
+    out.className = 'pdist-vals';
+    for (let i = 0; i < pd.steps.length; i++) {
+      const st = pd.steps[i];
+      if (!st || typeof st.ns !== 'number') continue;
+      if (i) out.append('  \u00B7  ');
+      const k = document.createElement('b');
+      k.textContent = st.label;
+      out.append(k, ' ' + int(st.ns));
+    }
+    out.append(' ns');
+    wrap.append(out);
+
+    // The comparison the whole page is built around. Stated, not left to the reader
+    // to work out from an axis that stops four decades short of it.
+    if (pd.frame_ns) {
+      const f = document.createElement('div');
+      f.className = 'pdist-lab';
+      const fl = document.createElement('span');
+      const worst = Math.max.apply(null, vals);
+      fl.textContent = 'one frame is ' + int(pd.frame_ns) + ' ns \u2014 the worst tick is '
+                     + (worst / pd.frame_ns * 100).toFixed(1) + ' % of it';
+      f.append(fl);
+      wrap.append(f);
+    }
+    return wrap;
+  }
+
   function underrunTimeline(u) {
     if (!u || !u.settle_secs || !Array.isArray(u.events)) return null;
     const W = 300, H = 24, PAD = 2;
@@ -1131,6 +1235,13 @@
       if (live && f.label === 'Frame underruns') {
         const t = underrunTimeline(snap.underruns);
         if (t) el.append(t);
+      }
+      // NOT gated on `live`, unlike the timeline above: this describes a run that has
+      // already finished, so a dead engine does not invalidate it — and the state the
+      // page is now permanently in is exactly the one where it must still show.
+      if (f.label === 'Clock phase, median tick') {
+        const p = phaseLadder(snap.phase_dist);
+        if (p) el.append(p);
       }
       rows.append(el);
     }
