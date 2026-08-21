@@ -211,6 +211,12 @@
     .lrow .lsrc { grid-row:1 / span 2; grid-column:2; max-width:78ch; align-self:center; }
     /* The underrun timeline belongs under the provenance, not beside the number. */
     .lrow .urt { grid-column:2; }
+    /* And so does the phase ladder. Without this it auto-places into the first free
+       cell — column 1, the 22ch value column — which squashes a four-decade axis into
+       a fifth of the width it needs and leaves column 2 blank beside it. Anything
+       appended to .lrow that is not a value or a label wants column 2 named
+       explicitly; the grid will not guess it. */
+    .lrow .pdist { grid-column:2; }
   }
   .lrow:last-child { border-bottom:0; }
   .lval { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:1.5rem;
@@ -250,20 +256,27 @@
      genuinely unreadable. A shape wants a shape. Log axis, because the data spans
      four decades and a linear one would collapse everything below the maximum
      into the left edge, which is exactly the misreading the row exists to prevent. */
-  .pdist { margin-top:.5rem; }
+  .pdist { margin-top:.6rem; max-width:78ch; }
   .pdist-lab { font-size:.6875rem; font-family:var(--mono); color:var(--ink-faint);
                display:flex; justify-content:space-between; gap:.75rem; }
-  .pdist-ax { position:relative; height:30px; margin-top:.4rem; }
-  .pdist-ax::after { content:''; position:absolute; left:0; right:0; bottom:10px;
+  .pdist-ax { position:relative; height:38px; margin-top:.5rem; }
+  .pdist-ax::after { content:''; position:absolute; left:0; right:0; bottom:12px;
                      height:1px; background:var(--rule-soft); }
   .pdist-dec { position:absolute; bottom:0; font-size:.5625rem; font-family:var(--mono);
                color:var(--ink-faint); transform:translateX(-50%); white-space:nowrap; }
-  .pdist-mk { position:absolute; bottom:10px; width:2px; height:12px;
-              background:var(--ink-soft); }
-  .pdist-mk.worst { background:#D2544A; height:16px; }
+  /* The decade tick itself, so the label is anchored to a position and not floating
+     near one — at four decades across a wide column, "near" is several pixels. */
+  .pdist-dec::after { content:''; position:absolute; left:50%; bottom:11px; width:1px;
+                      height:4px; background:var(--rule-soft); }
+  .pdist-mk { position:absolute; bottom:12px; width:2px; height:15px;
+              background:var(--ink-soft); border-radius:1px; }
+  .pdist-mk.worst { background:#D2544A; height:20px; }
   .pdist-vals { font-family:var(--mono); font-size:.6875rem; color:var(--ink-soft);
-                margin-top:.35rem; line-height:1.6; }
+                margin-top:.5rem; line-height:1.7; }
   .pdist-vals b { color:var(--ink); font-weight:600; }
+  /* Below the grid breakpoint the row is a flex stack and the ladder is the full
+     width of the panel, so it needs no column of its own. */
+  @media (max-width: 45.999rem) { .pdist { max-width:none; } }
   .trends { margin-top:.4rem; border-top:1px solid var(--rule-soft); padding-top:.6rem;
             display:flex; flex-direction:column; gap:.55rem; }
   .trend  { display:grid; grid-template-columns: 11rem 1fr; gap:.75rem; align-items:center; }
