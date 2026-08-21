@@ -415,9 +415,10 @@
 
       <div class="readout" id="live">
         <div class="live-head">
-          <div class="tally" id="tally" role="status" aria-live="polite">
+          <div class="tally" id="tally" role="status" aria-live="polite"
+               aria-label="Checking for current figures">
             <span class="lamp" aria-hidden="true"></span>
-            <span class="tally-txt">SOAK LIVE</span>
+            <span class="tally-txt">CHECKING</span>
           </div>
           <span class="freshness" id="fresh"></span>
         </div>
@@ -459,9 +460,10 @@
           Syke's — so the card's rate error is a measured quantity rather than an assumption;
           we predict its consequences to within 1 %. Genlock is something we accept, not
           something we depend on: the design rule from the start was that the clock must not
-          rely on it, and the reference unit runs free &mdash; with the card reporting no late
-          or dropped frames of its own, and the engine's own late-frame count published live
-          in the panel above and explained, when it is not zero, in the table below.
+          rely on it, and the reference unit runs free &mdash; through the 339-hour soak that
+          ended on 20 August 2026 the card reported no late and no dropped frames of its own,
+          and the engine's own late-frame count is carried in the panel above while a soak is
+          running and explained, when it is not zero, in the table below.
         </p>
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem">
@@ -524,7 +526,7 @@
               2026-08-20T23:16:43&nbsp;UTC, after 339&nbsp;h unbroken. Both events: <strong>11 Aug, 03:25&nbsp;UTC</strong>
               (567&nbsp;&micro;s) and <strong>15 Aug, 08:50&nbsp;UTC</strong>
               (570&nbsp;&micro;s). The panel had the first by 03:33 &mdash; eight minutes
-              later, unattended, because that panel is generated from the engine's own
+              later, unattended, because that panel was generated from the engine's own
               counters every fifteen minutes rather than written by hand. <strong>We did
               not notice the second for two days.</strong> The panel published it within
               minutes, as it is built to; nobody was reading the panel. That is worth
@@ -564,18 +566,21 @@
               one carries no information either way, and saying we had excluded them would
               be dressing an untestable up as a result. <strong>Ruled in:</strong> the
               112.5&nbsp;s recurrence, and it is now much harder to argue with than it was
-              on nine samples. The 67 arrive in 23 bursts of one to five, and
+              on nine samples. The 109 arrived in 36 bursts of one to five, and
               <em>every</em> gap inside a burst is 112 or 113&nbsp;s, or exactly twice that
-              where a beat is missed &mdash; 44 gaps, no other value, none. A metronome
+              where a beat is missed &mdash; 73 gaps, no other value, none. A metronome
               that regular is not local load, and the magnitudes are indistinguishable
               between the bursts that fall in working hours and those at 02:00 and
-              05:00&nbsp;local with nobody logged in (median 416 against 411&nbsp;&micro;s).
-              <strong>Not re-derived, and so not claimed:</strong> the observation that all
-              nine of the original excursions fell inside one long MXF decode was
-              established on those nine and has not been checked against the other 58. It
-              may still hold; we have not looked, and we would rather say so than let a
-              finding quietly inherit a larger sample than it was measured on. Cause not
-              determined. We publish it undetermined rather than
+              05:00&nbsp;local with nobody logged in (median 412 against 413&nbsp;&micro;s).
+              <strong>Re-derived after the campaign ended, and it holds:</strong> the
+              observation that the original nine all fell inside a long MXF decode was
+              established on those nine, so we went back and checked it against the
+              population we could still resolve against the as-run. Every one of them sits
+              inside a long MXF, across three different files rather than the one it was
+              first seen in. It is an association and not an explanation &mdash; the two
+              longest items in the schedule are not MXF and produced none at all, on more
+              airtime than the ones that did, so the container tracks the effect without
+              accounting for it. Cause not determined. We publish it undetermined rather than
               attach the tidiest available story to it</td>
           </tr>
           <tr>
@@ -586,9 +591,9 @@
               wanting: it published a starvation <em>run-length</em> that reset the moment a
               frame arrived, so a recovered underrun &mdash; nearly all of them &mdash; was
               structurally invisible to it. That 0 was not so much false as unearned; the
-              counter could not have reported anything else. It is cumulative now and stands
-              at whatever decoder priming cost that run &mdash; the live panel above carries
-              the figure whenever a soak is running &mdash; so the bar has moved: what would earn this row back is a
+              counter could not have reported anything else. It is cumulative now and reads
+              whatever decoder priming cost a run &mdash; the panel above carries the figure
+              whenever a soak is running &mdash; so the bar has moved: what would earn this row back is a
               completed run in which the counter does not grow <em>after</em> start-up. A run
               has now completed, and <strong>that bar is met</strong>: across the 14-day run
               the counter read 71 &mdash; all of it decoder priming, inside the first eight
@@ -598,13 +603,13 @@
               value it would publish is a zero and a zero is exactly what this row was wrong
               about the first time. Earning it back needs one more thing than a good result,
               and note
-              that this row stays empty while the campaign two rows up has already
+              that this row stays empty while the campaign row above it has already
               <em>failed</em>, which is the point of scoring them separately</td>
           </tr>
           <tr>
             <td>Clock phase, typical (mean magnitude)</td>
             <td class="v">45 ns</td>
-            <td class="src">mean of |phase| per tick, one 4,552 s window, 2 Aug 2026 &mdash; the live panel above reports the current value of this same quantity</td>
+            <td class="src">mean of |phase| per tick, one 4,552 s window, 2 Aug 2026 &mdash; the panel above reports this same quantity whenever a soak is running</td>
           </tr>
           <tr>
             <td>Clock phase, median of the per-second peak</td>
@@ -641,8 +646,9 @@
               latched worst tick, and 570&nbsp;&micro;s is where it finished. Exactly two
               of the 109 exceeded 500&nbsp;&micro;s, which is the threshold the late-frame
               counter itself uses &mdash; so the two counters agree without being wired
-              together. Cause open. Host load is recorded
-              alongside, and since 12 Aug so is every interrupt the clock core takes</td>
+              together. Cause open. Host load was recorded
+              alongside throughout, and from 12 Aug so was every interrupt the clock core
+              took</td>
           </tr>
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
@@ -722,8 +728,8 @@
             engine produces marginally faster than the card consumes. A surplus frame is discarded
             from the handoff queue roughly <strong>every 90 minutes</strong> at the drift measured through
             1 Aug 2026 — by design, and at a
-            rate we predict from the live drift to within 1&nbsp;%. The card itself reports zero
-            late and zero dropped frames after start-up. Whether a discarded frame is visible on
+            rate we predict from the measured drift to within 1&nbsp;%. The card itself reported zero
+            late and zero dropped frames after start-up, across the whole 339-hour run. Whether a discarded frame is visible on
             the wire is <strong>engine-side accounting, not a wire measurement.</strong></p>
           <p class="reg-earn"><span>Would earn it:</span> the same capture rig. Until then we
             report what our counters see and say which side of the card they sit on.</p>
@@ -738,7 +744,7 @@
             operation and the transition across a reference failure are both unmeasured. The
             card's genlock-source setting exists in our configuration and is currently read by
             nothing, and the telemetry that would let us watch the reference state has been
-            written and went on air on 2 Aug 2026; it reads <span class="inline-code">unlocked</span>,
+            written and went on air on 2 Aug 2026; it read <span class="inline-code">unlocked</span>,
             and has done in every one of <strong>25,876</strong> samples to 21 Aug 2026 &mdash;
             including all 339 hours of the soak that has just ended &mdash; since it began publishing
             &mdash; which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
@@ -746,7 +752,7 @@
             failure looks like.</p>
           <p class="reg-earn"><span>Would earn it:</span> a reference on the bench, lock observed,
             and then pulling that reference on a live channel and measuring the edge. The
-            telemetry needed to watch it is already on air.</p>
+            telemetry needed to watch it is built and has already run on air.</p>
         </div>
 
         <div class="reg-item">
@@ -926,7 +932,8 @@
       <span style="font-size:.8125rem">
         Copy and figures drawn from measured results. Every figure here is dated or marked a
         floor, because a static number for a quantity that moves is wrong the moment it moves;
-        the panel above carries the current readings.
+        the panel above carries the current readings whenever a soak is running, and the
+        dated record when none is.
       </span>
     </p>
   </footer>
