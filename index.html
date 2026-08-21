@@ -1333,11 +1333,18 @@
       }
     }
 
+    // THE LABEL DESCRIBES THE FIGURES ON SCREEN, NOT THE FETCH. It used to branch on
+    // `stale`, which is a property of the FILE, so a fresh file over a dead engine read
+    // "measured 3 min ago" directly beside figures from a run that ended days earlier.
+    // The age of the download is not the age of the numbers, and the panel is showing
+    // the numbers. It branches on `live` now: an age is only shown when the figures
+    // beside it are the thing that was measured.
+    //
     // Minutes, not hours: with a 15-minute push cadence an hour-granular label would
     // read "measured moments ago" for its entire healthy life and carry no information.
     const mins = Math.round(ageHours * 60);
-    fresh.className = 'freshness ' + (stale ? 'stale' : 'ok');
-    fresh.textContent = stale
+    fresh.className = 'freshness ' + (live ? 'ok' : 'stale');
+    fresh.textContent = !live
       ? 'no soak \u2014 showing the record'
       : 'measured ' + (mins < 1 ? 'moments'
                      : mins < 60 ? mins + ' min'
