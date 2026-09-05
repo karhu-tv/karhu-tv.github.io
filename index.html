@@ -196,6 +196,11 @@
   .freshness { font-family:var(--mono); font-size:.6875rem; letter-spacing:.06em; }
   .freshness.ok { color: var(--accent); }
   .freshness.stale { color: var(--warn); }
+  /* The dated reason for there being no live soak. Rendered ONLY when the tally is not
+     live AND the snapshot carries a `reason` — a ruling written on the engine side, with
+     its date first, so it never claims to be now. Under a lit tally it is hidden. */
+  .reason { font-family:var(--mono); font-size:.75rem; color:var(--ink-soft); line-height:1.5;
+            padding:.55rem 0 .15rem; border-bottom:1px solid var(--rule-soft); }
   /* Full-width panel (2026-08-06): a row is value+label on the left and provenance
      on the right, so the width is USED rather than turned into 241-character lines —
      the longest provenance the engine currently emits is 241 chars, which unbroken is
@@ -232,6 +237,10 @@
             color:var(--ink-faint); border:1px solid var(--rule); border-radius:3px;
             padding:.05em .35em; white-space:nowrap; vertical-align:.1em; }
   .lscope.now { color:var(--ink-soft); }
+  /* The pipeline locator. Deliberately quieter than .lscope: scope changes what a
+     number MEANS, stage only says where it was measured. */
+  .lstage { font-size:.625rem; letter-spacing:.04em; color:var(--ink-faint);
+            font-family:var(--mono); white-space:nowrap; }
   /* Trend sparklines. Single series each, so the row label IS the legend; the line
      wears the accent (the page's measured-value colour), text stays in ink tokens.
      A gap in the data BREAKS the line — drawing across it would claim a
@@ -464,6 +473,7 @@
           </div>
           <span class="freshness" id="fresh"></span>
         </div>
+        <div class="reason" id="reason" hidden></div>
         <div id="live-rows"></div>
         <div class="trends" id="trends" hidden></div>
         <p class="readout-src" id="live-src"></p>
@@ -1175,9 +1185,24 @@
     const lab = document.createElement('div');
     lab.className = 'urt-lab';
     const left = document.createElement('span');
-    left.textContent = u.settled
-      ? (real.length ? real.length + ' after start-up' : 'none after start-up')
-      : 'still settling';
+    // FRAMES, NOT MARKS. The chart draws one mark per EPISODE, but the headline figure
+    // and the panel sentence both count FRAMES — and this label used to print
+    // `real.length`, the episode count, unlabelled beside them. 33 frames arriving in 2
+    // episodes rendered as "2 after start-up" next to "33 SINCE start-up", and a reader
+    // has no way to reconcile those. Operator, 2026-08-23.
+    //
+    // So: state the FRAME count, and name the episodes as what the marks represent. If
+    // since_baseline is absent, fall back to the episode count but SAY it is episodes —
+    // an unlabelled number beside a differently-counted figure is the whole defect.
+    const grewBy = (typeof u.since_baseline === 'number') ? u.since_baseline : null;
+    const nEp = real.length;
+    const plur = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+    left.textContent = !u.settled ? 'still settling'
+      : grewBy === null
+        ? (nEp ? plur(nEp, 'episode') + ' after start-up' : 'none after start-up')
+      : grewBy === 0 ? 'none after start-up'
+      : plur(grewBy, 'frame') + ' after start-up'
+        + (nEp ? ' in ' + plur(nEp, 'episode') : '');
     const right = document.createElement('span');
     right.textContent = fmtAgo(u.run_secs || 0) + ' into the run';
     lab.append(left, right);
@@ -1272,6 +1297,21 @@
       v.className = 'lval' + (live ? '' : ' hist');
       v.textContent = fmt(f.value, f.unit);
       const l = document.createElement('div'); l.className = 'llab'; l.textContent = f.label;
+        // WHERE IN THE PIPELINE, as a chip beside the label. Operator, 2026-08-23:
+        // "label where the late, underrun frames are exactly in the system clearer".
+        // "Late frames" reads as "frames were late to air"; it means the clock thread
+        // woke late and the card's buffer absorbed it. The provenance said so in prose,
+        // which a reader has to open. This says it on the row.
+        //
+        // Optional by design: absent renders NOTHING. The historical rows carry no stage
+        // and must not grow an empty chip, and an older snapshot.json predating the field
+        // must still render — the page is fetched live, so it meets both.
+        if (live && f.stage) {
+          const st = document.createElement('span');
+          st.className = 'lstage';
+          st.textContent = f.stage;
+          l.append(' ', st);
+        }
       // SCOPE, ON EVERY ROW. This panel used to interleave three per-run figures with
       // three campaign sums and say nothing about which was which. With one unbroken
       // run every figure coincides, so the mixing was invisible — it would first have
@@ -1403,6 +1443,19 @@
       : 'measured ' + (mins < 1 ? 'moments'
                      : mins < 60 ? mins + ' min'
                      : Math.round(ageHours) + ' h') + ' ago';
+
+    // THE REASON THERE IS NO LIVE SOAK, when the engine side has ruled one. It is a
+    // published string written on rig 1 (soak_snapshot.py, NO_LIVE_SOAK marker) with its
+    // date first, so it is a DATED claim and cannot rot. Shown only when not live: a
+    // no-soak reason under a lit tally would be two claims contradicting each other on
+    // one panel. Absent key, empty string or a live tally all hide it.
+    const reasonEl = document.getElementById('reason');
+    if (reasonEl) {
+      const why = (!live && typeof snap.reason === 'string' && snap.reason.trim())
+                ? snap.reason.trim() : '';
+      reasonEl.textContent = why;
+      reasonEl.hidden = !why;
+    }
 
     // THE LEDE SENTENCE IS RENDERED, NOT TYPED. The prose copy of the frame counter
     // went stale within hours of being written \u2014 7,296,650 in the sentence while the
