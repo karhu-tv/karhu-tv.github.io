@@ -3,8 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>opx-* Tools — KarhuTV</title>
-<meta name="description" content="Free broadcast engineering tools from KarhuTV. opx-probe, opx-loudness, opx-drift and more.">
+<title>opx-* Tools — Karhu TV</title>
+<meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/tools.html">
+<meta property="og:title" content="opx-* Tools — Karhu TV">
+<meta property="og:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="opx-* Tools — Karhu TV">
+<meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -370,7 +384,7 @@
 <nav>
   <a href="/" class="nav-logo">
     <div class="nav-logo-mark"></div>
-    Karhu<span style="color:var(--accent)">TV</span>
+    Karhu <span style="color:var(--accent)">TV</span>
   </a>
   <ul class="nav-links">
     <li><a href="/tools.html" class="active">Tools</a></li>
@@ -383,7 +397,7 @@
   <h1 class="page-title">Free broadcast<br>engineering tools.</h1>
   <p class="page-body">
     Binary-only releases for Linux and Windows. No account required.
-    No licence. No telemetry. Built on the same codebase as our commercial products.
+    No licence key. No telemetry, no update check — the tools phone nowhere. (A URL given as the file argument is opened by FFmpeg, as in any FFmpeg tool.) Built on the same codebase as our commercial products.
   </p>
 </div>
 
@@ -396,7 +410,7 @@
     </div>
     <div class="tool-status-block">
       <div class="status-badge">Available</div>
-      <div class="tool-version">v0.2 · July 2026</div>
+      <div class="tool-version">v0.2.0 · 28 Jul 2026</div>
     </div>
   </div>
 
@@ -412,7 +426,7 @@
 
       <ul class="feature-list">
         <li>Container and stream inspection — H.264, MPEG-2, ProRes, DNxHD</li>
-        <li>MXF OP1a with AS-11 UK DPP sidecar parsing — programme title, audio layout, rights expiry</li>
+        <li>MXF with an AS-11 sidecar — programme title, audio track layout, AFD, subtitles flag, rights expiry</li>
         <li>Preflight validation against house format — frame rate, sample rate, edit list, VFR detection</li>
         <li>JSON output for scripting and pipeline integration</li>
         <li>Exit codes: 0 = clean, 1 = preflight fail, 2 = probe error</li>
@@ -440,7 +454,7 @@
 
     <div>
       <div class="download-block">
-        <div class="download-title">Download opx-probe v0.2</div>
+        <div class="download-title">Download opx-probe v0.2.0</div>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz"
              class="download-btn">
@@ -448,7 +462,7 @@
               <span class="platform-icon">🐧</span>
               <div>
                 <div>Linux x86_64</div>
-                <div class="download-btn-meta">tar.gz · Ubuntu 22.04+</div>
+                <div class="download-btn-meta">tar.gz · Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
               </div>
             </div>
             <span class="download-arrow">↓</span>
@@ -459,15 +473,16 @@
               <span class="platform-icon">⊞</span>
               <div>
                 <div>Windows x86_64</div>
-                <div class="download-btn-meta">zip · Windows 10+, FFmpeg bundled</div>
+                <div class="download-btn-meta">zip · Windows 10 (tested Jul–Aug 2026), FFmpeg bundled</div>
               </div>
             </div>
             <span class="download-arrow">↓</span>
           </a>
         </div>
         <div class="download-note">
-          <strong>Linux:</strong> requires FFmpeg 6.x —
-          <code>sudo apt install ffmpeg</code> on Ubuntu/Debian.<br><br>
+          <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
+          Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
+          (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
           <strong>Windows:</strong> FFmpeg DLLs bundled in the zip.
           Extract and run — no installation required.<br><br>
           Source code is not published.
@@ -483,15 +498,15 @@
   <div class="tool-header">
     <div class="tool-title-block">
       <div class="tool-name">opx-loudness</div>
-      <div class="tool-tagline">EBU R128 loudness analysis — integrated, short-term, momentary, true peak, Ofcom compliance</div>
+      <div class="tool-tagline">EBU R128 loudness analysis — integrated, short-term, momentary, true peak</div>
     </div>
     <div class="tool-status-block">
-      <div class="status-badge soon">Coming soon</div>
+      <div class="status-badge soon">In progress</div>
     </div>
   </div>
   <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
-    EBU R128 loudness metering with Ofcom compliance checking. Verified against ffprobe.
-    Per-channel analysis. In development.
+    EBU R128 and Free TV OP-59, with the thresholds read from the issuing bodies’ own documents
+    rather than a summary. Says INCONCLUSIVE where it can’t honestly say pass.
   </div>
 </div>
 
@@ -504,7 +519,7 @@
     </div>
     <div class="tool-status-block">
       <div class="status-badge">Available</div>
-      <div class="tool-version">v0.2 &middot; July 2026</div>
+      <div class="tool-version">v0.2.2 &middot; 12 Aug 2026</div>
     </div>
   </div>
 
@@ -524,9 +539,9 @@
         <li>PTS drift against an exact rational timeline &mdash; steps of &plusmn;1 period are dropped or repeated frames</li>
         <li>Audio/video differential with EBU R37 (+40 / &minus;60 ms) &mdash; asymmetric, so the sign selects the bound</li>
         <li>Two files &mdash; their video timelines compared against each other</li>
-        <li>Quantisation floor printed with every report; a deviation below it is reported as unmeasurable, never as zero</li>
+        <li>Quantisation floor printed with every report; a slope inside it is labelled quantisation-limited</li>
         <li>JSON output for scripting and pipeline integration</li>
-        <li>Exit codes: 0 = no discontinuities, 1 = discontinuities detected, 2 = error</li>
+        <li>Exit codes: 0 = no discontinuities, 1 = discontinuities detected (in <strong>sync</strong>, also an R37 breach inside the file), 2 = error, too little data, or a VFR stream</li>
       </ul>
 
       <div class="usage-block">
@@ -542,15 +557,15 @@
 <span class="t-prompt">$</span> <span class="t-cmd">opx-drift</span> <span class="t-cmd">file</span> <span class="t-path">capture.mp4</span> <span class="t-flag">--rate</span> <span class="t-val">30000/1001</span><br>
 <br>
 <span class="t-comment"># The differential is the finding, not the slope</span><br>
-<span class="t-label">  differential </span><span class="t-val">-1.412 ppm</span><span class="t-label"> (+ = audio ahead)</span><br>
-<span class="t-label">  guard 24.259 ppm (3&times; the 8.086 ppm slope floor)</span>
+<span class="t-comment"># opx-drift 0.2.2 on bars_h264_1080p25_stereo_10s.mp4, captured 2026-09-06</span><br>
+<span class="t-label">  no significant differential &middot; differential </span><span class="t-val">+0.000 ppm</span><span class="t-label"> (+ = audio ahead) &middot; guard 14.836 ppm (3&times; the 4.945 ppm slope floor)</span>
         </div>
       </div>
     </div>
 
     <div>
       <div class="download-block">
-        <div class="download-title">Download opx-drift v0.2</div>
+        <div class="download-title">Download opx-drift v0.2.2</div>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz"
              class="download-btn">
@@ -558,7 +573,7 @@
               <span class="platform-icon">&#128039;</span>
               <div>
                 <div>Linux x86_64</div>
-                <div class="download-btn-meta">tar.gz &middot; Ubuntu 22.04+</div>
+                <div class="download-btn-meta">tar.gz &middot; Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
               </div>
             </div>
             <span class="download-arrow">&darr;</span>
@@ -569,15 +584,16 @@
               <span class="platform-icon">&#8862;</span>
               <div>
                 <div>Windows x86_64</div>
-                <div class="download-btn-meta">zip &middot; Windows 10+, FFmpeg bundled</div>
+                <div class="download-btn-meta">zip &middot; Windows 10 (tested Jul–Aug 2026), FFmpeg bundled</div>
               </div>
             </div>
             <span class="download-arrow">&darr;</span>
           </a>
         </div>
         <div class="download-note">
-          <strong>Linux:</strong> requires FFmpeg 6.x &mdash;
-          <code>sudo apt install ffmpeg</code> on Ubuntu/Debian.<br><br>
+          <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
+          Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
+          (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
           <strong>Windows:</strong> FFmpeg DLLs bundled in the zip.
           Extract and run &mdash; no installation required.<br><br>
           <strong>Read the note under a sync report before quoting a number.</strong>
@@ -595,22 +611,22 @@
   <div class="tool-header">
     <div class="tool-title-block">
       <div class="tool-name">opx-verify</div>
-      <div class="tool-tagline">As-run log verifier — hash-chain validation, R128 compliance, subtitle quota, SCTE-35 accuracy</div>
+      <div class="tool-tagline">As-run log verifier — hash-chain validation across day files and restarts</div>
     </div>
     <div class="tool-status-block">
-      <div class="status-badge soon">Coming soon</div>
+      <div class="status-badge soon">In progress</div>
     </div>
   </div>
   <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
-    Validate cryptographically chained playout logs. Verify R128 compliance and subtitle quota
-    from the as-run record. In development.
+    Verifies a hash-chained as-run archive across day-file boundaries and restarts.
+    A single file can’t check what it continues.
   </div>
 </div>
 
 <footer>
   <div class="footer-left">
-    <span class="footer-logo">KarhuTV</span>
-    <span class="footer-meta">Bear Media Services Ltd · Trading as KarhuTV · England & Wales</span>
+    <span class="footer-logo">Karhu TV</span>
+    <span class="footer-meta">Bear Media Services LTD · Trading as Karhu TV · England & Wales</span>
   </div>
   <ul class="footer-links">
     <li><a href="/tools.html">Tools</a></li>
