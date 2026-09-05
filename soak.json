@@ -1,0 +1,190 @@
+{
+  "measured_at": "2026-09-05T23:28:43Z",
+  "elapsed_s": null,
+  "campaign": {
+    "late_frames": null,
+    "frames": null,
+    "shed": null,
+    "runs": null,
+    "span_h": null,
+    "note": "summed per run across the campaign window since the marker. NOT the live panel, which is this run only \u2014 a campaign sum and a run counter are different quantities and the panel publishes exactly one of them"
+  },
+  "series": {},
+  "underruns": null,
+  "phase_dist": {
+    "what": "per-second worst tick",
+    "samples": 1221791,
+    "unit": "ns",
+    "frame_ns": 20000000,
+    "steps": [
+      {
+        "label": "median",
+        "ns": 197
+      },
+      {
+        "label": "p90",
+        "ns": 735
+      },
+      {
+        "label": "p99",
+        "ns": 1059
+      },
+      {
+        "label": "p99.9",
+        "ns": 1219
+      },
+      {
+        "label": "p99.99",
+        "ns": 39780
+      },
+      {
+        "label": "worst",
+        "ns": 569759
+      }
+    ]
+  },
+  "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25i \u00b7 25p \u00b7 29.97p \u00b7 50p \u00b7 50i across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.",
+  "figures": [
+    {
+      "label": "Soak elapsed",
+      "value": null,
+      "unit": "h",
+      "provenance": "soak sampler silent \u2014 figures withheld rather than frozen",
+      "scope": "run"
+    },
+    {
+      "label": "Frames delivered",
+      "value": null,
+      "unit": "",
+      "provenance": "engine unreachable and soak log unreadable",
+      "scope": "run"
+    },
+    {
+      "label": "Late frames",
+      "value": null,
+      "unit": "",
+      "provenance": "the ENGINE's count of clock wakes that arrived more than 500 \u00b5s behind the instant they were scheduled for. An internal timing miss, not a lost frame \u2014 the frame is still built, and the card's output buffer absorbs the delay. This run; it resets at a restart, and so does the frame count above it, so the two always share a scope",
+      "scope": "run",
+      "stage": "engine clock"
+    },
+    {
+      "label": "Card-reported late frames",
+      "value": null,
+      "unit": "",
+      "provenance": "the CARD's own counter, not the engine's \u2014 an independent instrument on the far side of the handoff. Nothing reached the SDI output late",
+      "scope": "run",
+      "stage": "SDI output"
+    },
+    {
+      "label": "Frame underruns",
+      "value": null,
+      "unit": "",
+      "provenance": "cumulative since engine start. A standing value of a few hundred is decoder start-up priming, present at every start by design \u2014 growth after start-up is what would indicate a fault",
+      "scope": "run",
+      "stage": "decoder \u2192 queue"
+    },
+    {
+      "label": "Clock phase, worst this run",
+      "value": null,
+      "unit": "ns",
+      "provenance": "worst single tick since this run began, never reset. The ceiling pre-registered for this campaign, frozen before it started, is 2,000,000 ns \u2014 one tenth of a frame",
+      "scope": "run"
+    },
+    {
+      "label": "Clock phase, typical",
+      "value": null,
+      "unit": "ns",
+      "provenance": "mean magnitude \u2014 not the signed mean, which cancels",
+      "scope": "now"
+    },
+    {
+      "label": "Card crystal error vs TAI",
+      "value": null,
+      "unit": "ppm",
+      "provenance": "measured continuously; the figure the drift compensation is built on",
+      "scope": "now"
+    },
+    {
+      "label": "Frames shed by drift compensation",
+      "value": null,
+      "unit": "",
+      "provenance": "surplus frames discarded from the handoff queue, by design",
+      "scope": "run",
+      "stage": "handoff queue"
+    }
+  ],
+  "historical": [
+    {
+      "label": "Longest continuous engine run",
+      "value": 339,
+      "unit": "h",
+      "when": "6\u201320 Aug 2026, ended",
+      "provenance": "one unbroken run, 2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, ended deliberately at the close of the 14-day campaign. Derived three independent ways that agree to within twenty seconds \u2014 one part in 61,000: the supervisor reports NRestarts=0 across the whole span (339.3881 h), the engine's own frame counter reached 61,088,850 at 50 fps (339.3825 h, read 14 s before the stop), and the 1 Hz diagnostic line spans 339.3861 h. Rounded DOWN to whole hours \u2014 a final figure, not a floor"
+    },
+    {
+      "label": "Frames delivered, that run",
+      "value": 61088850,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "the engine's own frame counter 14 s before it was stopped; at 50 fps it is one of the three derivations of the 339 h above, agreeing with the supervisor span to within twenty seconds. Frames PRODUCED by the engine, which is not the same as frames the card put on the wire \u2014 214 were shed to drift compensation, by design"
+    },
+    {
+      "label": "Late SDI frames, that run",
+      "value": 0,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "reported by the card itself, not by us: frames that reached the SDI output late. Zero, across 339 hours \u2014 and the denominator is the card's own, not the engine's 61,088,850 produced, because 214 of those were shed to drift compensation before the card saw them"
+    },
+    {
+      "label": "Late engine frames, that run",
+      "value": 2,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "a different counter answering a different question \u2014 twice in 339 hours the clock thread woke more than half a millisecond late. The frame was still built and the card's buffer absorbed it, which is what the row above independently confirms. Published because the campaign's frozen criterion allowed ZERO of these, so it failed its own test, and a criterion you only quote when it passes is not a criterion"
+    },
+    {
+      "label": "Clock phase, median tick",
+      "value": 197,
+      "unit": "ns",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "the worst tick in each second, then the spread of those across all 1,221,791 seconds of the run: median 197 ns, p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759. Half the run sat inside 197 ns and 99.9 % of it inside 1.22 \u00b5s. Published as a distribution because a latched maximum is the least representative number a run produces, and quoting it alone flatters nobody honestly"
+    },
+    {
+      "label": "Worst single tick, that run",
+      "value": 569759,
+      "unit": "ns",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "latched maximum, never reset \u2014 under 3 % of one 20 ms frame, and the tail of the distribution in the row above rather than its shape. It belongs to a population of 109 excursions of 380 \u00b5s or more across the fortnight, all in the same direction; cause open and under investigation"
+    },
+    {
+      "label": "Clip junctions, that run",
+      "value": 7439,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "every transition between schedule items, taken from the as-run log and checked against the house tick grid: 7,439, and every one of them frame-exact \u2014 the interval between the last frame of the outgoing item and the first frame of the incoming one was exactly one source frame, worst deviation 79 ns. No gaps, no overlaps. One further transition is deliberately not counted as a junction: the 48.6 s gap at the very start, where this run itself began"
+    },
+    {
+      "label": "Seconds at exactly 50 frames, that run",
+      "value": 1221791,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "every second of the run \u2014 and there are no missing seconds, because 1,221,791 diagnostic seconds span exactly 1,221,791 seconds of wall clock. In all 1,221,790 intervals between them the frame counter advanced by exactly 50 and the timecode by exactly one second, across 14 midnights, with the clock reporting LOCK in every one"
+    },
+    {
+      "label": "Compliance records dropped, that run",
+      "value": 0,
+      "unit": "",
+      "when": "6\u201320 Aug 2026, concluded",
+      "provenance": "the as-run writer hands records to a queue that is allowed to drop its newest entry rather than stall the clock thread, and writes an exception into the chain when it does. It never did: zero drops across the run's 47,518,115 records. Published as a zero only because the thing that would have made it non-zero leaves its own evidence \u2014 an unwitnessed zero is what this panel withdrew a row over on 4 Aug"
+    },
+    {
+      "label": "As-run records checked for tampering",
+      "value": 120483920,
+      "unit": "",
+      "when": "re-verified 21 Aug 2026",
+      "provenance": "every record in the archive, re-checked after the 14-day run: 47 day files, 120,483,920 records, 13 chain segments. One broken boundary, 20\u219221 June 2026, known and pre-dating this run \u2014 it is a real finding and it is why the archive reads INVALID rather than clean. No other break, and 0 false positives across the rest; six forgery vectors closed"
+    }
+  ],
+  "reason": "2026-09-05 \u00b7 No live soak. The reference unit is in development use; a second unit is in development and does not publish. The figures below are the dated record.",
+  "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."
+}
