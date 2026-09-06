@@ -20,18 +20,18 @@
 <meta property="og:site_name" content="Karhu TV">
 <meta property="og:url" content="https://karhu.tv/">
 <meta property="og:title" content="Karhu TV — TAI-disciplined broadcast playout, in software">
-<meta property="og:description" content="At 1080p50, a frame is 20 milliseconds. We hold the clock to tens of nanoseconds on a stock PC — and we publish what we don't claim.">
+<meta property="og:description" content="At 1080p50, a frame is 20 milliseconds. We measure our clock error in nanoseconds, on a stock PC — and we publish what we don't claim.">
 <meta property="og:image" content="https://karhu.tv/og-card-v1.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: an evidence table and a public register of what we don't claim.">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
 <meta property="og:locale" content="en_GB">
 
 <!-- X/Twitter reads og:* as fallback but wants the card type declared. -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Karhu TV — TAI-disciplined broadcast playout, in software">
-<meta name="twitter:description" content="At 1080p50, a frame is 20 milliseconds. We hold the clock to tens of nanoseconds on a stock PC — and we publish what we don't claim.">
+<meta name="twitter:description" content="At 1080p50, a frame is 20 milliseconds. We measure our clock error in nanoseconds, on a stock PC — and we publish what we don't claim.">
 <meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
 
 <link rel="canonical" href="https://karhu.tv/">
@@ -450,7 +450,7 @@
                copy of a live counter in prose was exactly how this sentence rotted within
                hours of being typed (it read 7,296,650 while the panel beside it said
                7,656,700). A dated figure stays true; an undated one is stale on arrival. -->
-          <span id="lede-soak">Between 6 and 20 August 2026 the reference unit delivered
+          <span id="lede-soak">Between 6 and 20 August 2026 the reference unit produced
           <strong>61,088,850 frames</strong> in one unbroken 339-hour run, with
           <strong>none late on the SDI output</strong>.</span>
         </p>
@@ -503,17 +503,19 @@
           <strong>Syke</strong> paces from <strong>TAI</strong> — a monotonic timescale with no
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
-          an absolute instant, not an offset from whenever the process happened to start.
+          an absolute instant, not an offset from whenever the process happened to start &mdash;
+          with one open defect, RET-122, named in the register below: the head of a looping region
+          airs twice per loop, and displaces what follows.
         </p>
         <p>
-          <strong>Which is why losing house sync doesn't cost you your time base.</strong> Take
+          <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we have not yet tested, because no house reference has been on this bench. Take
           the second of those approaches and the reference is your timing authority, so when it
           goes you are left on an uncorrected crystal. Syke's authority is TAI — and Rytmi's is
           Syke's — so the card's rate error is a measured quantity rather than an assumption;
-          we predict its consequences from a measured figure &mdash; to within 1&nbsp;% over the twelve-hour runs of July 2026, and to 14&nbsp;% over the 339-hour run of August, where the sheds arrived sooner than the model said because the drift number we publish is a run-cumulative mean that lags the crystal (median observed &divide; predicted 0.864 over 213 intervals, re-derived 21 Aug 2026). Genlock is something we accept, not
-          something we depend on: the design rule from the start was that the clock must not
+          we predict its consequences from a measured figure &mdash; to within 1&nbsp;% at the median over the twelve-hour runs of July 2026 (individual runs &minus;8&nbsp;%/+19&nbsp;%), and to 14&nbsp;% over the 339-hour run of August, where the sheds arrived sooner than the model said because the drift number we publish is a run-cumulative mean that lags the crystal (median observed &divide; predicted 0.863 over 213 intervals, re-derived 21 Aug 2026). Genlock is something the card can take and we do not
+          depend on: the design rule from the start was that the clock must not
           rely on it, and the reference unit runs free &mdash; through the 339-hour soak that
-          ended on 20 August 2026 the card reported no late and no dropped frames of its own,
+          ended on 20 August 2026 the card reported no late and, after start-up, no dropped frames of its own,
           and the engine's own late-frame count is carried in the panel above while a soak is
           running and explained, when it is not zero, in the table below.
         </p>
@@ -543,8 +545,8 @@
           market.
         </p>
         <p class="note">
-          Four independent SDI outputs per card. Runs on Ubuntu. Binary-only, under NDA — the
-          timing core is the company, so it isn't published. Everything below it is.
+          Four independent SDI outputs per card &mdash; first driven from one process on 5 Sep 2026, on the second unit, bars only, not yet soaked. A source faster than the house rate airs slow (0.834&times;, RET-128) and is flagged, not refused. Runs on Ubuntu. Binary-only, under NDA — the
+          timing core is the company, so it isn't published.
         </p>
       </div>
     </div>
@@ -614,10 +616,10 @@
               disciplines that clock, so a correction applied to it was a live candidate
               and had to be excluded by measurement rather than by assertion &mdash; and
               the as-run block seal, thermal, and any engine stall or restart. <strong>Not ruled out, and not ruled in:</strong> clip
-              junctions &mdash; they run every 25&nbsp;s on this schedule, so proximity to
+              junctions &mdash; they run typically 25&nbsp;s apart (median) on this schedule, so proximity to
               one carries no information either way, and saying we had excluded them would
               be dressing an untestable up as a result. <strong>Ruled in:</strong> the
-              112.5&nbsp;s recurrence, and it is now much harder to argue with than it was
+              ~113&nbsp;s recurrence (measured 112.68&nbsp;s), and it is now much harder to argue with than it was
               on nine samples. The 109 arrived in 36 bursts of one to five, and
               <em>every</em> gap inside a burst is 112 or 113&nbsp;s, or exactly twice that
               where a beat is missed &mdash; 73 gaps, no other value, none. A metronome
@@ -673,7 +675,7 @@
           <tr>
             <td>Worst single tick, per run</td>
             <td class="v">944&ndash;3,091 ns</td>
-            <td class="src">the typical band, on most runs since the fsync fix of 28 Jul 2026.
+            <td class="src">the typical band on 14 of the 20 runs between the fsync fix of 28 Jul and 18 Aug 2026. Every run from 19 Aug to 5 Sep 2026 exceeded it, the worst at 904,629&nbsp;ns.
               <strong>Every run that exceeded it, through 18 Aug 2026:</strong>
               39&nbsp;&micro;s, 198&nbsp;&micro;s, 331&nbsp;&micro;s, 434&nbsp;&micro;s,
               570&nbsp;&micro;s, 1.21&nbsp;ms, 1.35&nbsp;ms,
@@ -707,7 +709,7 @@
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
             <td class="v">578&times;</td>
-            <td class="src">the fix deployed 28 Jul 2026. Median worst tick per run, 865,037&nbsp;&rarr;&nbsp;1,496&nbsp;ns; 9 runs before, 7 after, no overlap between the two sets. Runs were a uniform 12&nbsp;h at the time, which is what makes them comparable; that cadence has since been retired. Observational, not a controlled A/B &mdash; the controlled test on that fix measured late frames, not phase. Restricted to full-length runs on both sides &mdash; the figure is a latched maximum, so mixing in short ones flattered it to 693&times; &mdash; and the after-set excludes one further full-length run, 2 Aug, whose 434&nbsp;&micro;s peak is the build-load excursion the &ldquo;Worst single tick&rdquo; row lists; leaving it in changes the median not at all and the 578&times; barely, but saying &ldquo;no overlap&rdquo; without saying so would be a quiet cherry-pick</td>
+            <td class="src">the fix deployed 28 Jul 2026. Median worst tick per run, 865,037&nbsp;&rarr;&nbsp;1,496&nbsp;ns; 9 runs before, 7 after, no overlap between the two sets. Runs were a uniform 12&nbsp;h at the time, which is what makes them comparable; that cadence has since been retired. Observational, not a controlled A/B &mdash; the controlled test on that fix measured late frames, not phase. Restricted to full-length runs on both sides &mdash; the figure is a latched maximum, so mixing in short ones flattered it to 693&times; &mdash; and the after-set excludes one further full-length run, 2 Aug, whose 434&nbsp;&micro;s peak is the build-load excursion the &ldquo;Worst single tick&rdquo; row lists; leaving it in moves the median to 1,920&nbsp;ns and the factor to ~450&times; &mdash; which is why the exclusion is stated rather than silent, and saying &ldquo;no overlap&rdquo; without saying so would be a quiet cherry-pick</td>
           </tr>
           <tr>
             <td>As-run records checked for tampering</td>
@@ -722,12 +724,12 @@
           <tr>
             <td>Time-to-slip prediction from that drift</td>
             <td class="v">1.007×</td>
-            <td class="src">observed ÷ predicted, median over 14 runs to 31 Jul 2026. A model fit, so it moves as runs accumulate &mdash; what is claimed is that the model tracks, not that this digit is fixed. It moved: over the 339-hour run of August 2026 the same fit reads <strong>0.864</strong> across 213 shed intervals, because the drift figure it divides by is a run-cumulative mean that lags the crystal over a run that long. Corrected for that lag it reads 1.0025</td>
+            <td class="src">observed ÷ predicted, median over 14 runs to 31 Jul 2026. A model fit, so it moves as runs accumulate &mdash; what is claimed is that the model tracks, not that this digit is fixed. It moved: over the 339-hour run of August 2026 the same fit reads <strong>0.863</strong> across 213 shed intervals, because the drift figure it divides by is a run-cumulative mean that lags the crystal over a run that long. Corrected for that lag it reads 1.0025</td>
           </tr>
           <tr>
             <td>Longest continuous engine run</td>
             <td class="v">339 h</td>
-            <td class="src">6&ndash;20 Aug 2026 &mdash; a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the supervisor reports no restart across 2026-08-06T19:53:26Z&ndash;23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
+            <td class="src">6&ndash;20 Aug 2026 &mdash; a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the service manager (systemd) reports no restart across 2026-08-06T19:53:26Z&ndash;2026-08-20T23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
           </tr>
         </tbody>
       </table>
@@ -759,8 +761,9 @@
         be a timing instrument.
       </p>
       <p>
-        What that buys: it is a repeatable mechanism rather than noise; it is bounded, at
-        under 3&nbsp;% of one frame at its worst, and none of it reached the SDI output;
+        What that buys: it is a repeatable mechanism rather than noise; it is bounded &mdash;
+        under 3&nbsp;% of one frame at its worst over the 339-hour run of August 2026, 4.5&nbsp;% on the
+        228-hour run that ended 4 Sep 2026 &mdash; and none of it reached the SDI output;
         and it is not caused by the things it would be convenient to blame. Around twenty
         candidate causes have now been tested and rejected, several of them ours &mdash; and
         on 21 August the last two that were still standing went the same way. What is left is
@@ -809,10 +812,10 @@
 
         <div class="reg-item">
           <h3>Glass-to-glass latency</h3>
-          <p class="reg-why">We've measured the engine-side component over 200 trials. It is a
+          <p class="reg-why">We measured the engine-side component over 200 trials on 30 Jul 2026. It is a
             <em>lower bound</em>: it stops at the point the frame enters the handoff queue, and
             the card pipeline beyond that point adds at least 60&nbsp;ms this number does not
-            include. Quoting it as glass-to-glass would understate our own latency by an
+            include &mdash; the card buffer measured 8 frames, 160&nbsp;ms, unchanged across 1,824 samples over 30&nbsp;h to 1 Aug 2026. Scheduled-event accuracy on the wire is likewise unmeasured (engine-side, +22&ndash;31&nbsp;ms). Quoting it as glass-to-glass would understate our own latency by an
             unknown margin.</p>
           <p class="reg-earn"><span>Would earn it:</span> a capture rig on the SDI output measuring
             the round trip end to end.</p>
@@ -820,11 +823,11 @@
 
         <div class="reg-item">
           <h3>&ldquo;Never drops a frame&rdquo;</h3>
-          <p class="reg-why">The card's crystal runs about 3.7&nbsp;ppm slow against TAI, so the
+          <p class="reg-why">The card's crystal ran about 3.7&nbsp;ppm slow against TAI over 26 Jul&ndash;1 Aug 2026, so the
             engine produces marginally faster than the card consumes. A surplus frame is discarded
             from the handoff queue roughly <strong>every 90 minutes</strong> at the drift measured through
             1 Aug 2026 — by design, and at a
-            rate we predicted from the measured drift to within 1&nbsp;% over July 2026's twelve-hour runs &mdash; and 14&nbsp;% over the 339-hour August run, median observed &divide; predicted 0.864 across 213 shed intervals, re-derived 21 Aug 2026. The card itself reported zero
+            rate we predicted from the measured drift to within 1&nbsp;% at the median over July 2026's twelve-hour runs (individual runs &minus;8&nbsp;%/+19&nbsp;%) &mdash; and 14&nbsp;% over the 339-hour August run, median observed &divide; predicted 0.863 across 213 shed intervals, re-derived 21 Aug 2026. The card itself reported zero
             late and zero dropped frames after start-up, across the whole 339-hour run. Whether a discarded frame is visible on
             the wire is <strong>engine-side accounting, not a wire measurement.</strong></p>
           <p class="reg-earn"><span>Would earn it:</span> the same capture rig. Until then we
@@ -838,11 +841,11 @@
             not assumed. What we have <em>not</em> exercised is genlock at all: no valid house
             reference has yet been on this bench, so locked
             operation and the transition across a reference failure are both unmeasured. The
-            card's genlock-source setting exists in our configuration and is currently read by
+            card's genlock-source setting exists in our configuration and as of 21 Aug 2026 is read by
             nothing, and the telemetry that would let us watch the reference state has been
             written and went on air on 2 Aug 2026; it read <span class="inline-code">unlocked</span>,
             and has done in every one of <strong>25,876</strong> samples to 21 Aug 2026 &mdash;
-            including all 339 hours of the soak that has just ended &mdash; since it began publishing
+            including all 339 hours of the soak that ended on 20 Aug 2026 &mdash; since it began publishing
             &mdash; which is the correct answer for a bench with no reference. So we can tell you the box runs correctly free. We
             cannot yet tell you what it does locked, or what the first second after a reference
             failure looks like.</p>
@@ -853,10 +856,10 @@
 
         <div class="reg-item">
           <h3>Loudness monitoring on air</h3>
-          <p class="reg-why">We ship a full BS.1770 loudness meter — and it does not run on the
-            SDI path. It reads decoded source audio, upstream of the output mix, so it
-            structurally cannot see a conform error. A number from it would describe the file,
-            not the transmission.</p>
+          <p class="reg-why">We have a full BS.1770 loudness meter in the codebase — and on the SDI
+            product it is wired to nothing an operator can see. As built it reads decoded source
+            audio, upstream of the output mix, so even wired it could not see a conform error. A
+            number from it would describe the file, not the transmission.</p>
           <p class="reg-earn"><span>Would earn it:</span> metering the output bed itself, on its
             own thread. Designed; not built.</p>
         </div>
@@ -868,11 +871,12 @@
         <div class="reg-item">
             <h3>Item-level granularity in the as-run log</h3>
             <p class="reg-why">The as-run is a tamper-evident hash chain and we stand behind it:
-              120.5 million records checked as of 21 August 2026, no false positives, six forgery vectors closed. It
+              120,483,920 records checked as of 21 August 2026, no false positives, six forgery vectors closed, one known broken boundary (20&rarr;21 June 2026, before that run). It
               records <strong>one entry per frame</strong>, which makes it exact about what played
               and when, to the frame. What it does not carry is an <em>item</em> boundary &mdash; so
               two consecutive plays of the same file read as one continuous run of double the
-              length. <strong>Integrity is proven; item-level granularity is not</strong>, and we
+              length. That is not hypothetical: RET-122, an open defect, airs the head of a looping
+              region twice per loop on the reference unit today, and this log cannot show it. <strong>Integrity is proven; item-level granularity is not</strong>, and we
               would rather tell you which is which than let the first imply the second.</p>
           <p class="reg-earn"><span>Would earn it:</span> an item-boundary record. The obstacle is
             that our record format is frozen — adding a field would invalidate every archive
@@ -881,9 +885,10 @@
 
         <div class="reg-item">
           <h3>Cross-family rates on one card <em>while genlocked</em></h3>
-          <p class="reg-why">Mixed frame rates are supported and normal — this row is about one
-            specific edge, so here is the whole map rather than a caveat that sounds bigger than
-            it is.</p>
+          <p class="reg-why">Mixed <em>source</em> rates into one output rate are supported, normal and
+            proven on hardware; the engine binds one output rate per box today, and no 1001-family
+            (NTSC) frame has yet been on the wire from it. This row is about one specific edge, so
+            here is the whole map rather than a caveat that sounds bigger than it is.</p>
           <div class="matrix" role="table" aria-label="Frame-rate combinations by sync mode">
             <div class="mx-row mx-head" role="row">
               <span role="columnheader">Sync mode</span>
@@ -897,7 +902,7 @@
             </div>
             <div class="mx-row" role="row">
               <span role="rowheader">Free-running on internal sync</span>
-              <span class="ok" role="cell">Yes &mdash; and this is the mode the clock was designed for, not a fallback.</span>
+              <span class="maybe" role="cell">By design &mdash; one tick decimated per channel; not built. Free-running is the mode the clock was designed for.</span>
               <span class="maybe" role="cell">Not barred by the hardware &mdash; barred by us. See below.</span>
             </div>
           </div>
@@ -910,12 +915,12 @@
             crystal happily. What is single is our master tick, and one tick has to divide
             exactly into every rate it serves. <strong>59.94 is not 60</strong> &mdash; it is
             60000&frasl;1001, and 1001 shares no factor with 60000, so nothing cancels. The
-            smallest tick that lands on both is <strong>60&nbsp;kHz</strong>: 1,200 ticks per
+            smallest tick that lands on both is <strong>60&nbsp;kHz</strong> (120&nbsp;kHz once 23.976, which we also admit, is on the grid &mdash; ruled 18 Aug 2026): 1,200 ticks per
             50&nbsp;Hz frame, 1,001 per 59.94 &mdash; twelve hundred times today's grid <em>resolution</em>, but only 2.2&times; its wake rate, because you visit a grid point only where a frame boundary falls: 109.9 wakes a second against 50 today, measured 7 Aug 2026. (Were
             the second rate an exact 60, it would be 300&nbsp;Hz and this row would not exist;
             the whole cost is the NTSC 1001.) That is an
             engineering choice of ours, not a law of physics, and it is a choice we mean to
-            reverse: <strong>the 60&nbsp;kHz master clock is planned, and this row is written to
+            reverse: <strong>the finer master grid is planned &mdash; 120&nbsp;kHz &mdash; and this row is written to
             be deleted.</strong> We would rather say that than let a decision of ours read as a
             hardware limit.</p>
           <!-- INTENT, NOT A TIMEFRAME, and the distinction is policy §3 rather than taste.
@@ -927,9 +932,9 @@
                rotted on this site ("shipping this week", "a sync generator is on order"),
                which is why the rule exists at all. -->
           <p class="reg-earn"><span>Would earn it:</span> genlocked cross-family &mdash; a second
-            card with its own reference. Free-running cross-family &mdash; the 60&nbsp;kHz master
+            card with its own reference. Free-running cross-family &mdash; the 120&nbsp;kHz master
             tick, or independent cadence sources per channel. Ask if you need it; the answer is a
-            schedule, not a no.</p>
+            scope, not a no.</p>
         </div>
 
       </div>
@@ -1011,9 +1016,9 @@
         <div class="tool-top"><span class="tool-name">Karhu&nbsp;Player</span><span class="tag">in development &middot; not released</span></div>
         <p><strong>A media player for people who have to trust the timecode.</strong> Built for
           broadcast use rather than adapted to it, with EBU&nbsp;R128 loudness metering in the
-          engine rather than bolted on. <strong>It shares Rytmi's timing crate</strong> — TAI time
-          sourcing, exact rational frame arithmetic and the precision sleep are the same code, not
-          a reimplementation, and every ported item carries a provenance record naming its origin
+          engine rather than bolted on. <strong>Its frame-rate arithmetic and handoff ring are Rytmi's</strong> — copied
+          verbatim from a dated engine snapshot, each with a provenance record naming its origin;
+          its TAI sourcing and precision sleep are new code built to the same design, and the record says which is which
           in the engine.</p>
         <p class="note" style="margin-top:.4rem">Work in progress and <strong>not available</strong>
           — no download, no date. It is listed because it exists and because a player that says
@@ -1037,9 +1042,9 @@
 
 <script>
 (function () {
-  // In production this is: fetch('/soak.json').then(r => r.json())
-  // The Artifact CSP blocks external hosts, so a real snapshot is embedded instead.
-  const SNAPSHOT = {"measured_at": "2026-08-06T20:32:59Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1786046370, 86.0], [1786046430, 73.0], [1786046490, 60.0], [1786046550, 53.0], [1786046610, 44.0], [1786046670, 48.0], [1786046730, 53.0], [1786046790, 27.0], [1786046850, 142.0], [1786046910, 28.0], [1786046970, 39.0], [1786047030, 43.0], [1786047090, 37.0], [1786047150, 54.0], [1786047210, 62.0], [1786047270, 37.0], [1786047330, 39.0], [1786047390, 36.0], [1786047450, 67.0], [1786047510, 39.0], [1786047570, 47.0], [1786047630, 36.0], [1786047690, 46.0], [1786047750, 46.0], [1786047810, 55.0], [1786047870, 33.0], [1786047930, 41.0], [1786047990, 51.0], [1786048050, 54.0], [1786048110, 46.0], [1786048170, 73.0], [1786048230, 42.0], [1786048290, 57.0], [1786048350, 36.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1786046370, 3.364], [1786046430, 1.553], [1786046490, -0.208], [1786046550, -0.818], [1786046610, -1.158], [1786046670, -1.331], [1786046730, -1.486], [1786046790, -1.575], [1786046850, -1.632], [1786046910, -1.675], [1786046970, -1.705], [1786047030, -1.733], [1786047090, -1.755], [1786047150, -1.789], [1786047210, -1.839], [1786047270, -1.891], [1786047330, -1.934], [1786047390, -1.97], [1786047450, -2.005], [1786047510, -2.033], [1786047570, -2.062], [1786047630, -2.091], [1786047690, -2.116], [1786047750, -2.141], [1786047810, -2.167], [1786047870, -2.187], [1786047930, -2.221], [1786047990, -2.275], [1786048050, -2.326], [1786048110, -2.373], [1786048170, -2.417], [1786048230, -2.433], [1786048290, -2.45], [1786048350, -2.467]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1786046370, 2.0], [1786046430, 1.5], [1786046490, 8.04], [1786046550, 1.98], [1786046610, 1.493], [1786046670, 1.493], [1786046730, 0.5], [1786046790, 0.0], [1786046850, 4.975], [1786046910, 0.0], [1786046970, 0.503], [1786047030, 1.0], [1786047090, 1.005], [1786047150, 1.0], [1786047210, 1.5], [1786047270, 1.005], [1786047330, 1.493], [1786047390, 0.5], [1786047450, 0.505], [1786047510, 0.503], [1786047570, 1.0], [1786047630, 1.493], [1786047690, 0.505], [1786047750, 1.0], [1786047810, 1.0], [1786047870, 1.5], [1786047930, 1.0], [1786047990, 1.0], [1786048050, 1.0], [1786048110, 1.493], [1786048170, 1.0], [1786048230, 1.0], [1786048290, 1.0], [1786048350, 2.0]]}}, "underruns": {"run_secs": 2373, "settle_secs": 120, "settled": true, "baseline": 71, "since_baseline": 0, "events": [{"at": 7, "delta": 50, "priming": true}, {"at": 8, "delta": 21, "priming": true}]}, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25p \u00b7 25i \u00b7 29.97p \u00b7 50p \u00b7 50i across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": null, "unit": "h", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames delivered", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card-reported late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frame underruns", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, worst this run", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, typical", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card crystal error vs TAI", "value": null, "unit": "ppm", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames shed by drift compensation", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}], "historical": [{"label": "Longest continuous engine run", "value": 339, "unit": "h", "when": "6\u201320 Aug 2026, ended", "provenance": "one unbroken run, 2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, ended deliberately at the close of the 14-day campaign. Derived three independent ways that agree to within twenty seconds \u2014 one part in 61,000: the supervisor reports NRestarts=0 across the whole span (339.3881 h), the engine's own frame counter reached 61,088,850 at 50 fps (339.3825 h, read 14 s before the stop), and the 1 Hz diagnostic line spans 339.3861 h. Rounded DOWN to whole hours \u2014 a final figure, not a floor"}, {"label": "Frames delivered, that run", "value": 61088850, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the engine's own frame counter 14 s before it was stopped; at 50 fps it is one of the three derivations of the 339 h above, agreeing with the supervisor span to within twenty seconds. Frames PRODUCED by the engine, which is not the same as frames the card put on the wire \u2014 214 were shed to drift compensation, by design"}, {"label": "Late SDI frames, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "reported by the card itself, not by us: frames that reached the SDI output late. Zero, across 339 hours \u2014 and the denominator is the card's own, not the engine's 61,088,850 produced, because 214 of those were shed to drift compensation before the card saw them"}, {"label": "Late engine frames, that run", "value": 2, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "a different counter answering a different question \u2014 twice in 339 hours the clock thread woke more than half a millisecond late. The frame was still built and the card's buffer absorbed it, which is what the row above independently confirms. Published because the campaign's frozen criterion allowed ZERO of these, so it failed its own test, and a criterion you only quote when it passes is not a criterion"}, {"label": "Clock phase, median tick", "value": 197, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "the worst tick in each second, then the spread of those across all 1,221,791 seconds of the run: median 197 ns, p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759. Half the run sat inside 197 ns and 99.9 % of it inside 1.22 \u00b5s. Published as a distribution because a latched maximum is the least representative number a run produces, and quoting it alone flatters nobody honestly"}, {"label": "Worst single tick, that run", "value": 569759, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "latched maximum, never reset \u2014 under 3 % of one 20 ms frame, and the tail of the distribution in the row above rather than its shape. It belongs to a population of 109 excursions of 380 \u00b5s or more across the fortnight, all in the same direction; cause open and under investigation"}, {"label": "Clip junctions, that run", "value": 7439, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every transition between schedule items, taken from the as-run log and checked against the house tick grid: 7,439, and every one of them frame-exact \u2014 the interval between the last frame of the outgoing item and the first frame of the incoming one was exactly one source frame, worst deviation 79 ns. No gaps, no overlaps. One further transition is deliberately not counted as a junction: the 48.6 s gap at the very start, where this run itself began"}, {"label": "Seconds at exactly 50 frames, that run", "value": 1221791, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every second of the run \u2014 and there are no missing seconds, because 1,221,791 diagnostic seconds span exactly 1,221,791 seconds of wall clock. In all 1,221,790 intervals between them the frame counter advanced by exactly 50 and the timecode by exactly one second, across 14 midnights, with the clock reporting LOCK in every one"}, {"label": "Compliance records dropped, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the as-run writer hands records to a queue that is allowed to drop its newest entry rather than stall the clock thread, and writes an exception into the chain when it does. It never did: zero drops across the run's 47,518,115 records. Published as a zero only because the thing that would have made it non-zero leaves its own evidence \u2014 an unwitnessed zero is what this panel withdrew a row over on 4 Aug"}, {"label": "As-run records checked for tampering", "value": 120483920, "unit": "", "when": "re-verified 21 Aug 2026", "provenance": "every record in the archive, re-checked after the 14-day run: 47 day files, 120,483,920 records, 13 chain segments. One broken boundary, 20\u219221 June 2026, known and pre-dating this run \u2014 it is a real finding and it is why the archive reads INVALID rather than clean. No other break, and 0 false positives across the rest; six forgery vectors closed"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
+  // In production the page fetches SOAK_URL (raw.githubusercontent.com, soak-data
+  // branch); SNAPSHOT is the embedded fallback when that fetch fails.
+  const SNAPSHOT = {"measured_at": "2026-08-06T20:32:59Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1786046370, 86.0], [1786046430, 73.0], [1786046490, 60.0], [1786046550, 53.0], [1786046610, 44.0], [1786046670, 48.0], [1786046730, 53.0], [1786046790, 27.0], [1786046850, 142.0], [1786046910, 28.0], [1786046970, 39.0], [1786047030, 43.0], [1786047090, 37.0], [1786047150, 54.0], [1786047210, 62.0], [1786047270, 37.0], [1786047330, 39.0], [1786047390, 36.0], [1786047450, 67.0], [1786047510, 39.0], [1786047570, 47.0], [1786047630, 36.0], [1786047690, 46.0], [1786047750, 46.0], [1786047810, 55.0], [1786047870, 33.0], [1786047930, 41.0], [1786047990, 51.0], [1786048050, 54.0], [1786048110, 46.0], [1786048170, 73.0], [1786048230, 42.0], [1786048290, 57.0], [1786048350, 36.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1786046370, 3.364], [1786046430, 1.553], [1786046490, -0.208], [1786046550, -0.818], [1786046610, -1.158], [1786046670, -1.331], [1786046730, -1.486], [1786046790, -1.575], [1786046850, -1.632], [1786046910, -1.675], [1786046970, -1.705], [1786047030, -1.733], [1786047090, -1.755], [1786047150, -1.789], [1786047210, -1.839], [1786047270, -1.891], [1786047330, -1.934], [1786047390, -1.97], [1786047450, -2.005], [1786047510, -2.033], [1786047570, -2.062], [1786047630, -2.091], [1786047690, -2.116], [1786047750, -2.141], [1786047810, -2.167], [1786047870, -2.187], [1786047930, -2.221], [1786047990, -2.275], [1786048050, -2.326], [1786048110, -2.373], [1786048170, -2.417], [1786048230, -2.433], [1786048290, -2.45], [1786048350, -2.467]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1786046370, 2.0], [1786046430, 1.5], [1786046490, 8.04], [1786046550, 1.98], [1786046610, 1.493], [1786046670, 1.493], [1786046730, 0.5], [1786046790, 0.0], [1786046850, 4.975], [1786046910, 0.0], [1786046970, 0.503], [1786047030, 1.0], [1786047090, 1.005], [1786047150, 1.0], [1786047210, 1.5], [1786047270, 1.005], [1786047330, 1.493], [1786047390, 0.5], [1786047450, 0.505], [1786047510, 0.503], [1786047570, 1.0], [1786047630, 1.493], [1786047690, 0.505], [1786047750, 1.0], [1786047810, 1.0], [1786047870, 1.5], [1786047930, 1.0], [1786047990, 1.0], [1786048050, 1.0], [1786048110, 1.493], [1786048170, 1.0], [1786048230, 1.0], [1786048290, 1.0], [1786048350, 2.0]]}}, "underruns": {"run_secs": 2373, "settle_secs": 120, "settled": true, "baseline": 71, "since_baseline": 0, "events": [{"at": 7, "delta": 50, "priming": true}, {"at": 8, "delta": 21, "priming": true}]}, "unit": "reference unit \u2014 i7-12700, DeckLink Duo 2, free-running. Output is 1080p50 SDI; the test schedule is deliberately mixed-source \u2014 25p \u00b7 25i \u00b7 29.97p \u00b7 50p \u00b7 50i across DNxHD, H.264, MPEG-2, ProRes \u2014 so junctions cross format families every pass. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": null, "unit": "h", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames produced", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card-reported late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frame underruns", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, worst this run", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, typical", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card crystal error vs TAI", "value": null, "unit": "ppm", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames shed by drift compensation", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}], "historical": [{"label": "Longest continuous engine run", "value": 339, "unit": "h", "when": "6\u201320 Aug 2026, ended", "provenance": "one unbroken run, 2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, ended deliberately at the close of the 14-day campaign. Derived three independent ways that agree to within twenty seconds \u2014 one part in 61,000: systemd reports NRestarts=0 across the whole span (339.3881 h), the engine's own frame counter reached 61,088,850 at 50 fps (339.3825 h, read 14 s before the stop), and the 1 Hz diagnostic line spans 339.3861 h. Rounded DOWN to whole hours \u2014 a final figure, not a floor"}, {"label": "Frames produced, that run", "value": 61088850, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the engine's own frame counter 14 s before it was stopped; at 50 fps it is one of the three derivations of the 339 h above, agreeing with the systemd span to within twenty seconds. Frames PRODUCED by the engine, which is not the same as frames the card put on the wire \u2014 214 were shed to drift compensation, by design"}, {"label": "Late SDI frames, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "reported by the card itself, not by us: frames that reached the SDI output late. Zero, across 339 hours \u2014 and the denominator is the card's own, not the engine's 61,088,850 produced, because 214 of those were shed to drift compensation before the card saw them"}, {"label": "Late engine frames, that run", "value": 2, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "a different counter answering a different question \u2014 twice in 339 hours the clock thread woke more than half a millisecond late. The frame was still built and the card's buffer absorbed it, which is what the row above independently confirms. Published because the campaign's frozen criterion allowed ZERO of these, so it failed its own test, and a criterion you only quote when it passes is not a criterion"}, {"label": "Clock phase, median per-second peak", "value": 197, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "the worst tick in each second, then the spread of those across all 1,221,791 seconds of the run: median 197 ns, p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759. Half the run sat inside 197 ns and 99.9 % of it inside 1.22 \u00b5s. Published as a distribution because a latched maximum is the least representative number a run produces, and quoting it alone flatters nobody honestly"}, {"label": "Worst single tick, that run", "value": 569759, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "latched maximum, never reset \u2014 under 3 % of one 20 ms frame, and the tail of the distribution in the row above rather than its shape. It belongs to a population of 109 excursions of 380 \u00b5s or more across the fortnight, all in the same direction; cause open and under investigation"}, {"label": "Clip junctions, that run", "value": 7439, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every transition between schedule items, taken from the as-run log and checked against the house tick grid: 7,439, and every one of them frame-exact \u2014 the interval between the last frame of the outgoing item and the first frame of the incoming one was exactly one source frame, worst deviation 79 ns. No gaps, no overlaps. One further transition is deliberately not counted as a junction: the 48.6 s gap at the very start, where this run itself began"}, {"label": "Seconds at exactly 50 frames, that run", "value": 1221791, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every second of the run \u2014 and there are no missing seconds, because 1,221,791 diagnostic seconds span exactly 1,221,791 seconds of wall clock. In all 1,221,790 intervals between them the frame counter advanced by exactly 50 and the timecode by exactly one second, across 14 midnights, with the clock reporting LOCK in every one"}, {"label": "Compliance records dropped, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the as-run writer hands records to a queue that is allowed to drop its newest entry rather than stall the clock thread, and writes an exception into the chain when it does. It never did: zero drops across the run's 47,518,115 records. Published as a zero only because the thing that would have made it non-zero leaves its own evidence \u2014 an unwitnessed zero is what this panel withdrew a row over on 4 Aug"}, {"label": "As-run records checked for tampering", "value": 120483920, "unit": "", "when": "re-verified 21 Aug 2026", "provenance": "every record in the archive, re-checked after the 14-day run: 47 day files, 120,483,920 records, 13 chain segments. One broken boundary, 20\u219221 June 2026, known and pre-dating this run \u2014 it is a real finding and it is why the archive reads INVALID rather than clean. No other break, and 0 false positives across the rest; six forgery vectors closed"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
   // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
   //
@@ -1346,7 +1351,7 @@
       // NOT gated on `live`, unlike the timeline above: this describes a run that has
       // already finished, so a dead engine does not invalidate it — and the state the
       // page is now permanently in is exactly the one where it must still show.
-      if (f.label === 'Clock phase, median tick') {
+      if (f.label === 'Clock phase, median per-second peak') {
         const p = phaseLadder(snap.phase_dist);
         if (p) el.append(p);
       }
@@ -1462,14 +1467,14 @@
     // panel beside it said 7,656,700. One source of truth, and the no-JS fallback in
     // the HTML is dated so it cannot claim to be current.
     const lede = document.getElementById('lede-soak');
-    const frames = snap.figures.find(f => f.label === 'Frames delivered');
+    const frames = snap.figures.find(f => f.label === 'Frames produced');
     const late = snap.figures.find(f => f.label === 'Late frames');
     const cardLate = snap.figures.find(f => f.label === 'Card-reported late frames');
     lede.replaceChildren();
     if (live && frames && frames.value != null) {
       const b1 = document.createElement('strong');
       b1.textContent = fmt(frames.value, 'frames');
-      lede.append('The reference unit has delivered ', b1, ' in its current soak');
+      lede.append('The reference unit has produced ', b1, ' in its current soak');
       if (late && late.value != null) {
         const b2 = document.createElement('strong');
         b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
@@ -1505,7 +1510,7 @@
       if (when && fv != null) {
         const b1 = document.createElement('strong');
         b1.textContent = fmt(fv, 'frames');
-        lede.append('By ' + when + ' the reference unit had delivered ', b1,
+        lede.append('By ' + when + ' the reference unit had produced ', b1,
           ' in its then-current soak');
         // ASYMMETRIC DISCLOSURE, FIXED 2026-08-12. This branch used to render the
         // clause only when the count was ZERO and silently omit it otherwise — so the
@@ -1559,7 +1564,8 @@
       fill.style.width = '2px';
       tail.textContent = 'Our clock error is measured in nanoseconds.';
     } else {
-      mid.textContent = 'typical phase error ' + pv.toLocaleString('en-GB') + ' ns'
+      mid.textContent = (pvLive ? 'typical phase error ' : 'median per-second peak ')
+                      + pv.toLocaleString('en-GB') + ' ns'
                       + (pvLive ? '' : ' \u00B7 last run');
       fill.style.width = Math.max(0.15, (pv / FRAME_NS) * 100) + '%';
       const order = pv < 100 ? 'tens of nanoseconds'
