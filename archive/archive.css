@@ -1,0 +1,354 @@
+/* karhu.tv archive: entry pages and the archive index.
+   The colour, type and spacing tokens are the home page's, value for value, so the
+   pages read as one site. No JavaScript: a theme follows the reader's system setting,
+   and data-theme on <html> is honoured if it is ever set. */
+
+:root {
+  color-scheme: light;
+  --ground:      #F6F8FA;
+  --ground-2:    #EDF1F5;
+  --ink:         #10151C;
+  --ink-soft:    #4A5663;
+  --ink-faint:   #7B8794;
+  --accent:      #0A5C7A;
+  --accent-soft: #E2EEF3;
+  --warn:        #9A5B0B;
+  --warn-soft:   #F7EEDF;
+  --rule:        #D5DCE4;
+  --rule-soft:   #E6EBF0;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+  --measure: 68ch;   /* reading width of an entry */
+  --wide: 58rem;     /* tables, figures and the entry list may use more */
+  --pad: clamp(1.25rem, 4vw, 3.5rem);
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+    --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+    --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+  }
+}
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+    --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+    --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+  }
+}
+
+/* ── base ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font-family: var(--sans); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.875rem, 4.6vw, 2.875rem); line-height: 1.1; letter-spacing: -.015em; }
+h2 { font-size: clamp(1.3125rem, 2.4vw, 1.625rem); line-height: 1.2; letter-spacing: -.01em; }
+h3 { font-size: 1.125rem; line-height: 1.3; }
+h4 { font-size: 1rem; line-height: 1.35; }
+p { margin: 0; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.eyebrow {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .9rem;
+}
+.eyebrow a { color: inherit; }
+.eyebrow a:hover { color: var(--accent); }
+
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; margin: -1px; padding: 0; border: 0;
+}
+
+/* Keyboard users skip the masthead. Off-screen until focused, then visible. */
+.skip {
+  position: absolute; left: var(--pad); top: -3rem; z-index: 10;
+  background: var(--ground); color: var(--accent); border: 1px solid var(--accent);
+  padding: .45rem .8rem; font-size: .875rem;
+}
+.skip:focus { top: .75rem; }
+
+/* ── masthead: the home page's, with the logo linking home ────── */
+header.top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .75rem 1.5rem; flex-wrap: wrap;
+  padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
+}
+.logo { display: flex; align-items: center; gap: .625rem; color: var(--ink); text-decoration: none; }
+.logo-mark { display: block; flex: none; }
+.logo-word { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+.logo-word span { color: var(--accent); }
+header.top nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+header.top nav a {
+  color: var(--ink-soft); text-decoration: none;
+  border-bottom: 1px solid transparent; padding: .15rem 0;
+}
+header.top nav a:hover, header.top nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+header.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+
+/* ── entry page ─────────────────────────────────────────────────── */
+main { display: block; padding: clamp(2.5rem, 7vw, 4.5rem) 0 1rem; }
+main:focus { outline: none; }
+
+.entry-head { max-width: var(--measure); margin-bottom: 2.25rem; }
+.entry-head h1 { margin-bottom: 1rem; }
+.dek { font-size: 1.1875rem; line-height: 1.5; color: var(--ink-soft); }
+.stamp {
+  margin-top: 1.25rem; padding-top: .9rem; border-top: 1px solid var(--rule-soft);
+  font-size: .8125rem; color: var(--ink-soft);
+}
+
+.entry-body { font-size: 1.0625rem; line-height: 1.65; overflow-wrap: break-word; }
+.entry-body :is(p, ul, ol, dl, h2, h3, h4, blockquote, pre) { max-width: var(--measure); }
+.entry-body p + p, .entry-body p + ul, .entry-body p + ol, .entry-body ul + p, .entry-body ol + p,
+.entry-body p + dl, .entry-body dl + p, .entry-body blockquote + p, .entry-body p + blockquote { margin-top: 1rem; }
+.entry-body section + section, .entry-body > section + * , .entry-body > * + section { margin-top: 2.75rem; }
+.entry-body h2 { margin: 2.75rem 0 .9rem; }
+.entry-body h3 { margin: 2rem 0 .6rem; }
+.entry-body h4 { margin: 1.5rem 0 .5rem; }
+.entry-body section > h2:first-child, .entry-body > h2:first-child { margin-top: 0; }
+.entry-body ul, .entry-body ol { margin: 0; padding-left: 1.35rem; }
+.entry-body li + li { margin-top: .45rem; }
+.entry-body strong { font-weight: 600; }
+.entry-body sup, .entry-body sub { line-height: 0; }
+.entry-body [id] { scroll-margin-top: 1.25rem; }
+
+.entry-body code {
+  font-family: var(--mono); font-size: .875em;
+  background: var(--ground-2); border: 1px solid var(--rule-soft); border-radius: 3px;
+  padding: .05em .3em; overflow-wrap: anywhere;
+}
+.entry-body pre {
+  font-family: var(--mono); font-size: .8125rem; line-height: 1.55;
+  background: var(--ground-2); border: 1px solid var(--rule); padding: .9rem 1rem;
+  overflow-x: auto; margin: 1.25rem 0;
+}
+.entry-body pre code { background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; }
+
+.entry-body blockquote {
+  margin: 1.25rem 0; padding: .1rem 0 .1rem 1.1rem;
+  border-left: 3px solid var(--rule); color: var(--ink-soft);
+}
+
+.entry-body figure { margin: 2rem 0; max-width: var(--wide); }
+.entry-body figure > svg, .entry-body figure > img { display: block; width: 100%; height: auto; }
+.entry-body figcaption { margin-top: .6rem; font-size: .8125rem; line-height: 1.5; color: var(--ink-soft); max-width: var(--measure); }
+
+/* Optional key/value block for what an entry covers: period, machine, build. */
+.entry-body dl.meta {
+  display: grid; grid-template-columns: 1fr; gap: .15rem 1.5rem;
+  margin: 0 0 2rem; padding: .9rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-size: .875rem;
+}
+.entry-body dl.meta dt { font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.entry-body dl.meta dd { margin: 0 0 .5rem; }
+@media (min-width: 40rem) {
+  .entry-body dl.meta { grid-template-columns: 11rem 1fr; }
+  .entry-body dl.meta dd { margin: 0; }
+}
+
+/* ── facts table ────────────────────────────────────────────────
+   Three columns: what was measured · the value · when and how.
+   Styled by position as well as by class, so a row whose cells carry no
+   class still reads correctly. Below 36rem each row stacks, which keeps
+   the table's semantics in current browsers and keeps prose-length
+   provenance readable on a phone. */
+.entry-body table.facts {
+  width: 100%; max-width: var(--wide); border-collapse: collapse;
+  margin: 1.75rem 0 2rem; font-size: .9375rem; line-height: 1.5;
+}
+.facts caption {
+  caption-side: top; text-align: left; padding: 0 0 .7rem;
+  font-family: var(--serif); font-weight: 600; font-size: 1.0625rem; color: var(--ink);
+}
+.facts th, .facts td {
+  text-align: left; vertical-align: top; padding: .75rem .9rem .75rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.facts :is(th, td):last-child { padding-right: 0; }
+.facts thead th {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+  font-weight: 400; color: var(--ink-soft); border-bottom: 1px solid var(--rule);
+  padding-top: 0; padding-bottom: .55rem;
+}
+.facts tbody :is(th, td):first-child { font-weight: 600; color: var(--ink); width: 26%; }
+.facts tbody td:nth-child(2), .facts td.v {
+  font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 400;
+}
+.facts tbody td:nth-child(3), .facts td.src { font-size: .8125rem; color: var(--ink-soft); font-weight: 400; }
+@media (min-width: 36rem) {
+  .facts tbody td:nth-child(2), .facts td.v { white-space: nowrap; }
+}
+/* A value withdrawn after publication: the cell carries an em dash and the row
+   says why. A figure corrected in place is struck through beside a link to the
+   dated addendum that replaces it. */
+.facts td.withdrawn { color: var(--ink-soft); }
+@media (max-width: 35.999rem) {
+  .entry-body table.facts, .facts tbody { display: block; }
+  .facts caption { display: block; }
+  .facts thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+  .facts tr {
+    display: grid; grid-template-columns: 1fr; gap: .2rem;
+    padding: .85rem 0; border-bottom: 1px solid var(--rule-soft);
+  }
+  .facts tbody tr:first-child { border-top: 1px solid var(--rule); }
+  .facts th, .facts td { display: block; padding: 0; border: 0; width: auto; }
+  .facts tbody :is(th, td):first-child { width: auto; font-size: .875rem; }
+  .facts tbody td:nth-child(2), .facts td.v { font-size: 1.0625rem; white-space: normal; }
+}
+
+/* Any other table in an entry scrolls inside itself rather than widening the page. */
+.entry-body table:not(.facts) {
+  display: block; max-width: 100%; overflow-x: auto;
+  border-collapse: collapse; margin: 1.5rem 0; font-size: .875rem;
+}
+.entry-body table:not(.facts) :is(th, td) {
+  text-align: left; vertical-align: top; padding: .55rem .8rem .55rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.entry-body table:not(.facts) thead th {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+  font-weight: 400; color: var(--ink-soft); border-bottom: 1px solid var(--rule);
+}
+
+/* ── corrections: never silent ──────────────────────────────────── */
+.entry-body del { color: var(--ink-soft); text-decoration-thickness: 1px; }
+.entry-body ins { text-decoration: none; border-bottom: 1px solid var(--accent); }
+a.corr {
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .02em; white-space: nowrap;
+  margin-left: .35em;
+}
+
+/* ── what remains open: the register's colours, on purpose ─────── */
+.entry-body aside.open {
+  max-width: calc(var(--measure) + 2.5rem);
+  margin: 3rem 0 0; padding: 1.25rem clamp(1rem, 3vw, 1.25rem) 1.4rem;
+  background: var(--warn-soft);
+  border-top: 1px solid var(--warn); border-bottom: 1px solid var(--warn);
+}
+.entry-body aside.open > * { max-width: var(--measure); }
+.entry-body aside.open h2, .entry-body aside.open h3 {
+  margin: 0 0 .8rem; color: var(--warn); font-size: 1.25rem;
+}
+.entry-body aside.open p + p { margin-top: .8rem; }
+.entry-body aside.open ul, .entry-body aside.open ol { padding-left: 1.2rem; }
+.entry-body aside.open li::marker { color: var(--warn); }
+
+/* ── the record line: where the entry's facts come from ────────── */
+.entry-body p.record {
+  margin-top: 2.5rem; padding-top: .9rem; border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .75rem; line-height: 1.6; letter-spacing: .01em;
+  color: var(--ink-soft);
+}
+
+/* ── addenda: appended after publication, each dated ───────────── */
+.entry-body section.addendum {
+  margin-top: 3rem; padding: 1.1rem clamp(1rem, 3vw, 1.25rem) 1.25rem;
+  max-width: calc(var(--measure) + 2.5rem);
+  background: var(--ground-2); border-left: 3px solid var(--accent);
+}
+.entry-body section.addendum > * { max-width: var(--measure); }
+.entry-body section.addendum h2 { margin: 0 0 .7rem; font-size: 1.1875rem; }
+.entry-body section.addendum:target { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.entry-foot {
+  max-width: var(--measure); margin-top: 3rem; padding-top: 1.1rem;
+  border-top: 1px solid var(--rule); font-size: .9375rem;
+}
+
+/* ── archive index ──────────────────────────────────────────────── */
+.page-head { max-width: var(--measure); margin-bottom: 2.5rem; }
+.page-head h1 { margin-bottom: 1rem; }
+
+.rules {
+  list-style: none; margin: 0 0 3.5rem; padding: 1.5rem 0 0;
+  border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1fr; gap: 1.25rem 2.5rem; max-width: var(--wide);
+}
+@media (min-width: 52rem) { .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rules li { font-size: .9375rem; color: var(--ink-soft); }
+.rules li strong {
+  display: block; margin-bottom: .2rem;
+  font-family: var(--serif); font-size: 1.0625rem; font-weight: 600; color: var(--ink);
+}
+
+.list-head { max-width: var(--wide); margin-bottom: .9rem; }
+.list-head h2 { font-size: 1.375rem; }
+.list-head p { margin-top: .35rem; font-size: .875rem; color: var(--ink-soft); }
+
+ol.entries { list-style: none; margin: 0; padding: 0; max-width: var(--wide); border-top: 1px solid var(--rule); }
+ol.entries > li {
+  display: grid; grid-template-columns: 1fr; gap: .2rem;
+  padding: 1.25rem 0; border-bottom: 1px solid var(--rule-soft);
+}
+@media (min-width: 44rem) {
+  ol.entries > li { grid-template-columns: 9rem minmax(0, 1fr); column-gap: 2rem; }
+  ol.entries > li > .entry-date { grid-row: 1 / span 3; padding-top: .2rem; }
+  ol.entries > li > :not(.entry-date) { grid-column: 2; }
+}
+.entry-date {
+  font-family: var(--mono); font-size: .8125rem; font-variant-numeric: tabular-nums;
+  color: var(--ink-soft); margin: 0;
+}
+ol.entries h3 { font-size: 1.1875rem; line-height: 1.3; }
+ol.entries h3 a { color: var(--ink); text-decoration: none; }
+ol.entries h3 a:hover { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; }
+.entry-dek { font-size: .9375rem; color: var(--ink-soft); max-width: var(--measure); }
+.entry-span { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); }
+
+/* ── site footer: the home page's wording and order ────────────── */
+footer.site {
+  margin-top: 4rem; border-top: 1px solid var(--rule);
+  padding: 2.5rem 0 3.5rem; color: var(--ink-soft); font-size: .875rem;
+}
+footer.site p + p { margin-top: .5rem; font-size: .8125rem; max-width: var(--measure); }
+
+/* ── small screens ──────────────────────────────────────────────── */
+@media (max-width: 30rem) {
+  header.top { padding-top: 1.5rem; }
+  header.top nav { gap: .5rem 1.25rem; }
+  .dek { font-size: 1.0625rem; }
+  .entry-body { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* ── print: light, no navigation, link targets shown ──────────── */
+@media print {
+  :root {
+    color-scheme: light;
+    --ground: #fff; --ground-2: #f3f3f3; --ink: #000; --ink-soft: #333; --ink-faint: #555;
+    --accent: #000; --accent-soft: #eee; --warn: #000; --warn-soft: #fff; --rule: #999; --rule-soft: #ccc;
+  }
+  .skip, header.top nav, .entry-foot { display: none; }
+  body { font-size: 11pt; }
+  .wrap { max-width: none; padding: 0; }
+  main { padding-top: 1.5rem; }
+  .entry-body a[href^="http"]::after, .entry-body a[href^="/"]::after {
+    content: " (" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere;
+  }
+  .entry-body aside.open, .entry-body section.addendum { border: 1px solid #999; break-inside: avoid; }
+  .facts tr { break-inside: avoid; }
+}

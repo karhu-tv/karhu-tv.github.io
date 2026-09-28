@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>isolcpus, nohz_full, timer_migration: where Linux put our timer — Karhu TV</title>
+<meta name="description" content="How isolcpus, nohz_full and the default timer_migration put an isolated real-time thread’s timer on a housekeeping CPU, and the late wakes we traced but did not solve.">
+<link rel="canonical" href="https://karhu.tv/archive/late-wakes-2026-08/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/late-wakes-2026-08/">
+<meta property="og:title" content="isolcpus, nohz_full, timer_migration: where Linux put our timer">
+<meta property="og:description" content="How isolcpus, nohz_full and the default timer_migration put an isolated real-time thread’s timer on a housekeeping CPU, and the late wakes we traced but did not solve.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-09-28">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="isolcpus, nohz_full, timer_migration: where Linux put our timer">
+<meta name="twitter:description" content="How isolcpus, nohz_full and the default timer_migration put an isolated real-time thread’s timer on a housekeeping CPU, and the late wakes we traced but did not solve.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Late wakes near 400 microseconds, August 2026: we found where Linux had put the timer, not what made them late",
+ "description": "How isolcpus, nohz_full and the default timer_migration put an isolated real-time thread’s timer on a housekeeping CPU, and the late wakes we traced but did not solve.",
+ "datePublished": "2026-09-28",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/late-wakes-2026-08/",
+ "mainEntityOfPage": "https://karhu.tv/archive/late-wakes-2026-08/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-08-06/2026-09-27"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/">Home</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/tools.html">Tools</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-09-28">28 Sep 2026</time></p>
+        <h1 id="entry-title">Late wakes near 400 microseconds, August 2026: we found where Linux had put the timer, not what made them late</h1>
+        <p class="dek">Two late wakes failed our fourteen-day soak in August 2026. They were the top of 109 excursions near 413 µs that recurred with the content and fell only in items handled one way on their way to the output. Kernel traces found where Linux puts the wake timer of a thread on an isolated CPU, but not what made the wake late.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>What we set out to learn</h2>
+<p>Between 6 and 20 August 2026 the first unit (i7-12700, DeckLink Duo 2) ran one unbroken 339-hour soak, written up in <a href="/archive/fortnight-soak-2026-08/">its own entry</a>. Its criteria were frozen on 5 August and allowed zero late engine frames. It had two, on 11 Aug at 03:25&nbsp;UTC (567&nbsp;µs) and 15 Aug at 08:50&nbsp;UTC (570&nbsp;µs), so it failed its own test.</p>
+<p>Rytmi is Karhu TV's playout engine, in software, and Syke is its clock. Syke's clock thread wakes once per frame, every 20&nbsp;ms at 50 frames per second. Each wake is a tick, and how far a tick lands from its scheduled instant is the clock phase. A late engine frame is a tick more than 500&nbsp;µs late: a late wake, not a lost frame. An excursion is any tick far outside the ordinary range, which on this unit was a few hundred nanoseconds. Both times the card's output buffer absorbed the delay, and the card counted zero late frames on the SDI output. This entry follows our search for why the thread woke late, up to 18 Sep 2026, with per-run figures to 27 Sep 2026.</p>
+<p>If you came for the kernel behaviour, it is in <a href="#kernel">the traces section</a>. In short: on Linux 6.8, take a thread on a CPU isolated with <code>isolcpus</code> and <code>nohz_full</code>, and leave <code>kernel.timer_migration</code> at its default of 1. An unpinned hrtimer that the thread arms for itself, such as the one behind a sleep, is then armed on the first housekeeping CPU, not on the thread's own, whenever it is due later than that CPU's next tick. Setting <code>timer_migration=0</code> at runtime brought it back (on the second unit, an i7-14700: 497 of 500 expiries on the first housekeeping CPU before, none after, 8 Sep 2026). That settled where the timer lives. It did not, on our evidence, explain the late wakes.</p>
+</section>
+<section>
+<h2>The shape of it</h2>
+<p>Re-read after the run, the two late frames were the top of a population: <strong>109 excursions of 380&nbsp;µs or more</strong>. All were late, none early. 106 of the 109 fell within 380&ndash;450&nbsp;µs, median 413. Several more fell just short of 380&nbsp;µs. Below them lay a wide empty stretch: the ordinary tail stopped tens of microseconds up, and nothing else in the run's 339 hours landed in between. The distribution has two modes, not one long tail. The two late frames sat on a level of their own, 116&nbsp;µs clear of the rest. The 109 came in 36 bursts of one to five, and every gap inside a burst was 112 or 113&nbsp;s, or exactly twice that.</p>
+<p>That beat is five slots of a lattice about 22.5&nbsp;s long, and the lattice follows the <em>content</em>, not the wall clock. On five airings over nine days, one programme's events fell at the same point in it to within 0.2&nbsp;s. One event fired on a programme's lattice before that programme had begun to air. Re-encoded copies, flown on the live channel in late August against predictions we froze beforehand, showed that the lattice keeps time with the content, not with the size of the file.</p>
+<p>All 109 fell inside items handled one way on their way to the output. None fell inside items handled the other way, which filled just over half the airtime. We give no probability for that split. The events cluster in bursts and the bursts cluster in time, and we have not settled what the independent unit is. Load does not explain it. Minutes airing items of the first kind matched minutes of the second in CPU use, temperature, memory and ordinary clock phase.</p>
+<p>The mechanism can be present and silent. 5 August was clean with the same programmes and binary. On 11 August the burst rate stepped from 0.41 to 3.81 a day within about five hours, with no change the operating system could see. With the engine stopped (24 Aug 2026), processing an event-bearing file in a separate process never reproduced the lattice, but that null could equally mean the machine was not in its armed state. We then ran trials on a bench alongside the live engine, each started within a second or two of a real excursion. The twelve that could be read, by 5 Sep 2026, favoured the engine's own handling of the item as a required ingredient without proving it, and the pass mark we judged them by was chosen after their rules were written down.</p>
+</section>
+<section>
+<h2>What it was not, and how we know</h2>
+<p>We rejected about twenty candidate causes, several of them our own. These are the ones a real-time Linux reader would suspect first.</p>
+<p><strong>SMI.</strong> A System Management Interrupt takes a CPU into firmware without the operating system seeing it. Intel CPUs count them in MSR&nbsp;0x34. The counter read 374 on 21 Aug 2026, 350.30 hours into the campaign's boot, and 374 on 23 Jul 2026, 13.88 hours into another boot, so it did not advance while the machine ran. That rules out SMI but not microcode or management-engine stalls. A blocker arriving at random is ruled out without any counter. At random phase a small overhang is always at least as likely as a large one, so it would have put more events in the empty stretch below the cluster than there were in the whole cluster, and there were none. Nor could it land gap after gap on 112&ndash;113&nbsp;s. The periodicity comes from the engine's side; anything below the operating system could only gate or amplify it.</p>
+<p><strong>The rest.</strong> We read TAI from the kernel, and NTP disciplines that clock. But none of the time daemon's frequency steps of 0.20&nbsp;ppm or more fell on 11 Aug, which carried seven of the first nine events. The first burst, on 8 Aug, did coincide with its fastest slew, and no later burst did. We record that as a coincidence. TLB shootdowns (interrupts that flush a core's address translations) looked like a lead. Then a 1&nbsp;Hz sampler of every interrupt counter on the clock's CPU, running from 12 Aug, found them all at baseline at the events. The machine is configured to keep its cores out of deep idle states, which rules out exit latency. We also ruled out temperature, memory use, any engine stall, and the periodic tamper-evidence seal our as-run log writes, which the events beat against rather than lock to. Our own large file copies leave marks too, all smaller than the cluster. On 25 Aug we wrote up one event as the mechanism; it was our nightly backup, started three seconds earlier. Clip junctions come about 25&nbsp;s apart, so they are neither ruled in nor out.</p>
+</section>
+<section id="kernel">
+<h2>What the kernel traces showed</h2>
+<p>On 4 Sep 2026, in an instrumented run that was not a soak, an ftrace ring buffer caught ten excursions. It recorded the clock thread's CPU, and a watcher froze it after each event. A tool that knows nothing about the engine recovered the lattice from the kernel's timestamps alone.</p>
+<p>The buffers held 14 distinct genuine late wakes, all alike. Through each one the CPU's 1&nbsp;kHz kernel tick kept to schedule within 14&nbsp;µs, no task ran, and no interrupt, softirq or other timer fired there. The wake was traced in the idle task's context, the path for a wake queued from <em>another</em> CPU. The core was healthy and idle, and the late wake came from elsewhere. The thread's timer almost never expired on its own CPU: a handful of times in each buffer, against tens of thousands of wakes across them. Those buffers recorded none of the housekeeping CPUs. On 8 Sep a 10-second trace of every CPU on the second unit found the expiry before 497 of 500 wakes on the first housekeeping CPU.</p>
+<p>The reason is ordinary Linux 6.8 behaviour, and it applies to any thread on a CPU isolated this way. The hrtimer behind a user-space sleep is unpinned. <code>kernel.timer_migration</code> defaults to 1, and the kernel documents it as an attempt &ldquo;to migrate timers away from idle cpus to allow them to remain in low power states longer&rdquo;. With it set, each <code>hrtimer_start</code> of an unpinned timer goes through <code>switch_hrtimer_base</code> and <code>get_target_base</code> to <code>get_nohz_timer_target()</code>. <code>nohz_full</code> has removed the isolated CPU from timer housekeeping. <code>isolcpus</code> has left it no scheduler domains, so the domain walk finds nothing. The fallback, <code>housekeeping_any_cpu()</code>, returns the first housekeeping CPU on a single-NUMA-node machine. <code>hrtimer_check_target()</code> keeps a timer local only if it expires before that CPU's earliest programmed event, so with a 1&nbsp;kHz tick running there, any timer due more than a millisecond ahead is armed on the housekeeping CPU. The choice is made again at every <code>hrtimer_start</code>, so changing the sysctl needs no restart. We checked the chain line by line against the v6.8 source, and measured where it put the timer on the second unit. Our first reading, a round-robin across housekeeping CPUs, missed one branch; the data corrected it within the hour.</p>
+<p>So the thread we had isolated was woken, once a frame, by a timer on another CPU. On the second unit we measured that CPU as the first housekeeping CPU, the kind that carries a machine's background work. On the first, the traces showed the wake arriving from off the core. It was not the only isolation setting we had configured and believed without checking. <code>isolcpus</code> had not kept device interrupts off that core. <code>nohz_full</code> had not stopped its tick, which fired 999.9 times a second on the first unit (12 Aug 2026) and 751 on the second (6 Sep 2026).</p>
+</section>
+<section>
+<h2>The change, and a test that could not fail</h2>
+<p>On 8 Sep 2026 we wrote down what the trace should show, then set <code>kernel.timer_migration=0</code> on both units at runtime, without restarting the engine. Before, 497 of 500 expiries on the second unit were on the first housekeeping CPU; the first unit's only before-trace was the 4 Sep buffers. After, 500 of 500 were local on both units, each wake raised by the isolated CPU's own timer interrupt. The cost is one more timer interrupt per frame on a CPU that already takes a 1&nbsp;kHz tick. The first unit's worst tick in the hour after was no worse than in the hour before. We made the setting persist across reboots, and added a post-boot check that fails unless it reads 0.</p>
+<p>We withdrew the acceptance test we had registered, 75 hours clean on the first unit, before reading any data against it. That unit had already gone 50.5 hours without an excursion of 300&nbsp;µs or more, or a late frame, before the change. At the rate the campaign had shown, a quiet stretch that long was already unlikely, so the unit was probably no longer in the state that produced events, and a quiet result was decided in advance.</p>
+<p>On 9 Sep, <code>rtla timerlat</code> measured the timer interrupt on the second unit's first housekeeping CPU at a worst latency of 1.05&nbsp;µs over 3,067 samples. We had been writing up the wake as late because its timer fired late there. That measurement, on the second unit and outside any event, removed our evidence for the step, so we withdrew it. It does not show the timer was on time. It cannot see a timer callback running late inside an interrupt that started punctually. The timer's placement stands. The claim that it was delayed there does not.</p>
+</section>
+<section>
+<h2>A positive control, a retracted p-value, and the one that stands</h2>
+<p>A quiet machine could not judge the change, so we built a positive control. It loads the first housekeeping CPU with a large file copy and compares the clock thread's worst wake with the timer migrated against the timer local. Its first runs, on 8 Sep on both units, were null, and we called that a refutation of &ldquo;load on that CPU is the trigger&rdquo;. On 18 Sep we downgraded it to untested. The copy had bypassed the page cache, so it caused no writeback or reclaim. The arms ran in sequence, nothing checked that the machine was settled, and the trip threshold sat above the events the test was built to catch. A null from an apparatus that cannot apply the treatment is not evidence of absence.</p>
+<p>Run 4, on 14 Sep, gave 7 events to 0 at P&nbsp;=&nbsp;0.0078, and we withheld it. The migrated arm always ran first and warmed the page cache for the other. The card also reported 3,324 dropped frames during the migrated arm against 19 during the local one, so the arms were not watching the same machine. And the run started thirteen minutes after a fault our own test had caused. An earlier run's teardown left its copy running, and that load cost three of the second unit's four outputs their card buffer. Four of our instruments missed it for 67 minutes.</p>
+<p>On 16 Sep we rebuilt the test. Each arm evicts its load file from the page cache first, and rounds interleave with the leading arm alternating. The test refuses to start while any engine counter moves, and gives no p-value when the arms' backgrounds differ. Its first run, on 17 Sep, went 4 events to 0, too few to decide. For run 6 we wrote the prediction into our version-controlled record, which timestamps it: at least 7 events migrated, none local. It gave 8 to 0, and we headlined P&nbsp;=&nbsp;0.0039, decided. An audit of our own work withdrew that the same day, about nine hours later. The eight events came from three of six rounds, so the round is the independent unit, and over rounds P is 0.125. Pre-registering a statistic does not make it valid.</p>
+<p>Run 7 counted rounds, with a tie (neither arm producing an event) scoring nothing. Its rule and predicted outcome were committed at 17:31&nbsp;UTC on 18 Sep: at least 7 non-tied rounds of 10, every one worse with the timer migrated. It closed at 18:41&nbsp;UTC with <strong>10 of 10</strong>, 28 events to 0, P&nbsp;&asymp;&nbsp;0.0010 on a sign test over rounds. On the second unit, under that load, keeping the timer local reduced the worst wake. It does not reproduce the campaign. 22 of the 28 events sit under 100&nbsp;µs in a continuous tail, where the campaign left an empty stretch under a tight cluster. We had argued this load never reaches the campaign's band, and run 7's largest event, inside that band, ended that argument. Only the shapes of the two distributions still tell them apart.</p>
+</section>
+<section>
+<h2>The numbers</h2>
+<table class="facts">
+<thead><tr><th scope="col">What</th><th scope="col">Value</th><th scope="col">When, and how</th></tr></thead>
+<tbody>
+<tr><td>Late engine frames &middot; late SDI frames</td><td class="v">2 &middot; 0</td><td class="src">6&ndash;20 Aug 2026, one unbroken 339&nbsp;h soak on the first unit, card free-running. The engine counts wakes more than 500&nbsp;µs late; the card keeps its own count. The frozen criterion allowed zero late engine frames</td></tr>
+<tr><td>Clock phase, median per-second peak</td><td class="v">197&nbsp;ns</td><td class="src">the worst tick in each second, across all 1,221,791 seconds of that run: p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759&nbsp;ns</td></tr>
+<tr><td>Excursions of 380&nbsp;µs or more</td><td class="v">109</td><td class="src">same run: 36 bursts of one to five, 106 of them within 380&ndash;450&nbsp;µs, median 413&nbsp;µs. Every gap inside a burst was 112 or 113&nbsp;s, or exactly twice that</td></tr>
+<tr><td>Timer expiries on the first housekeeping CPU</td><td class="v">497 of 500 &rarr; 0 of 500</td><td class="src">second unit, all-CPU trace, before and after <code>timer_migration=0</code>, 8 Sep 2026</td></tr>
+<tr><td>Timer-interrupt latency on the first housekeeping CPU, worst</td><td class="v">1.05&nbsp;µs</td><td class="src"><code>rtla timerlat</code>, 3,067 samples, second unit, outside any event, 9 Sep 2026</td></tr>
+<tr><td>Positive control, run 7</td><td class="v">10 of 10 rounds</td><td class="src">second unit, 18 Sep 2026: 28 events to 0, P&nbsp;&asymp;&nbsp;0.0010 on a sign test over rounds. Run 6's P&nbsp;=&nbsp;0.0039 was retracted; over rounds it is 0.125</td></tr>
+<tr><td>Worst single tick, per run</td><td class="v">&le;&nbsp;4,043&nbsp;ns</td><td class="src">every run on the first unit from 9 to 27 Sep 2026, including runs of 176 and 195 hours. The three runs of 6&ndash;9 Sep peaked at 326,072, 1,217 and 89,932&nbsp;ns. The runs of 19 Aug to 5 Sep carried our experiments and our own load, were not soaks, and are not given here as results</td></tr>
+</tbody>
+</table>
+</section>
+<section>
+<h2>What it cost, and what we got wrong</h2>
+<p>None of it reached the SDI output. It cost time, and the accuracy of what we said. The count moved in public: nine through 12 Aug, 67 through 17 Aug, then 109. On nine events we said the 500&nbsp;µs line sat inside the cluster and that the events clustered in long MXF items, and the full population broke both claims. Both late frames were on our instruments within minutes. A person noticed the first 27 hours later, and the second two days later. In late August, while the unit carried our experiments, we blamed a rise in the event rate on a schedule change, but the rise began more than eight hours before the change. The rest are told above, beside the results they distorted: a backup written up as the mechanism, a late wake written up as a late timer, a null from a test that could not apply its treatment, and a p-value computed over the wrong unit.</p>
+</section>
+<section>
+<h2>What it changed</h2>
+<p>From 8 Sep 2026 both units kept the clock thread's timer on its own CPU. That establishes where the timer lives. It does not establish what recurs every 22.5 seconds or so of content, what delayed the wake, or whether the timer's placement had anything to do with the campaign's events. The first unit's quiet began about 50 hours before the change, and an 89,932&nbsp;ns tick came after it. A four-and-a-half-day quiet had also ended once before, from 28 Jul to 2 Aug. We changed the host and the engine on 8 and 9 Sep. The excursions' cause is not determined, so we credit neither change. On 14 Sep 2026 we parked the investigation rather than closing it, because it had never reached the SDI output, and left a tripwire on clock phase. Every event here predates the cards' first <a href="/archive/genlock-2026-09-27/">genlock</a>, on 27 Sep 2026.</p>
+</section>
+<aside class="open">
+<h2>Still open when we wrote this</h2>
+<ul>
+<li><strong>The ticker.</strong> What in that handling of an item recurs every 22.5 seconds or so of content.</li>
+<li><strong>The delay.</strong> What held a wake raised from another CPU late in the traces while the clock's own CPU sat idle. The candidates are the delivery path between CPUs, or one timer callback running late inside a punctual interrupt. No all-CPU capture caught an event, and no trace separated a timer that fired late from a wake that was delivered late.</li>
+<li><strong>The change.</strong> Whether keeping the timer local stops events like the campaign's (a tight cluster near 413&nbsp;µs with an empty stretch below it). A quiet unit cannot be told from an unarmed one, but an event with the timer local would show the change is not sufficient. Whether load on the first housekeeping CPU triggered the campaign's events was not tested.</li>
+<li><strong>The gate.</strong> What picks the slots that fire. In the August soak one slot in five fired within a playout, chosen afresh each playout, with about 75&nbsp;% of candidate slots firing within a burst. The traces of 4 Sep alternated two- and three-slot gaps instead, and the two readings are not reconciled. Also open: what arms the mechanism, what stepped its rate on 11 Aug, and whether the rises of late August, in runs that carried our own experiments and load, were the same thing.</li>
+<li><strong>The second unit.</strong> Before 8 Sep 2026 it ran under the same kernel rule, with its timer on the first housekeeping CPU. In ordinary running it never produced an event like the campaign's, and its worst tick stayed below the cluster. Under our deliberate load in run 7 its largest tick reached the campaign's band, as the top of a continuous tail. We do not know why the units differ.</li>
+<li><strong>Below the operating system.</strong> Microcode, management-engine and memory-controller stalls are not excluded. No hardware-noise measurement of the clock's CPU or the first housekeeping CPU was recorded. Outside the 14 traced events, a late wake has not been separated from the system clock moving under the measurement.</li>
+<li><strong>Loose ends.</strong> The second level, near 570&nbsp;µs, on which both late frames sat. The traced delays, which fell into two groups rather than one. The 326,072 and 89,932&nbsp;ns peaks of two runs of 6&ndash;9 Sep, the second after the timer change. Whether the larger ticks of late August, up to 904,629&nbsp;ns, belong to this population; those runs carried our experiments and our own load, were not soaks, and cannot answer it. Why <code>nohz_full</code> leaves the tick running on these units, for which we have a candidate and no test. And any kernel other than 6.8, which we did not check.</li>
+</ul>
+</aside>
+<p class="record">From the record: our issue file for these excursions (RET-130), with its trace-analysis, units and positive-control reports, the post-campaign deep dive of 21 Aug 2026, and the R&amp;D logs of 31 Aug and 5, 8, 14, 16 and 18 Sep 2026.</p>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a></p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

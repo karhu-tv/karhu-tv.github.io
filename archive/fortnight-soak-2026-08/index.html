@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Two-week SDI playout soak: what held, and the criterion it failed — Karhu TV</title>
+<meta name="description" content="Our pre-registered two-week SDI playout soak on Linux with a DeckLink Duo 2, 6–20 Aug 2026: what held on the output, and the criterion it failed.">
+<link rel="canonical" href="https://karhu.tv/archive/fortnight-soak-2026-08/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/fortnight-soak-2026-08/">
+<meta property="og:title" content="Two-week SDI playout soak: what held, and the criterion it failed">
+<meta property="og:description" content="Our pre-registered two-week SDI playout soak on Linux with a DeckLink Duo 2, 6–20 Aug 2026: what held on the output, and the criterion it failed.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-09-28">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Two-week SDI playout soak: what held, and the criterion it failed">
+<meta name="twitter:description" content="Our pre-registered two-week SDI playout soak on Linux with a DeckLink Duo 2, 6–20 Aug 2026: what held on the output, and the criterion it failed.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Fourteen days of SDI playout, 61 million frames produced: the August 2026 soak, including the part that failed",
+ "description": "Our pre-registered two-week SDI playout soak on Linux with a DeckLink Duo 2, 6–20 Aug 2026: what held on the output, and the criterion it failed.",
+ "datePublished": "2026-09-28",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/fortnight-soak-2026-08/",
+ "mainEntityOfPage": "https://karhu.tv/archive/fortnight-soak-2026-08/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-08-05/2026-08-21"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/">Home</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/tools.html">Tools</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-09-28">28 Sep 2026</time></p>
+        <h1 id="entry-title">Fourteen days of SDI playout, 61 million frames produced: the August 2026 soak, including the part that failed</h1>
+        <p class="dek">Between 6 and 20 August 2026 the first unit ran one unbroken 339-hour playout with no late frames on the SDI output, and still failed the criterion we had frozen before it started, because twice the engine's clock thread woke more than half a millisecond late.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>What we set out to learn, and what we froze before we started</h2>
+<p>A soak test runs a system without a break for long enough that rare faults get a chance to show. Ours ran on the first unit (our second was built after this run), a Linux machine with an Intel i7-12700 and a Blackmagic DeckLink Duo&nbsp;2, putting out 1080p50 over SDI, where a frame lasts 20&nbsp;milliseconds, from a looping test schedule of mixed sources: 25p and 50p material in MPEG-2, DNxHD and H.264 among them. The engine is Rytmi, our software playout engine; Syke, its clock, keeps time to TAI, International Atomic Time. The card was free-running at the time, with no house sync reference; it was first genlocked on 27 September 2026 (<a href="/archive/genlock-2026-09-27/">that entry</a>). This was a development bench running a test schedule, not a production fleet.</p>
+<p>After a shorter pre-registered null test (35.8 hours, adjudicated on 30 July 2026, no late engine frames), we froze a criterion for the fortnight on 5 August 2026, before the run began. Its own rule: &ldquo;These numbers do not move after the run starts. If the run fails, it failed.&rdquo; All three parts had to hold.</p>
+<p><strong>C1: the clock thread never wakes late</strong> &mdash; never once more than half a millisecond after the instant it was scheduled for. The criterion called this &ldquo;delivered output&rdquo;, which overstated it: the counter measures late wakes inside the engine, before anything reaches the card.</p>
+<p><strong>C2: ordinary behaviour does not degrade.</strong> Clock phase is how far a tick lands from its intended instant. The 99th percentile (p99) of each second's worst tick, sampled once a minute, must stay at or below 1,500&nbsp;ns; across the calibration runs it never left the range 952 to 1,091&nbsp;ns.</p>
+<p><strong>C3: no excursion comes near a frame.</strong> The worst tick must stay at or below 2&nbsp;ms, a tenth of a frame. The calibration runs' worst ticks left an empty elevenfold gap that no bound could be fitted to, so this one was anchored to a physical quantity.</p>
+<p>Of the calibration runs, eighteen were long enough to judge, and all passed but one: a real fault on 4 August, with 2 late frames and a 23.45&nbsp;ms excursion. A review before freezing found that the adjudicator, the script that applies the criterion to the logs, skipped short runs, which would have let two runs carrying late frames escape. A criterion whose primary gate can be escaped by restarting is not a criterion, so C1 and C3 were set to judge any run of two samples or more.</p>
+<p>A readiness audit then found that the engine was the Linux kernel's preferred out-of-memory victim: it had inherited an OOM score adjustment of +200, a 6.4&nbsp;GB handicap on a 31.8&nbsp;GB machine with no swap. That explained 4 August, which the criterion had put down to decoder underruns: one of the engine's own decoder threads had invoked the out-of-memory killer, which killed 30.8&nbsp;GB of development tooling in the same second. The underruns were the symptom. We protected the engine and added 8&nbsp;GB of swap. It also found that our test harness, which built the schedule before each engine start, would have left the channel black for the fortnight over one unreadable media file that the engine itself would have skipped. Refusing to start is not automatically the safe choice. We rebooted with someone at the machine to prove it comes back, and all 17 pre-flight checks passed.</p>
+</section>
+<section>
+<h2>What happened</h2>
+<p>The engine came up at 19:53:26 UTC on 6 August 2026, and the campaign's official start was recorded about four and a half minutes later. That gap caused the first failure, and it was ours. On 8 August, looking into a 425&nbsp;&micro;s phase peak overnight, we found the adjudicator had printed &ldquo;INSUFFICIENT &mdash; no runs in range&rdquo; for 39 hours: it kept only runs that began after the recorded start, so it had discarded the campaign's only run. The bug was aligned against success: fourteen clean days would have ended with no verdict, and a restart would have &ldquo;fixed&rdquo; it. The same fact had made our public campaign total over-count by 13,500 frames a day earlier, and we had fixed that without sweeping for others. We fixed the adjudicator that day, in tooling only; judged properly, the run passed at that point. The 425&nbsp;&micro;s peak itself later proved to be the first of the excursions described below.</p>
+<p>At 03:25:19 UTC on 11 August, about 103.5 hours in, the clock thread woke 566,716&nbsp;ns late. C1 failed, and could not be undone: the counter clears only on a restart, which would itself have ended the run. Our public panel, built from the engine's own counters every fifteen minutes, showed it by 03:33, unattended. The adjudicator's FAIL sat unread for about 27 hours, until a peak was noticed by eye at 06:40 UTC on 12 August. That day we published the failure on this site's main page, mid-run, and relabelled the run from a pass/fail test to a specimen: the verdict was banked, and a restart would have destroyed the only live example of the fault.</p>
+<p>At 08:50:13 UTC on 15 August, about 205 hours in, a second late wake came in at 569,759&nbsp;ns, the run's worst tick. We did not notice it for two days; until 17 August every internal document said &ldquo;late 1&rdquo;. Both fell in quiet stretches: no commit landed on 9, 10 or 11 August, and none from the afternoon of 13 August to the afternoon of 17 August. But the box was not left alone for the fortnight: development, builds and site publishing ran on it, eighteen commits on 12 August alone. The adjudicator prints CONFOUNDED when build artefacts are written during the campaign, as a flag for a human to attribute rather than an automatic void, and it found three. Builds were pinned away from the clock's processor cores, and neither late second coincides with one.</p>
+<p>We stopped the engine deliberately at 23:16:43 UTC on 20 August, about 3.3 hours after the fourteen-day mark, and proved the shutdown clean from the log rather than from an exit code: the queue feeding the as-run log, our hash-chained compliance record of what the engine played out, drained its last 711 records, and the final record is a block seal, the chain's own checkpoint. Verdict: <strong>FAIL (CONFOUNDED)</strong>. C1 failed on 2 late wakes. C2 passed at 1,055&nbsp;ns against 1,500, on the once-a-minute sampling it specifies (the every-second p99 below reads 1,059). C3 passed at 569,759&nbsp;ns against 2,000,000.</p>
+</section>
+<section>
+<h2>The numbers</h2>
+<p>One run, 6&ndash;20 August 2026. Where our main page's <a href="/#evidence">evidence table</a> carries a figure, it is the same figure here.</p>
+<table class="facts">
+<thead><tr><th>Measurement</th><th>Value</th><th>When and how</th></tr></thead>
+<tbody>
+<tr><td>Continuous engine run</td><td>339 h</td><td>2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, stopped deliberately. Three independent derivations agree to within twenty seconds: systemd (339.3881&nbsp;h), the engine's frame counter (339.3825&nbsp;h), the 1&nbsp;Hz diagnostic line (339.3861&nbsp;h). Rounded down.</td></tr>
+<tr><td>Frames produced</td><td>61,088,850</td><td>The engine's frame counter, 14&nbsp;s before the stop. Produced, not put on the wire: 214 were shed to drift compensation, by design.</td></tr>
+<tr><td>Late SDI frames</td><td>0</td><td>Reported by the card itself, not by us: frames that reached the SDI output late. The card's own denominator, not the 61,088,850 produced, 214 of which never reached it.</td></tr>
+<tr><td>Frames dropped by the card, after start-up</td><td>0</td><td>The card counted 4 at start-up, as it had at the start of earlier runs, and none after, so we do not publish an unqualified &ldquo;0 dropped&rdquo;.</td></tr>
+<tr><td>Late engine frames (C1)</td><td>2</td><td>Twice the clock thread woke more than half a millisecond late: 11 Aug 03:25 UTC (567&nbsp;&micro;s) and 15 Aug 08:50 UTC (570&nbsp;&micro;s). The criterion allowed zero.</td></tr>
+<tr><td>Frames shed to drift compensation</td><td>214</td><td>The card's crystal ran slow against TAI, between &minus;2.2 and &minus;4.2 parts per million, tracking case temperature, so the engine produced marginally faster than the card consumed and discarded the surplus before the card saw it.</td></tr>
+<tr><td>Seconds at exactly 50 frames</td><td>1,221,791</td><td>Every second, none missing: in all 1,221,790 intervals the frame counter advanced by exactly 50 and the timecode by one second, across 14 midnights. The engine's counter, not a wire measurement. The clock reported LOCK throughout: its own phase lock to TAI, not genlock.</td></tr>
+<tr><td>Clip junctions, frame-exact</td><td>7,439</td><td>Every clip change visible in the as-run log, checked against the engine's tick grid: exactly one source frame from outgoing to incoming, worst deviation 79&nbsp;ns, no gaps, no overlaps &mdash; in the video; the audio across them was not checked. Not counted: the 48.6&nbsp;s restart gap at the very start, between the previous run's last frame and this run's first. Not visible to the as-run log, so not covered: 782 same-file transitions, being 391 returns to the top of the schedule and 391 duplicate airings from a known defect in which the first item of a looping region airs twice per loop.</td></tr>
+<tr><td>Clock phase, per-second worst tick</td><td>median 197&nbsp;ns</td><td>Across all 1,221,791 seconds: median 197&nbsp;ns, p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759, which is 2.85&nbsp;% of a frame. Above p99.99, nothing in this run landed between about 50&nbsp;&micro;s and 355&nbsp;&micro;s; the excursions above that gap are a second population, not the tail of the first.</td></tr>
+<tr><td>Compliance records dropped</td><td>0</td><td>Of 47,518,115 as-run records. The writer's queue may drop a record rather than stall the clock thread, and writes an exception into the chain when it does, so a drop would have left its own evidence. The log keeps one record per source frame (a 25p item logs 25 a second), which is why it holds fewer records than the engine produced frames.</td></tr>
+<tr><td>Stalls in the output cadence</td><td>0</td><td>The engine's own count, across the whole run.</td></tr>
+<tr><td>Engine memory, peak</td><td>264&nbsp;MB</td><td>243&nbsp;MB at the stop; no leak over 339&nbsp;h.</td></tr>
+<tr><td>Frame underruns, after start-up priming</td><td>&mdash;</td><td>The counter read 71, all of it decoder priming within the first eight seconds, and did not move again across 20,363 samples. As of 28 September 2026 our main page keeps the value withdrawn, because later runs grew: the same unit's following run by 33 on 21 August 2026, while we ran our own work on the machine alongside it, and one of the second unit's four channels by 3, unexplained, on 24 September 2026.</td></tr>
+</tbody>
+</table>
+</section>
+<section>
+<h2>What went wrong</h2>
+<p><strong>The run failed its own test.</strong> A late wake means that on one tick of the fifty in a second, the clock thread woke late. The frame was still built and the card's output buffer absorbed the delay: under 3&nbsp;% of one frame, about 0.35&nbsp;% of the 160&nbsp;ms (8 frames) that buffer held when we measured it over 30 hours to 1 August 2026. Nothing reached the SDI output late, missing or out of order; the frame counter advanced exactly 50 across each event, and the clock was back in its ordinary range within the following second. It is an internal timing miss, not a dropped frame, and none of that changes the verdict. A criterion you only quote when it passes is not a criterion.</p>
+<p><strong>Nothing watched the adjudicator, three times.</strong> A wrong INSUFFICIENT stood for 39 hours and the FAIL sat unread for 27. The panel published both late wakes within minutes, as it was built to, and nobody saw the second one there for two days. The automation held and the attention did not.</p>
+<p><strong>Our public panel was wrong in places while the run went on</strong>, and each error was corrected when found. It called frames produced &ldquo;delivered&rdquo;, mixed per-run with campaign-summed figures, and said clip junctions were &ldquo;ruled out by measurement&rdquo; when they were neither ruled out nor in. On 17 August it said SOAK OFF for about 2.5 hours while the engine ran perfectly, because a GitHub incident was failing its data fetch; on 19 August its longest-run record still read 39 hours, 308 hours into this run.</p>
+<p><strong>This run's audio was not measured, and the software carried an audio defect.</strong> For sixty days from a change we made on 18 July 2026, until its fix on 16 September 2026, the engine fed the card audio at the wrong rate after any clip change where the source frame rate changed but the audio channel count and sample rate did not. Recorded on the wire on 16 September 2026, the worst case put 5.2&nbsp;% silence, in short scattered gaps, into programme audio that had none. What it did to this run's audio was not measured, so every frame and junction figure here is a video figure.</p>
+<p><strong>It did not end with the campaign.</strong> On the binary deployed on 21 August a third late wake, 571,634&nbsp;ns, came on 22 August, and more followed, the worst tick reaching 904,629&nbsp;ns, 4.5&nbsp;% of a frame, in the run that ended 4 September. Every run from 19 August to 5 September 2026 exceeded 944&ndash;3,091&nbsp;ns, the typical band for a run's worst tick before then. <strong>None of those runs was a soak</strong>: they carried probes, experiments on the live channel and our own load, so their counters measure our work as much as the engine, and we do not publish them as results. The three runs of 6&ndash;9 September peaked at 326,072, 1,217 and 89,932&nbsp;ns, and every run on the first unit from 9 to 27 September 2026 stayed at or below 4,043&nbsp;ns, including runs of 176 and 195 hours. We changed the host and the engine on 8 and 9 September; with the cause undetermined, we credit neither change.</p>
+</section>
+<section>
+<h2>What it changed</h2>
+<p>From 8 August 2026 the adjudicator selected runs by whether they overlap the campaign and labelled a run that straddles the recorded start, with a regression test that fails if the old rule returns; the fix was swept across every tool that reads that start time. On 12 August 2026 a watcher went onto the box, touching nothing in the engine and checking every 10 minutes for underrun growth, card drops, output-cadence stalls, a low card buffer and phase above 5&nbsp;ms. It reports and never acts: stopping a playout channel on a threshold is a self-inflicted outage while the card's buffer is absorbing the condition. As of 28 September 2026, and since 8 September, a late engine wake trips an alarm with no start-up allowance and pushes it to an engineer's phone, worst case about 15 minutes after the event; before 8 September a box could page once, ever. The push path was proven end to end on 27 September 2026, by a reference-loss alarm during the <a href="/archive/genlock-2026-09-27/">first genlock</a> rather than by a late wake.</p>
+<p>And the failure became an investigation. After the stop we re-read the fortnight from eight independent directions. The two late wakes are the largest of 109 excursions of 380&nbsp;&micro;s or more that the instruments had recorded all along; the half-millisecond counter only saw the two that crossed it. All 109 are late, never early. 106 sit in a 380&ndash;450&nbsp;&micro;s band, median 413, and the two late wakes stand 116&nbsp;&micro;s clear of the rest, with nothing in between. They came in 36 bursts of one to five, and every gap inside a burst is 112 or 113&nbsp;s, or exactly twice that: 73 gaps, no other value. They are the same size in working hours and in the small hours. Ruled out, each by a measurement that could have said otherwise: the NTP daemon's steering of the kernel's TAI clock, the as-run block seal, thermal effects, and any engine stall or restart. Clip junctions, about every 25&nbsp;s on this schedule, are neither ruled out nor in. By 21 August 2026 around twenty candidate causes had been tested and rejected, several of them ours. The cause is not determined; the investigation has <a href="/archive/late-wakes-2026-08/">its own entry</a>.</p>
+</section>
+<aside class="open">
+<h2>What remains open</h2>
+<p><strong>The cause</strong> of the excursions, both late wakes included: not determined as of 27 September 2026.</p>
+<p><strong>A larger excursion.</strong> The worst used about 0.35&nbsp;% of the card's buffer; the headroom above that is inferred from margin, not measured.</p>
+<p><strong>The wire.</strong> Nothing outside the card watched or recorded the SDI output during this run, and this run's audio was not measured at all. A capture on the wire is what would earn a claim about either.</p>
+<p><strong>The criterion.</strong> The fourteen-day criterion has never been passed; as of 28 September 2026 no run on either of our two units had exceeded 339 hours. C1 and C3 police one event at two thresholds four times apart, and no redesigned criterion exists.</p>
+<p><strong>The watchers.</strong> As of 28 September 2026 nothing ran the adjudicator automatically. The watcher pages a phone on C1's condition, a late engine wake, but no page for a real late wake is on record, and it trips on phase at 5&nbsp;ms, not C3's 2&nbsp;ms. As of 27 September 2026 the CONFOUNDED check could not see one class of development build, so &ldquo;quiet stretches&rdquo; above rests on the commit log.</p>
+<p><strong>The record.</strong> The looping-region defect was unfixed as of 27 September 2026, and the as-run log keeps no item-level record, so it cannot show this run's 391 duplicate airings. We make no claim about how low the card's buffer went: the instrument that tracked its minimum under-reported during this run. Per-process page-fault counts, which would have tested one candidate explanation directly, were not captured before the stop and cannot be recovered. The as-run archive, re-verified on 21 August 2026 with this run in it, reads INVALID: one broken boundary, 20&rarr;21 June 2026, and breaks inside day files &mdash; among them 20 and 21 June and 17 July 2026 &mdash; all known and all pre-dating the run. And 339 hours is not the 90 days of continuous running we require before we call anything reliable.</p>
+</aside>
+<p class="record">Written on 28 September 2026 from the record: the phase criterion frozen on 5 August 2026, the campaign close-out of 20 August 2026, and investigation records RET-129 (the adjudicator) and RET-130 (the excursions).</p>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a></p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

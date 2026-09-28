@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>DeckLink Duo 2 genlock at 1080p50: 720p50 locked, 1080i50 did not — Karhu TV</title>
+<meta name="description" content="A DeckLink Duo 2 at 1080p50 on a Blackmagic sync generator: which reference locked, what the generator measured against TAI, and what pulling it showed. 27 Sep 2026.">
+<link rel="canonical" href="https://karhu.tv/archive/genlock-2026-09-27/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/genlock-2026-09-27/">
+<meta property="og:title" content="DeckLink Duo 2 genlock at 1080p50: 720p50 locked, 1080i50 did not">
+<meta property="og:description" content="A DeckLink Duo 2 at 1080p50 on a Blackmagic sync generator: which reference locked, what the generator measured against TAI, and what pulling it showed. 27 Sep 2026.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-09-28">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DeckLink Duo 2 genlock at 1080p50: 720p50 locked, 1080i50 did not">
+<meta name="twitter:description" content="A DeckLink Duo 2 at 1080p50 on a Blackmagic sync generator: which reference locked, what the generator measured against TAI, and what pulling it showed. 27 Sep 2026.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Genlocking a DeckLink Duo 2 at 1080p50, and pulling the reference: 27 September 2026",
+ "description": "A DeckLink Duo 2 at 1080p50 on a Blackmagic sync generator: which reference locked, what the generator measured against TAI, and what pulling it showed. 27 Sep 2026.",
+ "datePublished": "2026-09-28",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/genlock-2026-09-27/",
+ "mainEntityOfPage": "https://karhu.tv/archive/genlock-2026-09-27/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-09-14/2026-09-27"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/">Home</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/tools.html">Tools</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-09-28">28 Sep 2026</time></p>
+        <h1 id="entry-title">Genlocking a DeckLink Duo 2 at 1080p50, and pulling the reference: 27 September 2026</h1>
+        <p class="dek">We froze this test before the sync generator arrived. A 1080i50 reference was seen but not locked, 720p50 locked on both units, and the generator was measured against TAI. While locked, the engine discarded surplus frames nearly four times as often as when free-running. When we pulled the reference, its loss alarm reached the operator's phone, and nothing was watching the SDI output itself.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>What we set out to learn</h2>
+<p>For two months the claims register on <a href="/#register">our front page</a>, which says what would earn each claim, declined this one. We could tell you &ldquo;the box runs correctly free&rdquo;, but not what it does locked, &ldquo;or what the first second after a reference failure looks like&rdquo;. This is the test it asked for, run on 27 September 2026. Genlock locks a device&rsquo;s video timing to a house reference (analogue blackburst or HD tri-level sync), so that every output in a facility runs at one rate and phase. Our design does not depend on it. Syke, the clock inside our playout engine Rytmi, takes its time from TAI (International Atomic Time) and measures how far the DeckLink card&rsquo;s crystal runs from it, in parts per million (ppm). The difference is absorbed by discarding an occasional surplus frame from the handoff queue between engine and card. We call that a shed.</p>
+<p>The first unit had never been genlocked, including through the <a href="/archive/fortnight-soak-2026-08/">339-hour run of August 2026</a>. From June until 17 August 2026, four of our own internal documents said it had. One record&rsquo;s error was copied outward without being re-derived, and it stood until someone read the instrument. Until the lock described below, the card&rsquo;s genlock state had read unlocked in every one of 78,132 samples on the first unit since it began publishing on 2 Aug 2026.</p>
+<p>We wrote the test down on 14 September 2026, the day the sync generator was ordered. We froze it before any data existed (a pre-registration): &ldquo;Nothing below may be edited after the first reading is taken.&rdquo; It set four pass criteria, which we called gates:</p>
+<ul>
+<li><strong>The flag:</strong> the card reports locked. This is necessary and explicitly not sufficient, so a pass means only &ldquo;the card claims a lock&rdquo;.</li>
+<li><strong>The result:</strong> drift under 0.5&nbsp;ppm for two hours.</li>
+<li><strong>The consequence:</strong> no shed for six hours.</li>
+<li><strong>The inverse intervention:</strong> pull the reference and watch drift and sheds come back, because &ldquo;Without this the whole test is a coincidence.&rdquo;</li>
+</ul>
+<p>A card that locks but refuses the output mode, &ldquo;e.g. a 1080i50 reference against a 1080p50 output&rdquo;, was named in advance as inconclusive.</p>
+<p>On 16 September, still before any hardware or data, we found that the second gate would fail a perfect lock. Our drift figure measured the card against Syke&rsquo;s clock, not against the reference. A card locked flawlessly to a generator 2.5&nbsp;ppm off TAI would therefore read 2.5&nbsp;ppm. The gate became a convergence test instead: two units on one reference must agree within 0.5&nbsp;ppm for two hours, since the generator&rsquo;s own error is common to both and cancels. The generator&rsquo;s absolute error became a description, not a gate: as of 16 Sep 2026 Blackmagic&rsquo;s tech-spec page for it gives no ppm figure, and a threshold taken from the measurement it judges would be fitted to the result. The shed gate kept its wording, but continuing sheds would now refute genlock only at a cadence inconsistent with the measured locked drift. We expected fewer of them, having assumed a reference closer to TAI than the card.</p>
+<p>The generator cannot emit 1080p50, the format of every channel, so the plan was to try 1080i50 first and then 720p50. The card&rsquo;s detected-reference-mode reading would separate &ldquo;the card cannot see the reference&rdquo; from &ldquo;the card sees it and refuses the mode&rdquo;. The alarm on reference loss (a push notification to the operator&rsquo;s phone) trips only on a transition out of locked. Because both units had only ever read unlocked, it could not be tested until a first lock existed. The acceptable behaviour on loss was written down first: &ldquo;output continues, no frame is lost, the transition is reported, and the engine keeps running. A device that drops frames on reference loss is worse than one that never locked.&rdquo;</p>
+</section>
+<section>
+<h2>What happened on 27 September</h2>
+<p>Both machines were development benches running a test schedule, not a production fleet: the first unit (i7-12700) and a second unit (i7-14700). Each had a Blackmagic DeckLink Duo 2 on driver 15.3.1a4, with one reference input for its four SDI outputs. One Blackmagic Mini Converter Sync Generator fed both units over separate cables. Its outputs carry blackburst or tri-level sync, not SDI, so the cards&rsquo; reference inputs were our only detector. The genlock-source setting in our configuration is still read by nothing, as of 27 Sep 2026: the cards locked without any instruction from our software.</p>
+<p><strong>1080i50: seen, not locked.</strong> We set the switches for 1080i50: 4 OFF, 3 OFF, 2 ON, 1 ON, per Blackmagic&rsquo;s Converters manual. Every sub-device on both cards reported the detected reference as <code>Hi50</code>, the DeckLink SDK&rsquo;s code for 1080i50. In 4.5 minutes of watching, neither unit locked, and drift stayed free-running. We read that as the card declining to lock a 1080p50 output to a reference it could see, and that reading rests on those 4.5 minutes. The flag, the drift and the detected mode all agreed, so this was no cosmetic lock. 1080i50 carries 25 frames a second as 50 fields; 720p50 carries 50 frames a second, like the output. Whether that is why this card declined is untested.</p>
+<p><strong>720p50: locked.</strong> We changed one switch (3 to ON) and no software. Both cards locked from 13:59&nbsp;UTC, the first lock in the project&rsquo;s history. That was five running outputs between them, one on the first unit and four on the second, every one at 1080p50. We then restarted both engines with the reference connected. Our drift figure was a run-cumulative mean, and a window straddling the lock would have blended two states. Both cards locked again at start-up.</p>
+<p><strong>Two crystals, one rate.</strong> Free-running, the two cards sat more than 4&nbsp;ppm apart. Locked, their medians over 3.57 hours agreed to within 0.038&nbsp;ppm (38 parts per billion), against the 0.5&nbsp;ppm line. The only thing they now shared was the generator, which ran about 11.8&nbsp;ppm slow against TAI. Blackmagic published no figure to compare it with. Ours comes from one generator on one afternoon, seen by two cards. Each card was measured against its host&rsquo;s kernel TAI clock, which NTP disciplines. The figure describes this generator, not the product line.</p>
+<p><strong>Locking made shedding more frequent.</strong> At 14:08:38&nbsp;UTC, before any locked shed, we wrote down what the locked cards&rsquo; early drift implied. It predicted one slipped 20&nbsp;ms frame about every 28 minutes, roughly four times as often as the first unit&rsquo;s own crystal would slip, so the frozen gate of no shed for six hours could not pass and its failure would not refute genlock. Over the whole window the drift medians give 0.020&nbsp;s &divide; 11.81&times;10<sup>&minus;6</sup> = 28.2 minutes. The gaps were 24, 33 and 18 minutes on the first unit and 39, 29 and 28 on the second: one about every 29 minutes (median interval, both units) against 28.2 predicted, nearly four times as often as the first unit shed free-running, where the median interval was 110 minutes over 9&ndash;14 Sep 2026. While locked, neither the engine nor the card counted a late frame (the engine&rsquo;s count records its clock thread waking more than half a millisecond late).</p>
+<p><strong>Pulling the reference.</strong> At 17:42:34&nbsp;UTC we wrote our predictions down and read them back. At about 17:44 we cut the generator&rsquo;s 12&nbsp;V supply, with every channel on both units locked and playing out a test schedule. Both units read unlocked between the 17:44 and 17:45 samples. The alarm fired for the first time since we built it thirteen days earlier: at 17:46:02&nbsp;UTC on the first unit and 17:49:55 on the second. Both notifications reached the operator&rsquo;s phone. Our service log records only that the alert ran, so the phone was the only witness to that last hop. At one-minute resolution no engine counter moved on the first unit, and its worst clock-tick timing error of the run stayed at 1,297&nbsp;ns. The second unit&rsquo;s engine counted no late frame.</p>
+<p><strong>Drift came back at once, beneath a figure that did not.</strong> The published mean crawled from &minus;11.72 to &minus;11.49&nbsp;ppm over six minutes, as we had said beforehand it would. Undoing the mean recovers the rate: mean &times; elapsed time is the card&rsquo;s integrated offset from TAI, and its minute-to-minute difference is the rate. By 17:46 the first unit was at &minus;2.77&nbsp;ppm, against &minus;2.927 free-running. The second unit was between &minus;7.3 and &minus;7.5, against &minus;7.180. The first unit went 101 minutes from its last locked shed, at 17:33&nbsp;UTC, before shedding again at 19:14. The second unit&rsquo;s intervals between discards went back to a median of 47 minutes across its four outputs that evening, against 46 predicted for its crystal. The lever moved drift and sheds in both directions.</p>
+</section>
+<section>
+<h2>The numbers</h2>
+<table class="facts">
+<thead><tr><th>Measure</th><th>Value</th><th>When and how</th></tr></thead>
+<tbody>
+<tr><td>Genlock state before the lock</td><td class="v">unlocked, every sample</td><td class="src">78,132 samples on the first unit, 2 Aug to 27 Sep 2026</td></tr>
+<tr><td>Free-running baseline, card vs TAI</td><td class="v">&minus;2.927 / &minus;7.180&nbsp;ppm</td><td class="src">first / second unit, medians over 9&ndash;14 Sep 2026 (8,075 / 8,073 samples) of a run-cumulative mean. Our front page&rsquo;s &minus;3.7&nbsp;ppm is the first unit over 26 Jul&ndash;1 Aug 2026; the crystal moves with temperature</td></tr>
+<tr><td>1080i50 reference</td><td class="v">detected, not locked</td><td class="src">all four sub-devices of both cards, 4.5&nbsp;min, 27 Sep 2026</td></tr>
+<tr><td>720p50 reference</td><td class="v">locked, 5 of 5 outputs</td><td class="src">all at 1080p50, both units, from 13:59&nbsp;UTC 27 Sep 2026; the card&rsquo;s own claim</td></tr>
+<tr><td>Locked drift vs TAI</td><td class="v">&minus;11.791 / &minus;11.829&nbsp;ppm</td><td class="src">first / second unit, medians over 14:03&ndash;17:37&nbsp;UTC (3.57&nbsp;h) 27 Sep 2026, 215 samples each</td></tr>
+<tr><td>Agreement between the cards</td><td class="v">within 0.038&nbsp;ppm</td><td class="src">same window, against 0.5&nbsp;ppm set on 16 Sep 2026: passed</td></tr>
+<tr><td>Generator vs TAI</td><td class="v">about &minus;11.8&nbsp;ppm</td><td class="src">descriptive: one generator, one afternoon, against NTP-disciplined kernel TAI; no vendor figure (checked 16 Sep 2026)</td></tr>
+<tr><td>Shed interval, locked</td><td class="v">about every 29&nbsp;min</td><td class="src">median interval, both units, 27 Sep 2026, against 28.2 predicted; six intervals, 18&ndash;39&nbsp;min</td></tr>
+<tr><td>Shed interval, free-running, first unit</td><td class="v">110&nbsp;min</td><td class="src">median interval over 9&ndash;14 Sep 2026</td></tr>
+<tr><td>Frozen shed gate: none for 6&nbsp;h</td><td class="v">failed</td><td class="src">four sheds per unit in 3.57&nbsp;h, as written down at 14:08&nbsp;UTC</td></tr>
+<tr><td>Late frames</td><td class="v">0</td><td class="src">engine count, both units, all five outputs, lock through pull, 27 Sep 2026; card&rsquo;s count 0 while locked</td></tr>
+<tr><td>Reference-loss alarm</td><td class="v">2 of 2 reached the phone</td><td class="src">raised 17:46:02 and 17:49:55&nbsp;UTC 27 Sep 2026</td></tr>
+<tr><td>Card clock step on acquiring the reference</td><td class="v">&minus;27.3 / &minus;35.6&nbsp;ms</td><td class="src">first / second unit, 13:58&ndash;13:59&nbsp;UTC 27 Sep 2026, as the card reports it; a frame is 20&nbsp;ms. None on loss</td></tr>
+<tr><td>Time locked</td><td class="v">about 3&nbsp;h&nbsp;46&nbsp;min</td><td class="src">226 one-minute samples, first unit, 13:59&ndash;17:44&nbsp;UTC 27 Sep 2026</td></tr>
+</tbody>
+</table>
+</section>
+<section>
+<h2>What it cost, and what went wrong</h2>
+<p><strong>The cost is the shed rate.</strong> As our results record puts it, &ldquo;that is not a defect in either the generator or the engine &mdash; it is the two of them disagreeing about what time it is.&rdquo; Syke keeps to TAI, the locked card keeps to its reference, and the difference goes into the queue. The cadence belongs to this generator; another reference would give another. A house reference makes the output coherent with a facility and, with a reference like this one, makes it drift faster against absolute time.</p>
+<p><strong>The step nobody was watching for.</strong> At the moment of lock, the first unit&rsquo;s integrated card-versus-TAI offset, as the card reports it, went from &minus;1.550&nbsp;ms to &minus;28.842&nbsp;ms in one minute. The second unit&rsquo;s moved 35.6&nbsp;ms. Both exceed a 20&nbsp;ms frame. The loss edge shows no step. That is physically sensible: acquiring a reference pulls the card&rsquo;s phase into line, while losing one leaves the crystal free-running from wherever it was. No engine counter moved at the step. Nothing watched the wire either: the second unit&rsquo;s SDI outputs had no cables attached, and nothing recorded the first unit&rsquo;s.</p>
+<p><strong>Our own errors, in writing.</strong> We expected locking to reduce sheds, and they came nearly four times as often. Our hardware notes had called locking a 50p output to an i50 reference ordinary broadcast practice, and this card did not lock in 4.5 minutes of watching. The frozen shed gate failed as worded, for the reason we gave at 14:08:38. It was right to fail, but it did not pass, and we do not say it did. The first unit&rsquo;s shed after the pull fell between our two predictions: 19:27, written before the pull as a full free-running cycle from its last locked shed, and 18:55, written at 18:47 to count the eleven minutes already spent at the locked rate, with a scatter of ten minutes or more that we did not state.</p>
+<p><strong>Our front page was wrong that afternoon.</strong> Fifteen updates of the data behind it, from 14:06 to 17:36&nbsp;UTC, called the first unit free-running while its card read locked, because that description was a fixed string. The register row on holdover said no reference had been on the bench until we rewrote it that night. And under lock its drift label, &ldquo;Card crystal error vs TAI&rdquo;, would have put the generator&rsquo;s error under the card&rsquo;s name; that did not happen only because the page was showing a dated record, not live figures, that day.</p>
+</section>
+<section>
+<h2>What it changed</h2>
+<p>On 27 Sep 2026, with this generator, a 720p50 reference locked 1080p50 outputs on this card where 1080i50 did not. PAL blackburst was not tried. Two cards on that one reference converged to within 0.038&nbsp;ppm over 3.57 hours. Across one pull, as far as the card and the engine can tell, the output kept running, no late frame was counted, the loss was reported and the alarm reached a phone. &ldquo;No frame is lost&rdquo; is an engine-side statement, because nothing watched the wire.</p>
+<p>Our shed model predicts one slipped frame every 0.020&nbsp;s divided by the drift. It had been checked only on free-running cards near 3&nbsp;ppm; the time-to-slip row of our front page&rsquo;s evidence table has those figures and their caveats. Here, at a drift near 12&nbsp;ppm, it predicted the locked cadence before any locked shed. That night we changed our front page to derive the first unit&rsquo;s description from the reference state the card reports. We also made it label a locked card&rsquo;s drift as the reference&rsquo;s, and withhold a drift mean that spans a change of lock.</p>
+<p>There is no threshold to tune. With a reference present, the facility&rsquo;s rate is the card&rsquo;s rate. The engine runs on Syke and Syke keeps to TAI, so the queue absorbs the difference. One direction the record names is production that follows the reference&rsquo;s rate. On 27 Sep 2026 it was not built, and how it would sit with events scheduled to air at a TAI instant was open. By mechanism rather than measurement, genlock should not touch the <a href="/archive/late-wakes-2026-08/">rare late wakes of our clock thread</a>. Those are timed against the host&rsquo;s own clock, upstream of the card, and one afternoon locked could not show it either way.</p>
+</section>
+<aside class="open">
+<h2>What remained open on 27 Sep 2026</h2>
+<ul>
+<li><strong>The wire.</strong> Whether acquiring a reference, with a clock step of more than a frame as the card reports it, put a repeated, dropped or torn frame on air was unmeasured. Re-powering the generator is itself that experiment, and on 27 Sep 2026 we left it off.</li>
+<li><strong>The first second after a reference failure.</strong> It was unmeasured on the wire, and one-minute sampling cannot resolve it. We saw one loss, once, after about 3&nbsp;h&nbsp;46&nbsp;min locked. We claim nothing about multi-day locked operation or long holdover.</li>
+<li><strong>Acquisition time.</strong> Detection was instant at our polling resolution. The time to lock was not characterised.</li>
+<li><strong>The output-by-reference matrix.</strong> A 1080i50 output on a 1080i50 reference was untested, so the 1080i50 result cannot be pinned on progressive outputs rather than on this card. 625-line PAL blackburst against 1080p50 was untested, and so was a wrong-family reference such as 1080i59.94 against a 50&nbsp;Hz output.</li>
+<li><strong>Mixed rates under lock.</strong> Every output was 1080p50. Mixed rates on one Duo 2 had been shown only free-running, on 18 Sep 2026: 50.25 and 60.24 frames a second by the card&rsquo;s own count. That count was not from a receiver on the wire.</li>
+<li><strong>The generator.</strong> Its temperature coefficient, its long-term stability, and whether other units agree with it were unmeasured.</li>
+<li><strong>Sheds on the wire.</strong> A shed is a surplus frame discarded before it reaches the card, by design. Whether one is visible on the SDI output, locked or free, was unmeasured: our counters sit on the engine&rsquo;s side of the card. The locked cadence rests on six intervals of 18 to 39 minutes.</li>
+<li><strong>The detected reference standard.</strong> The card reported it. As of 27 Sep 2026 the engine did not publish it, and ran its configured output rate rather than following the reference&rsquo;s.</li>
+</ul>
+</aside>
+<p class="record">From the record: our genlock pre-registration, frozen 14 Sep 2026, amended 16 Sep and extended 17 Sep 2026 before the generator arrived, with results appended on 27 Sep 2026.</p>
+
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a></p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

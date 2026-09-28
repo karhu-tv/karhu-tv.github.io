@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Archive — Karhu TV</title>
+<meta name="description" content="Dated records of finished soak runs and investigations on Rytmi, Karhu TV's software playout engine: what was measured, what failed, what was retracted and what is still open.">
+<link rel="canonical" href="https://karhu.tv/archive/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/">
+<meta property="og:title" content="The Karhu TV archive: soak runs and investigations, dated">
+<meta property="og:description" content="Dated records of finished soak runs and investigations on Rytmi, Karhu TV's software playout engine: what was measured, what failed, what was retracted and what is still open.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Karhu TV archive: soak runs and investigations, dated">
+<meta name="twitter:description" content="Dated records of finished soak runs and investigations on Rytmi, Karhu TV's software playout engine: what was measured, what failed, what was retracted and what is still open.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the archive</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/">Home</a>
+      <a href="/archive/" aria-current="page">Archive</a>
+      <a href="/tools.html">Tools</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <header class="page-head">
+      <p class="eyebrow">Archive</p>
+      <h1>What we measured, dated, and left as it was written.</h1>
+      <p class="dek">Finished soak runs and investigations on Rytmi, Karhu&nbsp;TV's software playout
+        engine, and on the hardware it drives. Each entry is written once, for an engineer who
+        arrived with a specific problem and wants to know what was actually measured, on what,
+        and when.</p>
+    </header>
+
+    <section aria-labelledby="rules-h">
+      <h2 id="rules-h" class="visually-hidden">How the archive works</h2>
+      <ul class="rules">
+        <li><strong>Every figure is dated.</strong> Each number carries the date it was
+          measured, or is marked as a floor (&ge;) because it can only grow. Nothing here is a
+          live reading: the home page carries current figures whenever a soak is running, and
+          this archive carries what was true on the day.</li>
+        <li><strong>Nothing is changed silently.</strong> An entry is not rewritten after it is
+          published. When something in one turns out to be wrong, a dated addendum goes at the
+          end saying what was wrong, how we found out and what replaces it. The original stays
+          readable, so you can see what we believed and when.</li>
+        <li><strong>The bad days are in it.</strong> Runs that failed their own criteria,
+          figures we retracted and results that came out inconclusive are published the same
+          way as the ones that passed. A passing number means little from someone who only
+          shows passing numbers.</li>
+        <li><strong>Each entry ends with what it did not settle.</strong> What remains open is
+          part of the record, stated with the evidence that would settle it. We do not give
+          dates for work that has not been done.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="entries-h">
+      <div class="list-head">
+        <h2 id="entries-h">Entries</h2>
+        <p>Newest first, by the date each was written.</p>
+      </div>
+      <ol class="entries">
+<li>
+  <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
+  <h3><a href="/archive/late-wakes-2026-08/">Late wakes near 400 microseconds, August 2026: we found where Linux had put the timer, not what made them late</a></h3>
+  <p class="entry-dek">Two late wakes failed our fourteen-day soak in August 2026. They were the top of 109 excursions near 413 µs that recurred with the content and fell only in items handled one way on their way to the output. Kernel traces found where Linux puts the wake timer of a thread on an isolated CPU, but not what made the wake late.</p>
+</li>
+<li>
+  <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
+  <h3><a href="/archive/genlock-2026-09-27/">Genlocking a DeckLink Duo 2 at 1080p50, and pulling the reference: 27 September 2026</a></h3>
+  <p class="entry-dek">We froze this test before the sync generator arrived. A 1080i50 reference was seen but not locked, 720p50 locked on both units, and the generator was measured against TAI. While locked, the engine discarded surplus frames nearly four times as often as when free-running. When we pulled the reference, its loss alarm reached the operator's phone, and nothing was watching the SDI output itself.</p>
+</li>
+<li>
+  <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
+  <h3><a href="/archive/fortnight-soak-2026-08/">Fourteen days of SDI playout, 61 million frames produced: the August 2026 soak, including the part that failed</a></h3>
+  <p class="entry-dek">Between 6 and 20 August 2026 the first unit ran one unbroken 339-hour playout with no late frames on the SDI output, and still failed the criterion we had frozen before it started, because twice the engine's clock thread woke more than half a millisecond late.</p>
+</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a></p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>
