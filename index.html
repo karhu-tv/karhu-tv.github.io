@@ -100,7 +100,7 @@
   /* ── masthead ────────────────────────────────────────────────── */
   header.top {
     display: flex; align-items: baseline; justify-content: space-between;
-    gap: 1rem; flex-wrap: wrap;
+    gap: .75rem 1.5rem; flex-wrap: wrap;
     padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
   }
   .logo { display: flex; align-items: center; gap: .625rem; }
@@ -110,8 +110,12 @@
   }
   .logo-word span { color: var(--accent); }
   nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
-  nav a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent; }
+  nav a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent; padding: .15rem 0; }
   nav a:hover, nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+  /* The other pages' masthead metrics (header gap, link padding, and the phone padding and
+     gap), so the eight-item menu sits in the same place and breaks into the same rows on
+     every page. */
+  @media (max-width: 30rem) { header.top { padding-top: 1.5rem; } nav { gap: .5rem 1.25rem; } }
 
   /* ── hero: the instrument reports a value ────────────────────── */
   .hero { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
@@ -406,13 +410,18 @@
   .tool-dl a.alt { color: var(--ink-soft); border-color: var(--rule); }
   .tool-dl a.alt:hover, .tool-dl a.alt:focus-visible { background: var(--rule); color: var(--ink); }
 
-  footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-faint); font-size: .875rem; }
+  /* --ink-soft, as on tools.html, hardware.html and the archive: the footer now carries the
+     company's statutory details, and --ink-faint is below 4.5:1 for text this size. */
+  footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-soft); font-size: .875rem; }
   footer a { color: var(--accent); }
-  /* The first link inside running prose on this page (to /hardware.html). Without a rule it
-     takes the browser's default blue, which is unreadable on the dark ground. Drawn as
-     tools.html and archive.css draw a prose link. */
-  #rytmi p a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
-  #rytmi p a:hover { text-decoration-thickness: 2px; }
+  /* The statutory line and the page's own sentence sit under the contact line, in the small
+     size tools.html, hardware.html and archive.css give every footer line after the first. */
+  footer p + p { margin-top: .5rem; font-size: .8125rem; }
+  /* Links inside running prose on this page (to /hardware.html and /as-run.html). Without a
+     rule they take the browser's default blue, which is unreadable on the dark ground. Drawn
+     as tools.html and archive.css draw a prose link. */
+  #rytmi p a, #register .reg-why a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  #rytmi p a:hover, #register .reg-why a:hover { text-decoration-thickness: 2px; }
   .note { font-size: .875rem; color: var(--ink-soft); }
   .note code, .inline-code { font-family: var(--mono); font-size: .9em; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
@@ -431,13 +440,15 @@
       </svg>
       <span class="logo-word">karhu<span>.tv</span></span>
     </div>
-    <nav>
-      <a href="#rytmi">Rytmi</a>
-      <a href="#evidence">Evidence</a>
-      <a href="#tools">Tools</a>
-      <a href="#register">What we don't claim</a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
       <a href="/hardware.html">Hardware</a>
       <a href="/archive/">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
     </nav>
   </header>
 
@@ -531,8 +542,14 @@
         <p>
           The as-run log is a <strong>hash chain</strong>. Each record commits to the one before it,
           blocks are sealed and fsynced, and rotated day files are verifiable across boundaries.
-          Compliance isn't a report generated later from something that might have been edited —
-          it's structural.
+          It is written as the engine plays, not assembled afterwards, so changing an earlier
+          record breaks the chain for anyone who already holds a hash from later in it. As of
+          29 Sep 2026 the log carries no key, no signature and no anchor outside itself, and our
+          backups of it are mirrors that a later copy overwrites: the hashes are plain SHA-256, so
+          someone holding the day files could rewrite a record and recompute every hash after it,
+          in that file and every later one, and only a hash kept out of their reach would show the
+          change.
+          <a href="/as-run.html">What verifying the log proves, and what it does not</a>.
         </p>
         <p>
           <strong>And it is software, not an appliance.</strong> The machine behind every
@@ -888,15 +905,26 @@
             <h3>Item-level granularity in the as-run log</h3>
             <p class="reg-why">The as-run is a tamper-evident hash chain and we stand behind it:
               120,483,920 records checked as of 21 August 2026, no false positives, six forgery vectors closed, known breaks from before the 339-hour run of August 2026 &mdash; one between two day files (20&rarr;21 June 2026), and others inside day files, among them 20 and 21 June and 17 July 2026. It
-              records <strong>one entry per frame</strong>, which makes it exact about what played
-              and when, to the frame. What it does not carry is an <em>item</em> boundary &mdash; so
+              records <strong>one entry per source frame</strong>, and that entry is not exact about
+              what played or when: a fault in our log, found in July 2026 and open as of 29 Sep 2026.
+              Each entry is written as the engine hands its frame on towards the card, and stamped
+              with the time of the engine clock tick the frame was made for rather than when the
+              frame leaves the SDI output; and a frame the engine then discards to absorb the
+              card&rsquo;s drift keeps any entry it had, so the log can say a frame played that
+              never reached the card
+              (<a href="/as-run.html">the as-run page</a> has the detail). What it does not carry is an <em>item</em> boundary &mdash; so
               two consecutive plays of the same file read as one continuous run of double the
-              length. That is not hypothetical: RET-122, an open defect, airs the head of a looping
-              region twice per loop on the first unit today, and this log cannot show it. <strong>Integrity is proven; item-level granularity is not</strong>, and we
-              would rather tell you which is which than let the first imply the second.</p>
-          <p class="reg-earn"><span>Would earn it:</span> an item-boundary record. The obstacle is
-            that our record format is frozen — adding a field would invalidate every archive
-            written to date — so it needs a versioned format change, done deliberately.</p>
+              length. That is not hypothetical: RET-122, a defect open as of 27 Sep 2026, airs the
+              head of a looping region twice per loop, as it did on the first unit through the
+              339-hour run of August 2026, and this log cannot show it. <strong>The chain proves its
+              records are the ones written, in the order written; it does not prove they were true,
+              or that nobody rewrote them all, and it carries no item boundaries</strong> &mdash; and
+              we would rather tell you which is which than let the first imply the rest.</p>
+          <p class="reg-earn"><span>Would earn it:</span> an item-boundary record, and frame entries
+            written from what the card reports it played rather than from the hand-off. The
+            obstacle to the first is that our record format is frozen — adding a field would
+            invalidate every archive written to date — so it needs a versioned format change, done
+            deliberately.</p>
         </div>
 
         <div class="reg-item">
@@ -1060,14 +1088,13 @@
   </section>
 
   <footer>
-    <p style="max-width:none">
-      Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a><br>
-      <span style="font-size:.8125rem">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>
         Copy and figures drawn from measured results. Every figure here is dated or marked a
         floor, because a static number for a quantity that moves is wrong the moment it moves;
         the panel above carries the current readings whenever a soak is running, and the
         dated record when none is.
-      </span>
     </p>
   </footer>
 </div>

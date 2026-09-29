@@ -1,0 +1,4 @@
+Contact: mailto:otso@karhu.tv
+Expires: 2027-09-28T00:00:00Z
+Preferred-Languages: en
+Canonical: https://karhu.tv/.well-known/security.txt

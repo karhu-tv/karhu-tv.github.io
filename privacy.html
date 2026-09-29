@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Privacy — Karhu TV</title>
+<meta name="description" content="What a visit to karhu.tv involves, which other services it reaches, and what happens to an email you send Karhu TV.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/privacy.html">
+<meta property="og:title" content="Privacy — Karhu TV">
+<meta property="og:description" content="What a visit to karhu.tv involves, which other services it reaches, and what happens to an email you send Karhu TV.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Privacy — Karhu TV">
+<meta name="twitter:description" content="What a visit to karhu.tv involves, which other services it reaches, and what happens to an email you send Karhu TV.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+<link rel="canonical" href="https://karhu.tv/privacy.html">
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<style>
+  /* The home page's colour, type and spacing tokens, value for value, as on tools.html and
+     hardware.html. System font stacks only: this page requests nothing from any other host.
+     Dark mode is written the way archive.css writes it: on screen only, so print is always
+     black on white. */
+  :root {
+    color-scheme: light;
+    --ground:      #F6F8FA;
+    --ground-2:    #EDF1F5;
+    --ink:         #10151C;
+    --ink-soft:    #4A5663;
+    --ink-faint:   #7B8794;
+    --accent:      #0A5C7A;
+    --accent-soft: #E2EEF3;
+    --warn:        #9A5B0B;
+    --warn-soft:   #F7EEDF;
+    --rule:        #D5DCE4;
+    --rule-soft:   #E6EBF0;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+    --measure: 64ch;
+    --pad: clamp(1.25rem, 4vw, 3.5rem);
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+  @media screen {
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+
+  /* ── base: tools.html's ───────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.015em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p, ul, ol { margin: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+  strong { font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--ground-2); border: 1px solid var(--rule-soft); border-radius: 3px;
+    padding: .05em .3em; overflow-wrap: anywhere;
+  }
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap; margin: -1px; padding: 0; border: 0;
+  }
+  .skip {
+    position: absolute; left: var(--pad); top: -3rem; z-index: 10;
+    background: var(--ground); color: var(--accent); border: 1px solid var(--accent);
+    padding: .45rem .8rem; font-size: .875rem;
+  }
+  .skip:focus { top: .75rem; }
+
+  /* ── masthead: the home page's, with the logo linking home ──────── */
+  header.top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .75rem 1.5rem; flex-wrap: wrap;
+    padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
+  }
+  .logo { display: flex; align-items: center; gap: .625rem; color: var(--ink); text-decoration: none; }
+  .logo-mark { display: block; flex: none; }
+  .logo-word { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+  .logo-word span { color: var(--accent); }
+  header.top nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+  header.top nav a {
+    color: var(--ink-soft); text-decoration: none;
+    border-bottom: 1px solid transparent; padding: .15rem 0;
+  }
+  header.top nav a:hover, header.top nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+  header.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  main { display: block; }
+  main:focus { outline: none; }
+
+  /* ── page intro: tools.html's ─────────────────────────────────── */
+  .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
+  .page-eyebrow {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .75rem;
+  }
+  .page-title { margin-bottom: 1.25rem; }
+  .page-body { font-size: 1.125rem; color: var(--ink-soft); max-width: var(--measure); }
+  .page-body + .page-body { margin-top: 1rem; }
+  .page-body strong { color: var(--ink); }
+
+  /* ── sections: the home page's rhythm and h2, as on hardware.html ── */
+  .page-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
+  [id] { scroll-margin-top: 1.25rem; }
+  .sec-head { margin-bottom: 2rem; max-width: var(--measure); }
+  .sec-title { font-size: clamp(1.5rem, 3vw, 2.125rem); line-height: 1.15; letter-spacing: -.01em; }
+  .sec-head p { margin-top: .75rem; color: var(--ink-soft); }
+  .after-list { margin-top: 1.25rem; max-width: var(--measure); color: var(--ink-soft); }
+  .after-list + .after-list { margin-top: .75rem; }
+  .after-list strong { color: var(--ink); }
+
+  /* ── one statement per entry: hardware.html's dated list ───────── */
+  .facts { list-style: none; padding: 0; max-width: var(--measure); border-top: 1px solid var(--rule-soft); }
+  .facts li { padding: 1rem 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .facts li strong { color: var(--ink); }
+
+  /* ── running prose, held to the measure ─────────────────────────── */
+  .prose { max-width: var(--measure); }
+  .prose p + p { margin-top: 1rem; }
+
+  /* ── footer: the home page's ──────────────────────────────────── */
+  footer.site {
+    border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
+    color: var(--ink-soft); font-size: .875rem;
+  }
+  footer.site p + p { margin-top: .5rem; font-size: .8125rem; max-width: var(--measure); }
+
+  @media (max-width: 30rem) {
+    header.top { padding-top: 1.5rem; }
+    header.top nav { gap: .5rem 1.25rem; }
+    .page-body { font-size: 1.0625rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ── print: archive.css's palette, no navigation, link targets written out ── */
+  @media print {
+    :root {
+      color-scheme: light;
+      --ground: #fff; --ground-2: #f3f3f3; --ink: #000; --ink-soft: #333; --ink-faint: #555;
+      --accent: #000; --accent-soft: #eee; --warn: #000; --warn-soft: #fff; --rule: #999; --rule-soft: #ccc;
+    }
+    .skip, header.top nav { display: none; }
+    body { font-size: 11pt; }
+    .wrap { max-width: none; padding: 0; }
+    main a[href^="/"]::after { content: " (https://karhu.tv" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere; }
+    main a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere; }
+    .facts li { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the privacy note</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+<main id="main" tabindex="-1">
+
+<div class="page-header">
+  <p class="page-eyebrow">Privacy</p>
+  <h1 class="page-title">Privacy on<br>karhu.tv.</h1>
+  <p class="page-body">
+    This site collects nothing about you for itself: no cookies, no analytics, no tracking, no
+    forms and no accounts. What a visit does involve, and what happens to an email you send us, is
+    below. As of 29 Sep 2026.
+  </p>
+</div>
+
+<section class="page-section" id="visit" aria-labelledby="visit-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="visit-title">What a visit involves</h2>
+  </div>
+  <ul class="facts">
+    <li><strong>No cookies, and no browser storage.</strong> No page on this site sets a cookie or
+      keeps anything in your browser&rsquo;s storage. Your browser may still keep copies of the
+      pages in its own cache, as it does for any site.</li>
+    <li><strong>No analytics and no tracking.</strong> There are no visitor counters, tracking
+      pixels, advertising or social-media embeds, and no fonts, images or scripts loaded from other
+      sites.</li>
+    <li><strong>Hosting.</strong> The site is hosted on GitHub Pages, a service of GitHub. Your
+      browser sends each request to GitHub, with your IP address and the details any browser
+      sends. GitHub&rsquo;s documentation for GitHub Pages says that it logs and stores
+      visitors&rsquo; IP addresses for security purposes
+      (<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#data-collection">read on 29 Sep 2026</a>),
+      and GitHub&rsquo;s own
+      <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">privacy statement</a>
+      covers that. We do not receive those logs.</li>
+    <li><strong>The live panel on the home page.</strong> While the home page is open, and only if
+      JavaScript is on, your browser fetches a small file of our test figures from
+      <code>raw.githubusercontent.com</code>, which is also GitHub&rsquo;s, about once a minute.
+      That request goes to GitHub, not to us. It sends no cookie; like any request a browser
+      makes, it carries your IP address, and it names this site as the page that asked. No other
+      page on this site makes a request to any other site.</li>
+    <li><strong>Links to other sites.</strong> The download links on this site, and the few other
+      links to other sites, take you there when you follow them; nothing is requested from those
+      sites until you do.</li>
+  </ul>
+  <p class="after-list">What the free tools do on your computer is on the
+    <a href="/tools.html">tools page</a>.</p>
+</section>
+
+<section class="page-section" id="email" aria-labelledby="email-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="email-title">If you email us</h2>
+  </div>
+  <div class="prose">
+    <p>If you write to <a href="mailto:otso@karhu.tv">otso@karhu.tv</a>, we read your message and
+      use it, with the address you wrote from and anything you tell us in it, to answer you and to
+      deal with what you asked about. It is held by the email services we use to receive and read
+      our mail.</p>
+    <p>We keep it for as long as that takes and, after that, for as long as we need it as a record
+      of our dealings with you. We do not publish a fixed period.</p>
+    <p>Our legal basis for this is our legitimate interest in answering the messages people send
+      us; where you ask us to take steps towards a contract, it is taking those steps at your
+      request.</p>
+  </div>
+</section>
+
+<section class="page-section" id="controller" aria-labelledby="controller-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="controller-title">Who is responsible</h2>
+  </div>
+  <div class="prose">
+    <p>Bear Media Services LTD, trading as Karhu TV, is the data controller for the personal
+      information this note describes. It is registered in England and Wales, company number
+      11824349, and its registered office is Suite 16, Enterprise House, Telford Road, Bicester,
+      Oxon, England, OX26 4LD. Write to <a href="mailto:otso@karhu.tv">otso@karhu.tv</a>.</p>
+  </div>
+</section>
+
+<section class="page-section" id="rights" aria-labelledby="rights-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="rights-title">Your rights</h2>
+  </div>
+  <div class="prose">
+    <p>Under UK data protection law you can ask us for a copy of the personal information we hold
+      about you, and ask us to correct it, to delete it, or to limit our use of it. Where you asked
+      us to take steps towards a contract, you can also ask for a copy of what you gave us in a
+      form you can pass to someone else. Write to <a href="mailto:otso@karhu.tv">otso@karhu.tv</a>.</p>
+    <p><strong>You have the right to object</strong> to our use of your information where we rely
+      on our legitimate interest, as we do in answering your messages. Write to the same address,
+      and we will stop unless we have compelling legitimate grounds that override your interests,
+      or need the information for a legal claim.</p>
+    <p>If you are unhappy with how we have handled your information, you can complain to the
+      Information Commissioner&rsquo;s Office, the UK&rsquo;s supervisory authority for data
+      protection: <a href="https://ico.org.uk/">ico.org.uk</a>.</p>
+  </div>
+</section>
+
+</main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+  </footer>
+</div>
+
+</body>
+</html>

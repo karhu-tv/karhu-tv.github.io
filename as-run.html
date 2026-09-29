@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>What our as-run log proves, and what it does not — Karhu TV</title>
+<meta name="description" content="How Rytmi's as-run log is written and hash-chained, what checking the chain proves, what it does not prove, and the verifier we use on our own archive.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/as-run.html">
+<meta property="og:title" content="What our as-run log proves, and what it does not — Karhu TV">
+<meta property="og:description" content="How Rytmi's as-run log is written and hash-chained, what checking the chain proves, what it does not prove, and the verifier we use on our own archive.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What our as-run log proves, and what it does not — Karhu TV">
+<meta name="twitter:description" content="How Rytmi's as-run log is written and hash-chained, what checking the chain proves, what it does not prove, and the verifier we use on our own archive.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+<link rel="canonical" href="https://karhu.tv/as-run.html">
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<style>
+  /* The home page's colour, type and spacing tokens, value for value, as on tools.html and
+     hardware.html. System font stacks only: this page requests nothing from any other host.
+     Dark mode is written the way archive.css writes it: on screen only, so print is always
+     black on white. */
+  :root {
+    color-scheme: light;
+    --ground:      #F6F8FA;
+    --ground-2:    #EDF1F5;
+    --ink:         #10151C;
+    --ink-soft:    #4A5663;
+    --ink-faint:   #7B8794;
+    --accent:      #0A5C7A;
+    --accent-soft: #E2EEF3;
+    --warn:        #9A5B0B;
+    --warn-soft:   #F7EEDF;
+    --rule:        #D5DCE4;
+    --rule-soft:   #E6EBF0;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+    --measure: 64ch;
+    --pad: clamp(1.25rem, 4vw, 3.5rem);
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+  @media screen {
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+
+  /* ── base: tools.html's ───────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.015em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p, ul, ol { margin: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+  strong { font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--ground-2); border: 1px solid var(--rule-soft); border-radius: 3px;
+    padding: .05em .3em; overflow-wrap: anywhere;
+  }
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap; margin: -1px; padding: 0; border: 0;
+  }
+  .skip {
+    position: absolute; left: var(--pad); top: -3rem; z-index: 10;
+    background: var(--ground); color: var(--accent); border: 1px solid var(--accent);
+    padding: .45rem .8rem; font-size: .875rem;
+  }
+  .skip:focus { top: .75rem; }
+
+  /* ── masthead: the home page's, with the logo linking home ──────── */
+  header.top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .75rem 1.5rem; flex-wrap: wrap;
+    padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
+  }
+  .logo { display: flex; align-items: center; gap: .625rem; color: var(--ink); text-decoration: none; }
+  .logo-mark { display: block; flex: none; }
+  .logo-word { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+  .logo-word span { color: var(--accent); }
+  header.top nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+  header.top nav a {
+    color: var(--ink-soft); text-decoration: none;
+    border-bottom: 1px solid transparent; padding: .15rem 0;
+  }
+  header.top nav a:hover, header.top nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+  header.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  main { display: block; }
+  main:focus { outline: none; }
+
+  /* ── page intro: tools.html's ─────────────────────────────────── */
+  .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
+  .page-eyebrow {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .75rem;
+  }
+  .page-title { margin-bottom: 1.25rem; }
+  .page-body { font-size: 1.125rem; color: var(--ink-soft); max-width: var(--measure); }
+  .page-body + .page-body { margin-top: 1rem; }
+  .page-body strong { color: var(--ink); }
+
+  /* ── sections: the home page's rhythm and h2, as on hardware.html ── */
+  .page-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
+  [id] { scroll-margin-top: 1.25rem; }
+  .sec-head { margin-bottom: 2rem; max-width: var(--measure); }
+  .sec-title { font-size: clamp(1.5rem, 3vw, 2.125rem); line-height: 1.15; letter-spacing: -.01em; }
+  .sec-head p { margin-top: .75rem; color: var(--ink-soft); }
+  .after-list { margin-top: 1.25rem; max-width: var(--measure); color: var(--ink-soft); }
+  .after-list + .after-list { margin-top: .75rem; }
+  .after-list strong { color: var(--ink); }
+
+  /* ── one statement per entry: hardware.html's dated list ───────── */
+  .facts { list-style: none; padding: 0; max-width: var(--measure); border-top: 1px solid var(--rule-soft); }
+  .facts li { padding: 1rem 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .facts li strong { color: var(--ink); }
+
+  /* ── what it does not prove: the known-issues box of tools.html and hardware.html,
+     the colours of "What we don't claim" ─────────────────────────── */
+  .known-issues {
+    padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 1.4rem;
+    background: var(--warn-soft);
+    border-top: 1px solid var(--warn); border-bottom: 1px solid var(--warn);
+  }
+  .known-issues > * { max-width: 78ch; }
+  .ki-date { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); margin: 0 0 1rem; }
+  .ki-list { padding-left: 1.2rem; }
+  .ki-list li { font-size: .9375rem; line-height: 1.65; color: var(--ink-soft); }
+  .ki-list li + li { margin-top: 1rem; }
+  .ki-list li::marker { color: var(--warn); }
+  .ki-list li strong { color: var(--ink); }
+  .ki-list p + p { margin-top: .6rem; }
+
+  /* ── footer: the home page's ──────────────────────────────────── */
+  footer.site {
+    border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
+    color: var(--ink-soft); font-size: .875rem;
+  }
+  footer.site p + p { margin-top: .5rem; font-size: .8125rem; max-width: var(--measure); }
+
+  @media (max-width: 30rem) {
+    header.top { padding-top: 1.5rem; }
+    header.top nav { gap: .5rem 1.25rem; }
+    .page-body { font-size: 1.0625rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ── print: archive.css's palette, no navigation, link targets written out ── */
+  @media print {
+    :root {
+      color-scheme: light;
+      --ground: #fff; --ground-2: #f3f3f3; --ink: #000; --ink-soft: #333; --ink-faint: #555;
+      --accent: #000; --accent-soft: #eee; --warn: #000; --warn-soft: #fff; --rule: #999; --rule-soft: #ccc;
+    }
+    .skip, header.top nav { display: none; }
+    body { font-size: 11pt; }
+    .wrap { max-width: none; padding: 0; }
+    main a[href^="/"]::after { content: " (https://karhu.tv" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere; }
+    .facts li, .ki-list li { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the as-run log</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html" aria-current="page">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+<main id="main" tabindex="-1">
+
+<div class="page-header">
+  <p class="page-eyebrow">As-run log</p>
+  <h1 class="page-title">What it proves,<br>and its limits.</h1>
+  <p class="page-body">
+    Rytmi writes an as-run log while it plays: a record for each source frame it hands on
+    towards the SDI card, in a chain in which every record commits to the one before it. This
+    page says how the log is written, what checking that chain proves, and what it does not
+    prove &mdash; the part to read before relying on it.
+  </p>
+  <p class="page-body">
+    <strong>A chain that checks out shows that its records are the ones that were written, in the
+    order they were written. It does not show that what was written was true, and on its own it
+    cannot show that nobody rewrote the whole log.</strong> Both are set out
+    <a href="#not-proved">below</a>. Everything on this page is as of 29 Sep 2026 unless it
+    carries another date; how the log works was read from our own code that day.
+  </p>
+</div>
+
+<section class="page-section" id="written" aria-labelledby="written-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="written-title">How the log is written</h2>
+  </div>
+  <ul class="facts">
+    <li><strong>One record for each source frame.</strong> The engine writes it as it hands the
+      frame on towards the card. The record carries the time of the engine clock tick the frame
+      was made for, and the name of the source file. Each channel has a chain of its own, kept in
+      one file per UTC day.</li>
+    <li><strong>Each record commits to the one before it.</strong> A record&rsquo;s SHA-256 hash
+      covers the hash of the record before it and everything else in the record, so changing,
+      removing, inserting or reordering a record breaks the chain at that point.</li>
+    <li><strong>Blocks are sealed once they are on the drive.</strong> After a fixed number of
+      records the writer has the operating system write the file out to the drive, and only then
+      adds a seal: one hash over that block&rsquo;s records. If the write-out fails, the seal is
+      withheld and the failure is recorded in the chain instead, so no seal vouches for records
+      that may not have reached the drive.</li>
+    <li><strong>Day files are chained across midnight.</strong> Each day&rsquo;s file opens with a
+      record carrying the hash of the last record of the day before, so a run of day files checks
+      as one chain.</li>
+    <li><strong>A restart continues the chain, or begins a new one.</strong> An engine
+      restarted during the day carries on in that day&rsquo;s file, from its last record, when it
+      can read the end of that file. An engine started on a day that has no file &mdash; because it was
+      stopped across midnight &mdash; begins a new chain. Checking reports that as a new segment,
+      not as a fault, because stopping the engine is not tampering with its log. A restart that
+      cannot read the end of the day&rsquo;s file is the exception, and is set out
+      <a href="#proved">below</a>.</li>
+    <li><strong>The clock does not wait for the log.</strong> Records reach the writer through a
+      queue, so writing to the drive never holds up the engine&rsquo;s clock. If the queue is
+      full, the newest record is dropped rather than stall the clock, and the writer records in
+      the chain how many were lost and where. If writing fails altogether &mdash; a full or
+      failing drive &mdash; playout carries on, the writer keeps retrying, and when it recovers
+      it records how long it was down and how many records it could not write. In the 339-hour
+      run of August 2026 the queue dropped none
+      (<a href="/archive/fortnight-soak-2026-08/">the archive entry for that run</a>).</li>
+  </ul>
+</section>
+
+<section class="page-section" id="proved" aria-labelledby="proved-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="proved-title">What checking it proves</h2>
+    <p>Checking recomputes every hash from the records themselves, so it needs nothing from the
+      machine that wrote them. Where every check passes:</p>
+  </div>
+  <ul class="facts">
+    <li><strong>Every record matches its own hash, and links to the record before it.</strong>
+      Within the chain, no record has been changed, removed, inserted or moved &mdash; unless every
+      hash after it was recomputed to match, which is the fourth point under
+      <a href="#not-proved">what it does not prove</a>.</li>
+    <li><strong>Each record&rsquo;s line is the record.</strong> Within a record&rsquo;s line, the
+      text must be exactly the form the writer produces for the record it holds. An added field,
+      extra spaces inside the record, an escaped character or a repeated key &mdash; edits a person
+      reading the file would see, but that leave the parsed record, and so its hash, unchanged
+      &mdash; fail the check. What lies between records is not held to that, as of 29 Sep 2026:
+      spaces or a carriage return at either end of a line, and blank lines, are ignored; and one
+      unreadable line directly before an engine restart that continues the chain is accepted as
+      crash damage, whatever it says, with no message. We tried each of these on the verifier on
+      29 Sep 2026.</li>
+    <li><strong>The structure is the writer&rsquo;s.</strong> A chain opens with a first record, or
+      with a record naming the one it continues; no chain opens twice; in each file, no frame
+      record comes before the engine&rsquo;s clock is recorded as locking to TAI, in that file or,
+      for a file that continues another, in the one before it &mdash; a restart during the day
+      does not need a new lock record to pass; and every seal matches the records it covers
+      &mdash; their number, their time span and the hash over them.</li>
+    <li><strong>Day files follow one another.</strong> A file that continues the one before it
+      must open with the actual hash of that file&rsquo;s last record, and the clock&rsquo;s lock
+      to TAI is carried from file to file rather than assumed. A file that begins a new chain
+      instead is reported as a new segment, naming the files either side of it, not as a
+      fault.</li>
+    <li><strong>A torn last line is not read as tampering.</strong> A last line cut short by a
+      crash is reported as a torn line, and the chain up to it still checks; a single torn line
+      directly before a restart that continues the chain is accepted too, without a message, as
+      above. Other crash and outage shapes are
+      still reported as breaks, as of 29 Sep 2026: a restart that cannot read the end of the
+      day&rsquo;s file begins a new chain inside that file, which fails it, and so do two or more
+      torn lines left by one recovery. One of the breaks in our archive, in a day file from June
+      2026, is that first shape: until a change to our writer, every restart began a new chain
+      inside the day&rsquo;s file.</li>
+  </ul>
+  <p class="after-list">It has found real faults. Over our whole archive &mdash;
+    <strong>&ge;&nbsp;120,483,920 records, re-verified on 21 Aug 2026</strong> &mdash; it found breaks
+    from before the 339-hour run of August 2026: one between two day files, and others inside day
+    files, among them one where two engines had written into one file. That is why our archive reads
+    INVALID rather than clean. <a href="/#evidence">The evidence table</a> lists them.</p>
+</section>
+
+<section class="page-section" id="not-proved" aria-labelledby="not-proved-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="not-proved-title">What it does not prove</h2>
+    <p>The part to read before relying on the log. Each of these is open.</p>
+  </div>
+  <div class="known-issues">
+    <p class="ki-date">As of 29 Sep 2026</p>
+    <ol class="ki-list">
+      <li>
+        <p><strong>That the log was right when it was written.</strong> Checking shows the records
+          are as written, not that they were true. This is a fault in our log, found in July 2026
+          and open as of 29 Sep 2026.</p>
+        <p>A frame is recorded as the engine hands it on towards the card. If the engine then
+          discards it to absorb the card&rsquo;s clock drift, the record stays, so the log says that
+          frame played when it never reached the card: up to one false record for each frame
+          discarded, since the frame discarded can be a repeat, which has no record of its own. We
+          saw this in the log itself in July 2026: at each of the four discards we checked, every
+          frame around it had a record. How often the engine discards one is in the
+          register&rsquo;s &ldquo;Never drops a frame&rdquo; row, under
+          <a href="/#register">what we don&rsquo;t claim</a>.</p>
+        <p>The time in each record is the time of the engine clock tick the frame was made for,
+          not the moment the frame left the SDI output, nor even the moment of hand-off: a tick that
+          runs late hands its frame on late, and the record still carries the tick&rsquo;s own time.
+          A frame the engine repeats &mdash; a slower source filled out to
+          the channel&rsquo;s rate, or the last frame, or black, held while a source is late &mdash;
+          gets no record; so a gap in the records&rsquo; frame numbers does not mean a frame was
+          dropped, and no gap does not mean none was. Two fields say nothing: the scan type reads
+          progressive whatever the channel is set to (every channel on our two units was
+          progressive on 29 Sep 2026, <a href="/hardware.html#duty">as the hardware page lists</a>),
+          and the loudness fields are always empty.</p>
+      </li>
+      <li>
+        <p><strong>Where one item ends and another begins.</strong> Records name the source file,
+          not the schedule item, so two consecutive plays of one file read as one run of twice the
+          length. The register&rsquo;s &ldquo;Item-level granularity&rdquo; row, under
+          <a href="/#register">what we don&rsquo;t claim</a>, has the detail, including an open
+          defect that this log cannot show.</p>
+      </li>
+      <li>
+        <p><strong>That nothing is missing from the end.</strong> Records removed from the end of
+          the newest day file, or from the end of a segment, leave no trace in the chain, because no
+          later record links to them; and if the engine is then restarted the same day, it carries
+          on from the shortened end. Removing a whole segment reads the same as the engine having
+          been stopped for that time. A writing outage that lasts until the engine stops leaves no
+          record of itself either: the file just ends. And records written since the latest seal,
+          or left unsealed by a crash or a writing outage, are in the chain but under no
+          seal.</p>
+      </li>
+      <li>
+        <p><strong>That nobody rewrote it.</strong> The hashes are plain SHA-256. The log carries
+          no key, no signature and no anchor outside itself. Someone holding the day files who
+          knows how their hashes are computed could change a record and recompute every hash after
+          it, in that file and every later one, and the result would check as clean. The chain is
+          evidence against that only beside a hash from later in it that was kept where the
+          rewriter could not reach it. Our own backups of the log are not that: they are mirrors,
+          and a later copy overwrites a changed file. We established this by reading the code on
+          29 Sep 2026 and confirmed it the same day: a chain written from scratch by a short script
+          outside the engine, with no key, checked as valid.</p>
+      </li>
+      <li>
+        <p><strong>What reached the wire.</strong> The engine writes the log, and nothing in it is a
+          measurement of the SDI output. Whether a frame left the card, and what it looked and
+          sounded like at the connector, is outside it. On 29 Sep 2026 no recorder watched our
+          outputs (<a href="/hardware.html#test-kit">the hardware page&rsquo;s test kit</a>).</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="page-section" id="verifier" aria-labelledby="verifier-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="verifier-title">The verifier, as it stands</h2>
+    <p><code>opx-verify</code> does the checking described above, and we use it on our own
+      archive. It is not released: <a href="/tools.html#opx-verify">the tools page</a> lists it as
+      in progress, and it is not offered for download.</p>
+  </div>
+  <ul class="facts">
+    <li><strong>What it reads.</strong> The files it is given, in the order given, as one chain;
+      or a directory of one channel&rsquo;s day files, in date order. A directory holding more than
+      one chain is refused rather than guessed at.</li>
+    <li><strong>What it skips.</strong> It reads only uncompressed day files, with names ending
+      <code>.jsonl</code>. Any other file in the directory is skipped without a message, and the
+      count of files in its verdict is the only sign that any were. We keep our archive
+      compressed, so we check a decompressed copy and compare the number of files checked with the
+      number in the archive.</li>
+    <li><strong>What it reports.</strong> Plain text: each file&rsquo;s result, with its first
+      errors where it fails; the breaks between files; each new segment; and a verdict line with
+      the counts of files, segments, broken boundaries and records. A run of files whose first
+      continues one it was not given is reported as checked among themselves, not back to the
+      start of the chain. It exits 0 for a valid chain, 1 for an invalid one, and 2 when it could
+      not run.</li>
+  </ul>
+  <p class="after-list" data-record><strong>A correction.</strong> From 21 Aug to 28 Sep 2026 this
+    site said our archive had one break, between two day files, and no other. It had others,
+    inside day files, and our own records had noted them since July 2026; we did not check the
+    sentence against them. We had also read the verifier through a summary of our own that printed
+    its verdict and the breaks between files, and left out the files that failed on their own. The
+    summary now prints every file that fails, and <a href="/#evidence">the evidence table</a> lists
+    the breaks.</p>
+</section>
+
+</main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+  </footer>
+</div>
+
+</body>
+</html>
