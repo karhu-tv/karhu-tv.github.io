@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <title>opx-* Tools — Karhu TV</title>
 <meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta property="og:type" content="website">
@@ -19,418 +20,301 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="opx-* Tools — Karhu TV">
 <meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+<link rel="canonical" href="https://karhu.tv/tools.html">
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  /* The home page's colour, type and spacing tokens, value for value. System font
+     stacks only: this page requests nothing from any other host. Dark mode is written
+     the way archive.css writes it: on screen only, so print is always black on white. */
   :root {
-    --bg:        #0a0a0b;
-    --bg2:       #111114;
-    --bg3:       #18181c;
-    --border:    #242428;
-    --text:      #e8e8ea;
-    --muted:     #6b6b72;
-    --accent:    #e8502a;
-    --accent2:   #f0a020;
-    --mono:      'DM Mono', monospace;
-    --sans:      'Syne', sans-serif;
+    color-scheme: light;
+    --ground:      #F6F8FA;
+    --ground-2:    #EDF1F5;
+    --ink:         #10151C;
+    --ink-soft:    #4A5663;
+    --ink-faint:   #7B8794;
+    --accent:      #0A5C7A;
+    --accent-soft: #E2EEF3;
+    --warn:        #9A5B0B;
+    --warn-soft:   #F7EEDF;
+    --rule:        #D5DCE4;
+    --rule-soft:   #E6EBF0;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+    --measure: 64ch;
+    --pad: clamp(1.25rem, 4vw, 3.5rem);
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+  @media screen {
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
   }
 
-  html { scroll-behavior: smooth; }
-
+  /* ── base ─────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.015em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p, ul { margin: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+  strong { font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--ground-2); border: 1px solid var(--rule-soft); border-radius: 3px;
+    padding: .05em .3em; overflow-wrap: anywhere;
   }
-
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 48px;
-    height: 64px;
-    background: rgba(10,10,11,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap; margin: -1px; padding: 0; border: 0;
   }
-
-  .nav-logo {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .skip {
+    position: absolute; left: var(--pad); top: -3rem; z-index: 10;
+    background: var(--ground); color: var(--accent); border: 1px solid var(--accent);
+    padding: .45rem .8rem; font-size: .875rem;
   }
+  .skip:focus { top: .75rem; }
 
-  .nav-logo-mark {
-    width: 28px;
-    height: 28px;
-    background: var(--accent);
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    flex-shrink: 0;
+  /* ── masthead: the home page's, with the logo linking home ──────── */
+  header.top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .75rem 1.5rem; flex-wrap: wrap;
+    padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
   }
-
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.2s;
+  .logo { display: flex; align-items: center; gap: .625rem; color: var(--ink); text-decoration: none; }
+  .logo-mark { display: block; flex: none; }
+  .logo-word { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+  .logo-word span { color: var(--accent); }
+  header.top nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+  header.top nav a {
+    color: var(--ink-soft); text-decoration: none;
+    border-bottom: 1px solid transparent; padding: .15rem 0;
   }
-  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  header.top nav a:hover, header.top nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+  header.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
 
-  /* ── Page header ── */
-  .page-header {
-    position: relative;
-    z-index: 1;
-    padding: 120px 48px 64px;
-    border-bottom: 1px solid var(--border);
-  }
+  main { display: block; }
+  main:focus { outline: none; }
 
+  /* ── page intro ───────────────────────────────────────────────── */
+  .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
   .page-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 24px;
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .75rem;
   }
+  .page-title { margin-bottom: 1.25rem; }
+  .page-body { font-size: 1.125rem; color: var(--ink-soft); max-width: var(--measure); }
 
-  .page-title {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: clamp(36px, 5vw, 64px);
-    letter-spacing: -0.04em;
-    line-height: 1;
-    margin-bottom: 24px;
-  }
-
-  .page-body {
-    color: var(--muted);
-    max-width: 560px;
-    line-height: 1.7;
-  }
-
-  /* ── Tool detail ── */
-  .tool-section {
-    position: relative;
-    z-index: 1;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .tool-section.unavailable { opacity: 0.5; }
-
+  /* ── one section per tool ─────────────────────────────────────── */
+  .tool-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
+  [id] { scroll-margin-top: 1.25rem; }
   .tool-header {
-    padding: 48px 48px 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
+    display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+    gap: 1rem 2rem; margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
   }
-
-  .tool-title-block {}
-
+  .tool-title-block { flex: 1 1 18rem; min-width: 0; }
   .tool-name {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: 36px;
-    letter-spacing: -0.03em;
-    margin-bottom: 8px;
+    font-family: var(--mono); font-weight: 600; letter-spacing: -.02em;
+    font-size: clamp(1.5rem, 3vw, 2.125rem); line-height: 1.15; margin-bottom: .5rem;
   }
-
-  .tool-tagline {
-    color: var(--muted);
-    font-size: 14px;
-  }
-
-  .tool-status-block {
-    text-align: right;
-    flex-shrink: 0;
-  }
-
+  .tool-section.unavailable .tool-name { color: var(--ink-soft); }
+  .tool-tagline { color: var(--ink-soft); max-width: var(--measure); }
+  .tool-status-block { display: flex; flex-direction: column; align-items: flex-end; gap: .45rem; }
   .status-badge {
-    display: inline-block;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    margin-bottom: 8px;
+    display: inline-block; font-family: var(--mono); font-size: .6875rem; line-height: 1.4;
+    letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    padding: .25rem .6rem; border: 1px solid var(--accent); color: var(--accent);
   }
-
-  .status-badge.soon {
-    border-color: var(--border);
-    color: var(--muted);
-  }
-
+  .status-badge.soon { border-color: var(--rule); color: var(--ink-soft); }
   .tool-version {
-    font-size: 12px;
-    color: var(--muted);
+    font-family: var(--mono); font-size: .8125rem; color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 39.999rem) {
+    .tool-status-block { align-items: flex-start; }
   }
 
   .tool-body {
-    padding: 40px 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: start;
+    display: grid; grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 3.5rem); align-items: start;
   }
-
-  .tool-desc-full {
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 32px;
-    font-size: 14px;
-  }
+  @media (min-width: 55rem) { .tool-body { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .tool-body > * { min-width: 0; }
+  .tool-desc-full { max-width: var(--measure); margin-bottom: 1.75rem; }
+  .tool-note { color: var(--ink-soft); max-width: var(--measure); }
 
   .feature-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-bottom: 40px;
+    list-style: none; padding: 0; margin: 0 0 2rem; max-width: var(--measure);
+    border-top: 1px solid var(--rule-soft);
   }
-
   .feature-list li {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-    color: var(--muted);
-    display: flex;
-    gap: 12px;
-    align-items: baseline;
+    position: relative; padding: .7rem 0 .7rem 1.5rem;
+    border-bottom: 1px solid var(--rule-soft); font-size: .9375rem; color: var(--ink-soft);
   }
-
   .feature-list li::before {
-    content: '→';
-    color: var(--accent);
-    flex-shrink: 0;
+    content: "\2192"; position: absolute; left: 0; top: .7rem;
+    font-family: var(--mono); color: var(--accent);
   }
+  .feature-list strong { color: var(--ink); }
 
-  .feature-list li:last-child { border-bottom: none; }
-
-  /* ── Download block ── */
-  .download-block {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 32px;
-  }
-
-  .download-title {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: -0.01em;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .download-platform {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .download-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 13px;
-    transition: border-color 0.2s, background 0.2s;
-    gap: 12px;
-  }
-
-  .download-btn:hover {
-    border-color: var(--accent);
-    background: var(--bg);
-  }
-
-  .download-btn-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .platform-icon {
-    font-size: 16px;
-    width: 20px;
-    text-align: center;
-  }
-
-  .download-btn-meta {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .download-arrow {
-    color: var(--accent);
-    font-size: 16px;
-  }
-
-  .download-note {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.6;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .download-note a {
-    color: var(--accent2);
-    text-decoration: none;
-  }
-
-  .download-note a:hover { text-decoration: underline; }
-
-  /* ── Usage block ── */
-  .usage-block {
-    margin-top: 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-  }
-
+  /* ── usage samples: every line wraps, as on the page this replaces ──
+     A sample line can be a published limitation or the only sample output, so none of it
+     may sit past the box edge. A token too long for the line breaks inside itself rather
+     than hide; overflow-x stays only as a fallback. Not pre-wrap: the markup has a source
+     newline after every line-break tag, which pre-wrap would render as a second break. */
+  .usage-block { border: 1px solid var(--rule); background: var(--ground-2); }
   .usage-bar {
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .05em;
+    color: var(--ink-soft); padding: .5rem 1rem; border-bottom: 1px solid var(--rule);
   }
-
   .usage-body {
-    padding: 20px 24px;
-    font-size: 13px;
-    line-height: 2;
-    overflow-x: auto;
+    font-family: var(--mono); font-size: .8125rem; line-height: 1.75;
+    padding: .9rem 1rem; overflow-x: auto; white-space: normal; overflow-wrap: anywhere;
+    color: var(--ink);
   }
+  .t-comment, .t-prompt, .t-label { color: var(--ink-soft); }
+  .t-cmd { color: var(--accent); font-weight: 600; }
+  .t-flag { color: var(--accent); }
+  .t-path { color: var(--ink); }
+  .t-val { color: var(--ink); font-weight: 600; }
 
-  .t-comment { color: #4a4a52; }
-  .t-cmd { color: var(--accent2); }
-  .t-path { color: #6b8ed6; }
-  .t-out { color: #7ec880; }
-  .t-label { color: var(--muted); }
-  .t-val { color: var(--text); }
-  .t-warn { color: var(--accent); }
-  .t-prompt { color: var(--accent); }
-  .t-flag { color: #b07ec8; }
+  /* ── downloads ────────────────────────────────────────────────── */
+  /* max-width: in one column (below 55rem) the note would otherwise run to ~100
+     characters a line; the home page holds prose to the measure. */
+  .download-block {
+    background: var(--ground-2); border: 1px solid var(--rule);
+    padding: clamp(1.25rem, 3vw, 1.75rem); max-width: var(--measure);
+  }
+  .download-title {
+    padding-bottom: .8rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--rule);
+  }
+  .download-platform { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.25rem; }
+  .download-btn {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    padding: .8rem 1rem; background: var(--ground); color: var(--ink); text-decoration: none;
+    border: 1px solid var(--accent); border-radius: 3px;
+  }
+  /* hover and focus as the home page's download links: accent fill, ground text */
+  .download-btn:hover, .download-btn:focus-visible { background: var(--accent); color: var(--ground); }
+  .download-btn:hover .download-btn-meta, .download-btn:focus-visible .download-btn-meta,
+  .download-btn:hover .download-arrow, .download-btn:focus-visible .download-arrow { color: inherit; }
+  .download-btn-left { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+  .download-btn-left > div { min-width: 0; font-weight: 600; }
+  .platform-icon { flex: none; width: 1.5rem; font-size: 1.125rem; text-align: center; }
+  .download-btn-meta {
+    font-family: var(--mono); font-size: .75rem; font-weight: 400; color: var(--ink-soft);
+  }
+  .download-arrow { flex: none; font-size: 1.125rem; color: var(--accent); }
+  .download-note {
+    font-size: .875rem; color: var(--ink-soft);
+    padding-top: 1rem; border-top: 1px solid var(--rule);
+  }
+  .download-note strong { color: var(--ink); }
 
-  /* ── Known issues ── */
+  /* ── known issues: the colours of "What we don't claim" ────────── */
   .known-issues {
-    margin: 0 48px 48px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent2);
-    padding: 28px 32px;
-    scroll-margin-top: 80px;
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 1.4rem;
+    background: var(--warn-soft);
+    border-top: 1px solid var(--warn); border-bottom: 1px solid var(--warn);
+  }
+  .known-issues > * { max-width: 78ch; }
+  .ki-title { color: var(--warn); font-size: 1.25rem; }
+  .ki-date { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); margin: .35rem 0 1rem; }
+  .ki-list { padding-left: 1.2rem; }
+  .ki-list li { font-size: .9375rem; line-height: 1.65; color: var(--ink-soft); }
+  .ki-list li + li { margin-top: .75rem; }
+  .ki-list li::marker { color: var(--warn); }
+  .ki-list li strong { color: var(--ink); }
+
+  /* ── footer: the home page's ──────────────────────────────────── */
+  footer.site {
+    border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
+    color: var(--ink-soft); font-size: .875rem;
+  }
+  footer.site p + p { margin-top: .5rem; font-size: .8125rem; max-width: var(--measure); }
+
+  @media (max-width: 30rem) {
+    header.top { padding-top: 1.5rem; }
+    header.top nav { gap: .5rem 1.25rem; }
+    .page-body { font-size: 1.0625rem; }
   }
 
-  .ki-title {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: -0.01em;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
 
-  .ki-date {
-    font-size: 12px;
-    color: var(--muted);
-    margin: 4px 0 20px;
-  }
-
-  .ki-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .ki-list li {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.7;
-    overflow-wrap: anywhere;
-  }
-
-  .ki-list li strong { color: var(--text); font-weight: 500; }
-
-  /* ── Footer ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--border);
-    padding: 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-left { display: flex; align-items: center; gap: 16px; }
-  .footer-logo { font-family: var(--sans); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
-  .footer-meta { font-size: 12px; color: var(--muted); }
-  .footer-links { display: flex; gap: 24px; list-style: none; }
-  .footer-links a { color: var(--muted); text-decoration: none; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--text); }
-
-  @media (max-width: 768px) {
-    nav { padding: 0 24px; }
-    .page-header { padding: 100px 24px 48px; }
-    .tool-header { padding: 32px 24px 0; }
-    .tool-body { padding: 32px 24px; grid-template-columns: 1fr; gap: 40px; }
-    .known-issues { margin: 0 24px 40px; padding: 20px; }
-    footer { flex-direction: column; gap: 24px; text-align: center; }
+  /* ── print: archive.css's palette, no navigation, download targets written out ── */
+  @media print {
+    :root {
+      color-scheme: light;
+      --ground: #fff; --ground-2: #f3f3f3; --ink: #000; --ink-soft: #333; --ink-faint: #555;
+      --accent: #000; --accent-soft: #eee; --warn: #000; --warn-soft: #fff; --rule: #999; --rule-soft: #ccc;
+    }
+    .skip, header.top nav { display: none; }
+    body { font-size: 11pt; }
+    .wrap { max-width: none; padding: 0; }
+    .usage-body { overflow: visible; }
+    .download-btn { flex-wrap: wrap; }
+    .download-btn::after {
+      content: attr(href); flex-basis: 100%;
+      font-family: var(--mono); font-size: .75em; overflow-wrap: anywhere;
+    }
+    main a[href^="http"]:not(.download-btn)::after {
+      content: " (" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere;
+    }
+    .usage-block, .download-btn, .feature-list li, .ki-list li { break-inside: avoid; }
   }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to the tools</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/tools.html" aria-current="page">Tools</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/archive/">Archive</a>
+    </nav>
+  </header>
 
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-mark"></div>
-    Karhu <span style="color:var(--accent)">TV</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/tools.html" class="active">Tools</a></li>
-    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
-  </ul>
-</nav>
+<main id="main" tabindex="-1">
 
 <div class="page-header">
   <p class="page-eyebrow">opx-* suite</p>
@@ -447,7 +331,7 @@
 <div class="tool-section" id="opx-probe">
   <div class="tool-header">
     <div class="tool-title-block">
-      <div class="tool-name">opx-probe</div>
+      <h2 class="tool-name">opx-probe</h2>
       <div class="tool-tagline">Fast media file inspector — container, codec, frame rate, MXF sidecar, preflight</div>
     </div>
     <div class="tool-status-block">
@@ -501,18 +385,18 @@
 
     <div>
       <div class="download-block">
-        <div class="download-title">Download opx-probe v0.2.0</div>
+        <h3 class="download-title">Download opx-probe v0.2.0</h3>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz"
              class="download-btn">
             <div class="download-btn-left">
-              <span class="platform-icon">🐧</span>
+              <span class="platform-icon" aria-hidden="true">🐧</span>
               <div>
                 <div>Linux x86_64</div>
                 <div class="download-btn-meta">tar.gz · Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
               </div>
             </div>
-            <span class="download-arrow">↓</span>
+            <span class="download-arrow" aria-hidden="true">↓</span>
           </a>
         </div>
         <div class="download-note">
@@ -535,7 +419,7 @@
   </div>
 
   <div class="known-issues" id="opx-probe-issues">
-    <div class="ki-title">Known issues in opx-probe 0.2.0</div>
+    <h3 class="ki-title">Known issues in opx-probe 0.2.0</h3>
     <div class="ki-date">Added 29 Sep 2026 · they apply to the published 0.2.0 binary</div>
     <ul class="ki-list">
       <li><strong>A false “will reject” line.</strong> The line <code>Rytmi v1 will reject this file</code>
@@ -577,14 +461,14 @@
 <div class="tool-section unavailable" id="opx-loudness">
   <div class="tool-header">
     <div class="tool-title-block">
-      <div class="tool-name">opx-loudness</div>
+      <h2 class="tool-name">opx-loudness</h2>
       <div class="tool-tagline">EBU R128 loudness analysis — integrated, short-term, momentary, true peak</div>
     </div>
     <div class="tool-status-block">
       <div class="status-badge soon">Designed; not built</div>
     </div>
   </div>
-  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
+  <div class="tool-note">
     Designed to check EBU R128 and Free TV OP-59, with the thresholds read from the issuing bodies’
     own documents rather than a summary, and to say INCONCLUSIVE where it can’t honestly say pass.
     The BS.1770 loudness meter exists in Rytmi’s codebase; this tool does not.
@@ -595,7 +479,7 @@
 <div class="tool-section" id="opx-drift">
   <div class="tool-header">
     <div class="tool-title-block">
-      <div class="tool-name">opx-drift</div>
+      <h2 class="tool-name">opx-drift</h2>
       <div class="tool-tagline">Media timeline drift — PTS deviation and audio/video differential, EBU R37 quoted</div>
     </div>
     <div class="tool-status-block">
@@ -646,18 +530,18 @@
 
     <div>
       <div class="download-block">
-        <div class="download-title">Download opx-drift v0.2.2</div>
+        <h3 class="download-title">Download opx-drift v0.2.2</h3>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz"
              class="download-btn">
             <div class="download-btn-left">
-              <span class="platform-icon">&#128039;</span>
+              <span class="platform-icon" aria-hidden="true">&#128039;</span>
               <div>
                 <div>Linux x86_64</div>
                 <div class="download-btn-meta">tar.gz &middot; Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
               </div>
             </div>
-            <span class="download-arrow">&darr;</span>
+            <span class="download-arrow" aria-hidden="true">&darr;</span>
           </a>
         </div>
         <div class="download-note">
@@ -678,7 +562,7 @@
   </div>
 
   <div class="known-issues" id="opx-drift-issues">
-    <div class="ki-title">Known issues in opx-drift 0.2.2</div>
+    <h3 class="ki-title">Known issues in opx-drift 0.2.2</h3>
     <div class="ki-date">Added 29 Sep 2026 &middot; they apply to the published 0.2.2 binary</div>
     <ul class="ki-list">
       <li><strong><code>sync</code> measures drift, not a constant offset.</strong> Drift means a change in
@@ -725,29 +609,28 @@
 <div class="tool-section unavailable" id="opx-verify">
   <div class="tool-header">
     <div class="tool-title-block">
-      <div class="tool-name">opx-verify</div>
+      <h2 class="tool-name">opx-verify</h2>
       <div class="tool-tagline">As-run log verifier — hash-chain validation across day files and restarts</div>
     </div>
     <div class="tool-status-block">
       <div class="status-badge soon">In progress</div>
     </div>
   </div>
-  <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
+  <div class="tool-note">
     Verifies a hash-chained as-run archive across day-file boundaries and restarts.
     A single file can’t check what it continues.
   </div>
 </div>
 
-<footer>
-  <div class="footer-left">
-    <span class="footer-logo">Karhu TV</span>
-    <span class="footer-meta">Bear Media Services LTD · Trading as Karhu TV · England & Wales</span>
-  </div>
-  <ul class="footer-links">
-    <li><a href="/tools.html">Tools</a></li>
-    <li><a href="mailto:otso@karhu.tv">Contact</a></li>
-  </ul>
-</footer>
+</main>
+
+  <footer class="site">
+    <p>
+      Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a>
+    </p>
+    <p>Bear Media Services LTD · Trading as Karhu TV · England &amp; Wales</p>
+  </footer>
+</div>
 
 </body>
 </html>
