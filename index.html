@@ -999,7 +999,10 @@
       <p class="eyebrow">Tools</p>
       <h2>The instruments, and what else runs on the clock</h2>
       <p>The <span class="inline-code">opx-*</span> tools exist because we needed them to prove
-        Rytmi correct. They're free, binary-only, Linux and Windows. Published checksums;
+        Rytmi correct. They're free and binary-only, for Linux; the two released ones list their
+        known issues, dated, on the tools page. We withdrew the Windows
+        builds on 29 Sep 2026: they bundled a GPL-licensed FFmpeg without its licence text or an
+        offer of its source. Published checksums;
         <span class="inline-code">--version</span> on every one, because that's the first thing a
         support conversation asks. The last card is neither an instrument nor finished — it is
         here because some of its timing code began as a copy of Rytmi's, and we would rather show it early than
@@ -1007,23 +1010,26 @@
     </div>
     <div class="tools">
       <div class="tool">
-        <div class="tool-top"><span class="tool-name">opx-probe</span><span class="tag live">v0.2 · available</span></div>
+        <div class="tool-top"><span class="tool-name">opx-probe</span><span class="tag live">v0.2.0 · available</span></div>
         <p><strong>What is this file?</strong> Container, codec, exact rational frame rate,
-          audio config, MXF sidecar. And <span class="inline-code">--house</span> pre-flights it
-          against your delivery spec, exiting non-zero if it won't conform.</p>
-        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-windows-x86_64.zip">Windows&nbsp;x86-64</a><a class="alt" href="https://github.com/karhu-tv/opx-probe/releases">All releases &amp; checksums</a></p>
+          audio config, an MXF's XML sidecar (matched by file name). And
+          <span class="inline-code">--house</span> pre-flights frame rate, audio sample rate and
+          stream start offset against a target format — not resolution or scan type — exiting
+          non-zero on a mismatch.</p>
+        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a class="alt" href="/tools.html#opx-probe-issues">Known issues</a><a class="alt" href="https://github.com/karhu-tv/opx-probe/releases">All releases &amp; checksums</a></p>
       </div>
       <div class="tool">
         <div class="tool-top"><span class="tool-name">opx-drift</span><span class="tag live">v0.2.2 · available</span></div>
-        <p><strong>Is its timeline sane?</strong> PTS drift and A/V sync from exact rational
+        <p><strong>Is its timeline sane?</strong> PTS drift and A/V sync drift from exact rational
           arithmetic — 29.97 is 30000/1001, and rounding it is how drift gets designed in.</p>
-        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-windows-x86_64.zip">Windows&nbsp;x86-64</a><a class="alt" href="https://github.com/karhu-tv/opx-drift/releases">All releases &amp; checksums</a></p>
+        <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a class="alt" href="/tools.html#opx-drift-issues">Known issues</a><a class="alt" href="https://github.com/karhu-tv/opx-drift/releases">All releases &amp; checksums</a></p>
       </div>
       <div class="tool">
-        <div class="tool-top"><span class="tool-name">opx-loudness</span><span class="tag">in progress</span></div>
-        <p><strong>Is it deliverable?</strong> EBU R128 and Free TV OP-59, with the thresholds read
-          from the issuing bodies' own documents rather than a summary. Says
-          <span class="inline-code">INCONCLUSIVE</span> where it can't honestly say pass.</p>
+        <div class="tool-top"><span class="tool-name">opx-loudness</span><span class="tag">designed; not built</span></div>
+        <p><strong>Is it deliverable?</strong> Designed to check EBU R128 and Free TV OP-59, with
+          the thresholds read from the issuing bodies' own documents rather than a summary, and to
+          say <span class="inline-code">INCONCLUSIVE</span> where it can't honestly say pass. The
+          BS.1770 loudness meter exists in Rytmi's codebase; this tool does not.</p>
       </div>
       <div class="tool">
         <div class="tool-top"><span class="tool-name">opx-verify</span><span class="tag">in progress</span></div>

@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>opx-* Tools — Karhu TV</title>
-<meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
+<meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Karhu TV">
 <meta property="og:url" content="https://karhu.tv/tools.html">
 <meta property="og:title" content="opx-* Tools — Karhu TV">
-<meta property="og:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
+<meta property="og:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta property="og:image" content="https://karhu.tv/og-card-v1.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -18,7 +18,7 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="opx-* Tools — Karhu TV">
-<meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows; opx-loudness and opx-verify in development.">
+<meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -352,6 +352,45 @@
   .t-prompt { color: var(--accent); }
   .t-flag { color: #b07ec8; }
 
+  /* ── Known issues ── */
+  .known-issues {
+    margin: 0 48px 48px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 28px 32px;
+    scroll-margin-top: 80px;
+  }
+
+  .ki-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .ki-date {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 4px 0 20px;
+  }
+
+  .ki-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .ki-list li {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  .ki-list li strong { color: var(--text); font-weight: 500; }
+
   /* ── Footer ── */
   footer {
     position: relative;
@@ -375,6 +414,7 @@
     .page-header { padding: 100px 24px 48px; }
     .tool-header { padding: 32px 24px 0; }
     .tool-body { padding: 32px 24px; grid-template-columns: 1fr; gap: 40px; }
+    .known-issues { margin: 0 24px 40px; padding: 20px; }
     footer { flex-direction: column; gap: 24px; text-align: center; }
   }
 </style>
@@ -396,8 +436,10 @@
   <p class="page-eyebrow">opx-* suite</p>
   <h1 class="page-title">Free broadcast<br>engineering tools.</h1>
   <p class="page-body">
-    Binary-only releases for Linux and Windows. No account required.
+    Binary-only releases for Linux. No account required.
     No licence key. No telemetry, no update check — the tools phone nowhere. (A URL given as the file argument is opened by FFmpeg, as in any FFmpeg tool.) Built on the same codebase as our commercial products.
+    The two released tools list their known issues below, dated, and say why we withdrew their
+    Windows builds on 29 Sep 2026.
   </p>
 </div>
 
@@ -406,7 +448,7 @@
   <div class="tool-header">
     <div class="tool-title-block">
       <div class="tool-name">opx-probe</div>
-      <div class="tool-tagline">Fast media file inspector — container, codec, frame rate, AS-11 sidecar, preflight</div>
+      <div class="tool-tagline">Fast media file inspector — container, codec, frame rate, MXF sidecar, preflight</div>
     </div>
     <div class="tool-status-block">
       <div class="status-badge">Available</div>
@@ -419,16 +461,17 @@
       <p class="tool-desc-full">
         opx-probe reads media files directly via libavformat — no shell-out to ffprobe,
         no subprocess overhead. It returns container duration, video codec and frame rate,
-        audio configuration, MXF AS-11 sidecar metadata, and whether any stream starts at a
-        non-zero time, which it reports as an edit list. MPEG-TS has no edit lists, yet all
-        9 .ts files we tried on 27 Sep 2026 tripped it.
+        audio configuration, fields from an XML sidecar beside an MXF, and whether any stream
+        starts at a non-zero time, which it reports as an edit list. MPEG-TS has no edit lists,
+        yet all 9 .ts files we tried on 27 Sep 2026 tripped it, as did the Matroska and FLV
+        files we tried on 29 Sep 2026.
         Run preflight against a target format (<code>--house</code>) to check a file before ingest.
         JSON output for scripting and pipeline integration.
       </p>
 
       <ul class="feature-list">
         <li>Container and stream inspection — H.264, MPEG-2, ProRes, DNxHD</li>
-        <li>MXF with an AS-11 sidecar — programme title, audio track layout, AFD, subtitles flag, rights expiry</li>
+        <li>MXF with an XML sidecar, found by file name — programme title and audio track layout; AFD, subtitles and rights expiry only under field names AS-11 does not use (see known issues)</li>
         <li>Preflight against a target format — frame rate, audio sample rate, stream start offset (reported as an edit list), VFR; resolution and scan type are not checked</li>
         <li>JSON output for scripting and pipeline integration</li>
         <li>Exit codes: 0 = clean, 1 = preflight fail, 2 = probe error</li>
@@ -471,29 +514,62 @@
             </div>
             <span class="download-arrow">↓</span>
           </a>
-          <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-windows-x86_64.zip"
-             class="download-btn">
-            <div class="download-btn-left">
-              <span class="platform-icon">⊞</span>
-              <div>
-                <div>Windows x86_64</div>
-                <div class="download-btn-meta">zip · Windows 10 (tested Jul 2026), FFmpeg bundled</div>
-              </div>
-            </div>
-            <span class="download-arrow">↓</span>
-          </a>
         </div>
         <div class="download-note">
           <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
           Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
           (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
-          <strong>Windows:</strong> FFmpeg DLLs bundled in the zip.
-          Extract and run — no installation required.<br><br>
-          Source code is not published.
+          <strong>Windows:</strong> the Windows zip bundled FFmpeg 6.1.1 DLLs (gyan.dev full_build-shared),
+          licensed GPL version 3 or later. It did not include that licence’s text or an offer of the
+          FFmpeg source, which the licence requires. The Linux builds do not bundle FFmpeg.
+          Windows downloads withdrawn 29 Sep 2026 for this reason.<br><br>
+          Source code is not published. One exception, stated so nobody has to find it: from
+          16 Apr to 28 Jul 2026 the opx-probe repository carried one source file of the
+          command-line front-end, committed by mistake under <code>.github/workflows/</code>.
+          It was removed from the tree on 28 Jul 2026. It remains in the repository’s history
+          and in the “Source code” archive of the v0.1.0 release. Stated 29 Sep 2026.
           <a href="https://github.com/karhu-tv/opx-probe/releases">All releases on GitHub →</a>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="known-issues" id="opx-probe-issues">
+    <div class="ki-title">Known issues in opx-probe 0.2.0</div>
+    <div class="ki-date">Added 29 Sep 2026 · they apply to the published 0.2.0 binary</div>
+    <ul class="ki-list">
+      <li><strong>A false “will reject” line.</strong> The line <code>Rytmi v1 will reject this file</code>
+        is wrong: Rytmi does not reject such a file. The line prints whenever any stream starts at a
+        non-zero time: every MPEG-TS file we tried, and the Matroska and FLV files we tried on
+        29 Sep 2026, including a fresh MKV encode, which <code>--house</code> also fails.</li>
+      <li><strong>Several files: only the last is probed.</strong> Given several files, 0.2.0 probes only
+        the last and ignores the others without a message, so <code>opx-probe *.mxf --house 1080i50</code>
+        can print PASSED and exit 0 over files it never opened. Pass one file per run:
+        <code>for f in *.mxf; do opx-probe "$f" --house 1080i50 || echo "FAIL $f"; done</code>.</li>
+      <li><strong>VFR.</strong> VFR is flagged only when FFmpeg reports no frame rate at all. A
+        variable-rate file that declares a nominal rate, such as a typical phone or screen capture or a
+        stream whose rate changes part-way, passes preflight.</li>
+      <li><strong>Truncated files.</strong> Preflight reads the container header, not the media. A
+        truncated file whose header survives passes: on 29 Sep 2026 the first 23 % of a faststart MP4
+        reported its full 10 s duration and PASSED.</li>
+      <li><strong>Edit lists.</strong> The start-offset check does not read MP4/MOV edit lists. A
+        stream-copy trim that carries a real edit list passes, reports <code>has_edit_list: false</code>,
+        and counts the frames its edit list discards.</li>
+      <li><strong>MXF sidecar.</strong> The sidecar is found by file name only: <code>&lt;name&gt;.xml</code>,
+        <code>&lt;name&gt;_shim.xml</code>, or a <code>shim.xml</code> in the same folder, so one
+        <code>shim.xml</code> is reported against every MXF beside it. Any well-formed XML counts as a
+        sidecar. AFD, subtitles and rights expiry are read from field names that are not AS-11’s, and a
+        missing subtitles field reads as false. AS-11 metadata embedded in the MXF is not read.</li>
+      <li><strong>Exit code 101.</strong> opx-probe ends in a Rust panic with exit code 101, outside the
+        documented 0/1/2, when a file name is not valid UTF-8, and intermittently when stdout is closed
+        early (<code>| head</code>).</li>
+      <li><strong>Publisher name.</strong> <code>--help</code> names a limited company that is not the
+        publisher, and the archive’s README.txt runs the trading name together as one word. The publisher
+        is Bear Media Services LTD, trading as Karhu TV. The <code>--help</code> text is fixed in source;
+        the published archive is unchanged.</li>
+      <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
+        “Ubuntu 24.04+”. Of Ubuntu releases, only 24.04 LTS is supported, as this page states.</li>
+    </ul>
   </div>
 </div>
 
@@ -505,12 +581,13 @@
       <div class="tool-tagline">EBU R128 loudness analysis — integrated, short-term, momentary, true peak</div>
     </div>
     <div class="tool-status-block">
-      <div class="status-badge soon">In progress</div>
+      <div class="status-badge soon">Designed; not built</div>
     </div>
   </div>
   <div style="padding: 32px 48px 48px; color: var(--muted); font-size: 14px;">
-    EBU R128 and Free TV OP-59, with the thresholds read from the issuing bodies’ own documents
-    rather than a summary. Says INCONCLUSIVE where it can’t honestly say pass.
+    Designed to check EBU R128 and Free TV OP-59, with the thresholds read from the issuing bodies’
+    own documents rather than a summary, and to say INCONCLUSIVE where it can’t honestly say pass.
+    The BS.1770 loudness meter exists in Rytmi’s codebase; this tool does not.
   </div>
 </div>
 
@@ -534,7 +611,7 @@
         <strong>file</strong> measures PTS deviation against the stream&rsquo;s own declared
         rate. <strong>sync</strong> measures the audio-versus-video differential and quotes it
         against EBU R37. The frame period is resolved as an exact rational and never floated,
-        so a reported deviation is not an artefact of the measurement. Each track in a
+        so rounding the period adds no error. Each track in a
         differential is measured against <em>its own</em> declaration, so the common-mode term
         subtracts out.
       </p>
@@ -551,7 +628,7 @@
       <div class="usage-block">
         <div class="usage-bar">usage examples</div>
         <div class="usage-body">
-<span class="t-comment"># Lip sync, with EBU R37 bounds</span><br>
+<span class="t-comment"># Lip-sync DRIFT (not a constant offset), with EBU R37 bounds</span><br>
 <span class="t-prompt">$</span> <span class="t-cmd">opx-drift</span> <span class="t-cmd">sync</span> <span class="t-path">programme.mxf</span><br>
 <br>
 <span class="t-comment"># PTS drift of a recorded stream</span><br>
@@ -582,24 +659,15 @@
             </div>
             <span class="download-arrow">&darr;</span>
           </a>
-          <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-windows-x86_64.zip"
-             class="download-btn">
-            <div class="download-btn-left">
-              <span class="platform-icon">&#8862;</span>
-              <div>
-                <div>Windows x86_64</div>
-                <div class="download-btn-meta">zip &middot; Windows 10 (tested Jul–Aug 2026), FFmpeg bundled</div>
-              </div>
-            </div>
-            <span class="download-arrow">&darr;</span>
-          </a>
         </div>
         <div class="download-note">
           <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
           Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
           (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
-          <strong>Windows:</strong> FFmpeg DLLs bundled in the zip.
-          Extract and run &mdash; no installation required.<br><br>
+          <strong>Windows:</strong> the Windows zips (0.2.1 and 0.2.2) bundled FFmpeg 6.1.1 DLLs
+          (gyan.dev full_build-shared), licensed GPL version 3 or later. They did not include that
+          licence&rsquo;s text or an offer of the FFmpeg source, which the licence requires. The Linux
+          builds do not bundle FFmpeg. Windows downloads withdrawn 29 Sep 2026 for this reason.<br><br>
           <strong>Read the note under a sync report before quoting a number.</strong>
           A common-mode slope is a coherent retime, not a sync fault.<br><br>
           Source code is not published.
@@ -607,6 +675,49 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="known-issues" id="opx-drift-issues">
+    <div class="ki-title">Known issues in opx-drift 0.2.2</div>
+    <div class="ki-date">Added 29 Sep 2026 &middot; they apply to the published 0.2.2 binary</div>
+    <ul class="ki-list">
+      <li><strong><code>sync</code> measures drift, not a constant offset.</strong> Drift means a change in
+        A/V alignment across the file. Each track is anchored at its own first packet, so a file whose
+        audio is late by a fixed amount from the first frame reports no differential and exits 0. On
+        29 Sep 2026 a copy of our bars file with its audio 178&nbsp;ms late passed.
+        <code>opx-probe --house</code> flags such a file as a non-zero stream start (reported as an edit
+        list).</li>
+      <li><strong>Dropped frames mid-file.</strong> When dropped or repeated frames sit near the middle of
+        a file, or are spread through it, the slope estimate absorbs them. The report then shows a slope
+        the file does not have (roughly drops &divide; frames) and, on MPEG-TS and on some MP4s (25 fps in
+        our tests), lists nearly every frame as a sub-period step. The &plusmn;1-period steps are still
+        listed and the exit code is still 1.
+        In <code>sync</code> the same slope appears as an A/V differential and can be reported as an
+        EBU R37 crossing. On 29 Sep 2026 one dropped frame at the midpoint of a 500-frame 50p TS read
+        +2066&nbsp;ppm and 499 steps.</li>
+      <li><strong>AAC in MKV or FLV.</strong> <code>sync</code> reports a false audio drift of about
+        1.6&nbsp;%, and an EBU R37 breach, on AAC audio in Matroska (MKV) or FLV, because those containers
+        round each AAC packet&rsquo;s duration to the millisecond. A lossless remux of a clean MP4 failed
+        this way on 29 Sep 2026. In the same tests AAC in MP4, MOV and TS read clean, as did PCM audio in
+        MXF and Opus audio in WebM.</li>
+      <li><strong>VFR.</strong> VFR is recognised only when FFmpeg reports no frame rate. A variable-rate
+        file that declares a nominal rate is analysed at that rate: <code>file</code> reports steps and
+        exits 1, not 2, and <code>sync</code> can report a false R37 breach.</li>
+      <li><strong>Truncated files.</strong> A truncated file is analysed as far as it goes and can read
+        clean; the report does not say the file ended early.</li>
+      <li><strong><code>--audio-stream</code>.</strong> An index that is out of range or not audio falls
+        back to video only, reports &ldquo;no audio stream in this file&rdquo;, and exits 0.</li>
+      <li><strong>Exit code 101.</strong> opx-drift ends in a Rust panic with exit code 101, outside the
+        documented 0/1/2, when a file name is not valid UTF-8, and when stdout is closed before the
+        report is written (for example <code>| head</code> on a long report).</li>
+      <li><strong>Publisher name.</strong> <code>--help</code> names a limited company that is not the
+        publisher, and the archive&rsquo;s README.txt runs the trading name together as one word. The
+        publisher is Bear Media Services LTD, trading as Karhu TV. Both are fixed in source; the published
+        archives are unchanged.</li>
+      <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
+        <code>sudo apt install ffmpeg (Ubuntu/Debian)</code>. No current Debian release ships FFmpeg 6;
+        of Ubuntu releases, only 24.04 LTS is supported.</li>
+    </ul>
   </div>
 </div>
 
