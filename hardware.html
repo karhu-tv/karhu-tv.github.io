@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Hardware we build and test on — Karhu TV</title>
+<meta name="description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/hardware.html">
+<meta property="og:title" content="Hardware we build and test on — Karhu TV">
+<meta property="og:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hardware we build and test on — Karhu TV">
+<meta name="twitter:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+<link rel="canonical" href="https://karhu.tv/hardware.html">
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<style>
+  /* The home page's colour, type and spacing tokens, value for value, as on tools.html.
+     System font stacks only: this page requests nothing from any other host. Dark mode is
+     written the way archive.css writes it: on screen only, so print is always black on white. */
+  :root {
+    color-scheme: light;
+    --ground:      #F6F8FA;
+    --ground-2:    #EDF1F5;
+    --ink:         #10151C;
+    --ink-soft:    #4A5663;
+    --ink-faint:   #7B8794;
+    --accent:      #0A5C7A;
+    --accent-soft: #E2EEF3;
+    --warn:        #9A5B0B;
+    --warn-soft:   #F7EEDF;
+    --rule:        #D5DCE4;
+    --rule-soft:   #E6EBF0;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+
+    --measure: 64ch;
+    --pad: clamp(1.25rem, 4vw, 3.5rem);
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+  @media screen {
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #0C1116; --ground-2: #131A21; --ink: #E4EAF0; --ink-soft: #9BA8B5;
+      --ink-faint: #6C7A88; --accent: #4FB3D9; --accent-soft: #10222B;
+      --warn: #D9A441; --warn-soft: #241C0E; --rule: #26313B; --rule-soft: #1B242C;
+    }
+  }
+
+  /* ── base: tools.html's ───────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--pad); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-spacing: -.015em; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p, ul { margin: 0; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+  strong { font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--ground-2); border: 1px solid var(--rule-soft); border-radius: 3px;
+    padding: .05em .3em; overflow-wrap: anywhere;
+  }
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap; margin: -1px; padding: 0; border: 0;
+  }
+  .skip {
+    position: absolute; left: var(--pad); top: -3rem; z-index: 10;
+    background: var(--ground); color: var(--accent); border: 1px solid var(--accent);
+    padding: .45rem .8rem; font-size: .875rem;
+  }
+  .skip:focus { top: .75rem; }
+
+  /* ── masthead: the home page's, with the logo linking home ──────── */
+  header.top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: .75rem 1.5rem; flex-wrap: wrap;
+    padding: 2rem 0 1.25rem; border-bottom: 1px solid var(--rule);
+  }
+  .logo { display: flex; align-items: center; gap: .625rem; color: var(--ink); text-decoration: none; }
+  .logo-mark { display: block; flex: none; }
+  .logo-word { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; letter-spacing: -.01em; }
+  .logo-word span { color: var(--accent); }
+  header.top nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+  header.top nav a {
+    color: var(--ink-soft); text-decoration: none;
+    border-bottom: 1px solid transparent; padding: .15rem 0;
+  }
+  header.top nav a:hover, header.top nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+  header.top nav a[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  main { display: block; }
+  main:focus { outline: none; }
+
+  /* ── page intro: tools.html's ─────────────────────────────────── */
+  .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
+  .page-eyebrow {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 .75rem;
+  }
+  .page-title { margin-bottom: 1.25rem; }
+  .page-body { font-size: 1.125rem; color: var(--ink-soft); max-width: var(--measure); }
+  .page-body + .page-body { margin-top: 1rem; }
+  .page-body strong { color: var(--ink); }
+
+  /* ── sections: the home page's rhythm and h2 ──────────────────── */
+  .hw-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
+  [id] { scroll-margin-top: 1.25rem; }
+  .sec-head { margin-bottom: 2rem; max-width: var(--measure); }
+  .sec-title { font-size: clamp(1.5rem, 3vw, 2.125rem); line-height: 1.15; letter-spacing: -.01em; }
+  .sec-head p { margin-top: .75rem; color: var(--ink-soft); }
+  .unit + .unit { margin-top: clamp(2.25rem, 5vw, 3.25rem); }
+  .unit-title { font-size: 1.25rem; margin-bottom: .35rem; }
+  .unit-dek { color: var(--ink-soft); max-width: var(--measure); margin-bottom: 1rem; }
+  .after-table { margin-top: 1.25rem; max-width: var(--measure); color: var(--ink-soft); font-size: .9375rem; }
+  .after-table + .after-table { margin-top: .75rem; }
+
+  /* ── tables: drawn like the home page's evidence table (mono capital heads, soft rules),
+     each in a scroll box so a phone scrolls the table and never the page. The parts tables
+     have two columns and fit a phone; the wider two scroll ─────────── */
+  .tbl-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+  table.versions { min-width: 40rem; }
+  table.kit { min-width: 36rem; }
+  th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  thead th {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-soft); border-bottom: 1px solid var(--rule); font-weight: 400;
+  }
+  tbody th { font-weight: 600; color: var(--ink); }
+  td.ver { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+  td.asof { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); white-space: nowrap; }
+  .cell-note { display: block; margin-top: .2rem; font-weight: 400; font-size: .8125rem; color: var(--ink-soft); }
+
+  /* ── what each unit does: a dated list, one entry per unit ──────── */
+  .duty { list-style: none; padding: 0; max-width: var(--measure); border-top: 1px solid var(--rule-soft); }
+  .duty li { padding: 1rem 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink-soft); }
+  .duty li strong { color: var(--ink); }
+
+  /* ── known fault: tools.html's known-issues box, the colours of "What we don't claim" ── */
+  .known-issues {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 1.4rem;
+    background: var(--warn-soft);
+    border-top: 1px solid var(--warn); border-bottom: 1px solid var(--warn);
+  }
+  .known-issues > * { max-width: 78ch; }
+  .ki-title { color: var(--warn); font-size: 1.25rem; }
+  .ki-date { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); margin: .35rem 0 1rem; }
+  .ki-list { padding-left: 1.2rem; }
+  .ki-list li { font-size: .9375rem; line-height: 1.65; color: var(--ink-soft); }
+  .ki-list li + li { margin-top: .75rem; }
+  .ki-list li::marker { color: var(--warn); }
+  .ki-list li strong { color: var(--ink); }
+
+  /* ── footer: the home page's ──────────────────────────────────── */
+  footer.site {
+    border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
+    color: var(--ink-soft); font-size: .875rem;
+  }
+  footer.site p + p { margin-top: .5rem; font-size: .8125rem; max-width: var(--measure); }
+
+  @media (max-width: 30rem) {
+    header.top { padding-top: 1.5rem; }
+    header.top nav { gap: .5rem 1.25rem; }
+    .page-body { font-size: 1.0625rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ── print: archive.css's palette, no navigation, link targets written out ── */
+  @media print {
+    :root {
+      color-scheme: light;
+      --ground: #fff; --ground-2: #f3f3f3; --ink: #000; --ink-soft: #333; --ink-faint: #555;
+      --accent: #000; --accent-soft: #eee; --warn: #000; --warn-soft: #fff; --rule: #999; --rule-soft: #ccc;
+    }
+    .skip, header.top nav { display: none; }
+    body { font-size: 11pt; }
+    .wrap { max-width: none; padding: 0; }
+    .tbl-scroll { overflow: visible; }
+    table.versions, table.kit { min-width: 0; }
+    main a[href^="/"]::after { content: " (https://karhu.tv" attr(href) ")"; font-size: .8em; overflow-wrap: anywhere; }
+    tr, .ki-list li { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the hardware</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/hardware.html" aria-current="page">Hardware</a>
+      <a href="/archive/">Archive</a>
+    </nav>
+  </header>
+
+<main id="main" tabindex="-1">
+
+<div class="page-header">
+  <p class="page-eyebrow">Hardware</p>
+  <h1 class="page-title">Hardware we build<br>and test on.</h1>
+  <p class="page-body">
+    Rytmi is developed and tested on two machines built from off-the-shelf PC parts: a desktop
+    Intel processor, a retail motherboard, standard non-ECC memory, NVMe and SATA solid-state
+    drives, and a Blackmagic DeckLink card. They run Ubuntu 24.04 LTS, with Ubuntu&rsquo;s own
+    kernel and FFmpeg packages. <strong>There is no appliance, and no hardware of our own design.</strong>
+  </p>
+  <p class="page-body">
+    That is deliberate. Every part in the tables below is a standard product sold through ordinary
+    retail channels, so a failed part can be replaced with one bought from a retailer. And the two
+    machines come from different hardware generations, with different processors, chipsets and
+    motherboard makers, so a result on one can be checked on the other. Because they differ in
+    several ways at once, a difference between them does not point to any one part.
+  </p>
+  <p class="page-body">
+    This is not a certified configuration or a minimum specification. The two machines are
+    development benches running a test schedule, and this page says nothing about hardware we have
+    not tried. Everything on this page is as of 29 Sep 2026 unless it carries another date.
+  </p>
+</div>
+
+<section class="hw-section" id="units" aria-labelledby="units-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="units-title">The two units</h2>
+    <p>Read from each running machine on 29 Sep 2026, except where a row says otherwise. Cases,
+      CPU coolers and power supplies are not listed, because we have not recorded them from the
+      machines themselves.</p>
+  </div>
+
+  <div class="unit" id="first-unit">
+    <h3 class="unit-title" id="first-unit-title">The first unit</h3>
+    <p class="unit-dek">The machine behind the
+      <a href="/archive/fortnight-soak-2026-08/">August 2026 soak</a>.</p>
+    <div class="tbl-scroll" role="region" aria-labelledby="first-unit-title" tabindex="0">
+      <table class="parts">
+        <thead>
+          <tr><th scope="col">Component</th><th scope="col">What it is</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Processor</th>
+            <td>Intel Core i7-12700, a 12th-generation desktop part (non-K): 12 cores, 20 threads
+              (8 performance cores with Hyper-Threading, 4 efficient cores)</td></tr>
+          <tr><th scope="row">Graphics</th>
+            <td>Intel UHD Graphics 770, built into the processor. No separate graphics card.</td></tr>
+          <tr><th scope="row">Motherboard</th>
+            <td>MSI PRO Z790-P WIFI, Intel Z790 chipset, a consumer ATX board</td></tr>
+          <tr><th scope="row">Memory</th>
+            <td>32 GB DDR5, non-ECC: two Crucial 16 GB DDR5-6000 modules (CP16G60C48U5), one per
+              memory channel</td></tr>
+          <tr><th scope="row">System drive</th>
+            <td>Samsung 980 PRO 1 TB NVMe SSD, with heatsink: operating system and as-run log</td></tr>
+          <tr><th scope="row">Media drive</th>
+            <td>Crucial BX500 2 TB SATA SSD</td></tr>
+          <tr><th scope="row">Backup drive</th>
+            <td>Transcend StoreJet USB disk</td></tr>
+          <tr><th scope="row">SDI card</th>
+            <td>Blackmagic DeckLink Duo 2: four SDI connectors and a reference input</td></tr>
+          <tr><th scope="row">Network</th>
+            <td>Intel I226-V 2.5 GbE on the motherboard; Intel I350-T2 two-port gigabit card; the
+              motherboard&rsquo;s Wi-Fi, unused</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="unit" id="second-unit">
+    <h3 class="unit-title" id="second-unit-title">The second unit</h3>
+    <p class="unit-dek">Built in September 2026, with more processor cores and a
+      workstation-class motherboard.</p>
+    <div class="tbl-scroll" role="region" aria-labelledby="second-unit-title" tabindex="0">
+      <table class="parts">
+        <thead>
+          <tr><th scope="col">Component</th><th scope="col">What it is</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Processor</th>
+            <td>Intel Core i7-14700, a 14th-generation desktop part (non-K): 20 cores, 28 threads
+              (8 performance cores with Hyper-Threading, 12 efficient cores)</td></tr>
+          <tr><th scope="row">Graphics</th>
+            <td>Intel UHD Graphics 770, built into the processor. No separate graphics card.</td></tr>
+          <tr><th scope="row">Motherboard</th>
+            <td>ASUS Pro WS W680-ACE, Intel W680 chipset, a workstation-class ATX board</td></tr>
+          <tr><th scope="row">Memory</th>
+            <td>32 GB DDR5, non-ECC: two Crucial 16 GB DDR5-4800 modules (CT16G48C40U5), one per
+              memory channel
+              <span class="cell-note">Capacity read 29 Sep 2026; the modules are from our build
+                record of 6 Sep 2026.</span></td></tr>
+          <tr><th scope="row">System drive</th>
+            <td>Samsung 990 PRO 1 TB NVMe SSD: operating system and as-run log</td></tr>
+          <tr><th scope="row">Media drive</th>
+            <td>Crucial BX500 2 TB SATA SSD</td></tr>
+          <tr><th scope="row">SDI card</th>
+            <td>Blackmagic DeckLink Duo 2: four SDI connectors and a reference input</td></tr>
+          <tr><th scope="row">Network</th>
+            <td>Two Intel I226-LM 2.5 GbE on the motherboard; Intel I350-T4 four-port gigabit card</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="hw-section" id="duty" aria-labelledby="duty-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="duty-title">What each unit does</h2>
+    <p>As of 29 Sep 2026.</p>
+  </div>
+  <ul class="duty">
+    <li><strong>The first unit</strong> plays one channel, 1920&times;1080 progressive at 50 frames a
+      second (1080p50), on one of its card&rsquo;s SDI outputs. Of the card&rsquo;s four outputs,
+      three work; the fourth is the <a href="#known-fault">known fault</a> below.</li>
+    <li><strong>The second unit</strong> plays four channels, each 1080p50, one on each SDI output.
+      On 27 Sep 2026, the last time its cabling was recorded, none of the four outputs had a cable
+      attached; only the reference input did. So what it played then was counted inside the
+      machine, by the engine and the card, and nothing downstream watched it.</li>
+    <li><strong>Reference.</strong> On 27 Sep 2026 both units took a reference from the sync generator
+      listed under test kit. With the generator at 1080i50 their cards did not lock their 1080p50
+      outputs; at 720p50 they locked. We switched the generator off the same day, and both units
+      read free-running on 29 Sep 2026. What locking showed, and what it did not cover, is in the
+      archive: <a href="/archive/genlock-2026-09-27/">genlock, 27 September 2026</a>.</li>
+  </ul>
+
+  <div class="known-issues" id="known-fault">
+    <h3 class="ki-title">Known fault</h3>
+    <div class="ki-date">As of 29 Sep 2026</div>
+    <ul class="ki-list">
+      <li><strong>The first unit&rsquo;s fourth SDI output does not work.</strong> It has not worked
+        since the card was fitted, in May 2026. The card&rsquo;s driver still lists all four outputs,
+        and none of our software on the machine has detected the fault.</li>
+      <li><strong>Fix underway.</strong> A replacement card is coming back to us from a warranty
+        return. It takes this card&rsquo;s place, and this card then goes back under warranty
+        itself. Until the swap, the first unit uses three of the four outputs.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="hw-section" id="software" aria-labelledby="software-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="software-title">Software versions</h2>
+    <p>The operating system, kernel, DeckLink driver and card firmware, FFmpeg and the Intel media
+      driver, per unit, as of 29 Sep 2026; the card firmware was read on 5&ndash;6 Sep 2026. Of the
+      versions in this table, the two units differ only in the kernel build.</p>
+  </div>
+  <div class="tbl-scroll" role="region" aria-label="Software versions table" tabindex="0">
+    <table class="versions">
+      <thead>
+        <tr><th scope="col">Software</th><th scope="col">First unit</th><th scope="col">Second unit</th><th scope="col">As of</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Operating system
+            <span class="cell-note">Ubuntu, long-term support release</span></th>
+          <td class="ver">Ubuntu 24.04.4 LTS</td><td class="ver">Ubuntu 24.04.4 LTS</td>
+          <td class="asof">29 Sep 2026</td></tr>
+        <tr><th scope="row">Linux kernel
+            <span class="cell-note">Ubuntu&rsquo;s own kernel package, generic flavour, as published
+              in Ubuntu&rsquo;s archive; not rebuilt or patched by us</span></th>
+          <td class="ver">6.8.0-134-generic</td><td class="ver">6.8.0-139-generic</td>
+          <td class="asof">29 Sep 2026</td></tr>
+        <tr><th scope="row">Blackmagic Desktop Video
+            <span class="cell-note">The DeckLink driver and SDK library. Blackmagic&rsquo;s own
+              package, not Ubuntu&rsquo;s.</span></th>
+          <td class="ver">15.3.1a4</td><td class="ver">15.3.1a4</td>
+          <td class="asof">29 Sep 2026</td></tr>
+        <tr><th scope="row">DeckLink Duo 2 firmware
+            <span class="cell-note">As Blackmagic&rsquo;s updater reports it</span></th>
+          <td class="ver">0x128</td><td class="ver">0x128</td>
+          <td class="asof">5&ndash;6 Sep 2026</td></tr>
+        <tr><th scope="row">FFmpeg
+            <span class="cell-note">The libraries the engine links or loads: libavcodec 60,
+              libavformat 60, libavutil 58, libswresample 4. Ubuntu&rsquo;s own packages.</span></th>
+          <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
+          <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
+          <td class="asof">29 Sep 2026</td></tr>
+        <tr><th scope="row">Intel media driver
+            <span class="cell-note">The VA-API driver for hardware video decode on the built-in
+              graphics. Ubuntu&rsquo;s own package.</span></th>
+          <td class="ver">24.1.0+ds1-1</td><td class="ver">24.1.0+ds1-1</td>
+          <td class="asof">29 Sep 2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="after-table">Everything in this table except Blackmagic&rsquo;s driver and the
+    card&rsquo;s firmware is Ubuntu&rsquo;s own package, as Ubuntu publishes it. The FFmpeg
+    versions are the ones the engine uses: on the first unit, read from the libraries the running
+    engine has loaded; on the second, from the libraries its engine binary resolves to on that
+    machine. Other Ubuntu packages, which this table does not list, are not all at the same
+    revision on the two units.</p>
+  <p class="after-table">As of 29 Sep 2026, both units had run the same Rytmi source since
+    18 Sep 2026, each built on its own machine. Setting a machine up for Rytmi also changes some
+    operating-system settings; those are part of how we install Rytmi, and are not listed
+    here.</p>
+</section>
+
+<section class="hw-section" id="test-kit" aria-labelledby="kit-title">
+  <div class="sec-head">
+    <h2 class="sec-title" id="kit-title">Test kit</h2>
+    <p>The instruments we test the two units with, and what each is for, as of 29 Sep 2026.</p>
+  </div>
+  <div class="tbl-scroll" role="region" aria-label="Test kit table" tabindex="0">
+    <table class="kit">
+      <thead>
+        <tr><th scope="col">Instrument</th><th scope="col">What it is</th><th scope="col">What we use it for</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Sync generator</th>
+          <td>Blackmagic Mini Converter Sync Generator: six analogue reference outputs, blackburst or
+            HD tri-level</td>
+          <td>Genlock. It fed both units&rsquo; reference inputs on 27 Sep 2026, and was switched off the
+            same day. Blackmagic published no accuracy figure for it when we checked on 16 Sep 2026; the
+            offset we measured is in the <a href="/archive/genlock-2026-09-27/">genlock entry</a>.</td></tr>
+        <tr><th scope="row">Audio check</th>
+          <td>Blackmagic Mini Converter SDI to Audio, which takes the audio out of an SDI signal as
+            analogue; a Steinberg UR22mkII USB audio interface, recording at 48 kHz; Genelec 8030A
+            monitor loudspeakers</td>
+          <td>Measuring and hearing the audio on an SDI output from outside the engine, such as a
+            test tone&rsquo;s level. Last shown working on 16 Sep 2026, reading a 1 kHz test tone
+            off an SDI output.</td></tr>
+        <tr><th scope="row">Picture monitor</th>
+          <td>An SDI monitor from Blackmagic&rsquo;s SmartScope range</td>
+          <td>Looking at the picture on an SDI output.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="after-table">We use these by hand, for checks. On 29 Sep 2026 neither unit had a
+    recorder on its SDI outputs, so the other figures on this site are measured inside the
+    machines themselves.</p>
+</section>
+
+</main>
+
+  <footer class="site">
+    <p>
+      Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a>
+    </p>
+    <p>Bear Media Services LTD · Trading as Karhu TV · England &amp; Wales</p>
+  </footer>
+</div>
+
+</body>
+</html>

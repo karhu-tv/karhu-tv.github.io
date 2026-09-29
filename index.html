@@ -408,6 +408,11 @@
 
   footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-faint); font-size: .875rem; }
   footer a { color: var(--accent); }
+  /* The first link inside running prose on this page (to /hardware.html). Without a rule it
+     takes the browser's default blue, which is unreadable on the dark ground. Drawn as
+     tools.html and archive.css draw a prose link. */
+  #rytmi p a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+  #rytmi p a:hover { text-decoration-thickness: 2px; }
   .note { font-size: .875rem; color: var(--ink-soft); }
   .note code, .inline-code { font-family: var(--mono); font-size: .9em; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
@@ -431,6 +436,7 @@
       <a href="#evidence">Evidence</a>
       <a href="#tools">Tools</a>
       <a href="#register">What we don't claim</a>
+      <a href="/hardware.html">Hardware</a>
       <a href="/archive/">Archive</a>
     </nav>
   </header>
@@ -530,8 +536,10 @@
         </p>
         <p>
           <strong>And it is software, not an appliance.</strong> The machine behind every
-          figure on this page is one of two stock Intel desktops, each with a DeckLink card any broadcast
-          dealer stocks. The nanoseconds come from measurement, not from custom silicon —
+          figure on this page is one of two machines built around stock Intel desktop processors, each
+          with a DeckLink card any broadcast dealer stocks. Their motherboards, memory and drives are
+          standard retail parts too, <a href="/hardware.html">listed part by part</a> with the
+          software versions each machine runs. The nanoseconds come from measurement, not from custom silicon —
           the engine treats every clock in the box as something to verify rather than trust,
           which is why it holds time on hardware you can buy, replace, and keep spares for.
           When a card fails, you swap a card — not a channel appliance.
