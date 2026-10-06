@@ -522,8 +522,14 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with one open defect, RET-122, named in the register below: the head of a looping region
-          airs twice per loop, and displaces what follows.
+          with two known exceptions. RET-122, in the register below: the head of a looping region
+          airs twice per loop, and displaces what follows; the first unit has carried a fix since
+          3 Oct 2026, not accepted as of 6 Oct, and the second unit has none. And RET-142, found off
+          air on 4 Oct 2026: a schedule whose first item lay more than a minute ahead of the
+          engine&rsquo;s start aired that item at once, early by almost the whole lead. Neither unit&rsquo;s
+          schedules start that far ahead. Under the first unit&rsquo;s fix, since 5 Oct 2026, such an
+          item waits and airs at most 313&nbsp;ms after its instant in our tests without a card
+          &mdash; which is still late; the second unit has no fix.
         </p>
         <p>
           <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we first put to the test on 27 Sep 2026, as far as our own instruments reach; the register below has what that showed, what locking cost here, and what it did not cover. Take
@@ -543,12 +549,13 @@
           The as-run log is a <strong>hash chain</strong>. Each record commits to the one before it,
           blocks are sealed and fsynced, and rotated day files are verifiable across boundaries.
           It is written as the engine plays, not assembled afterwards, so changing an earlier
-          record breaks the chain for anyone who already holds a hash from later in it. As of
-          29 Sep 2026 the log carries no key, no signature and no anchor outside itself, and our
-          backups of it are mirrors that a later copy overwrites: the hashes are plain SHA-256, so
-          someone holding the day files could rewrite a record and recompute every hash after it,
-          in that file and every later one, and only a hash kept out of their reach would show the
-          change.
+          record breaks the chain for anyone who already holds a hash from later in it. Since
+          3 Oct 2026 the first unit&rsquo;s log also records each airing of a schedule item, and signs
+          each seal with a key made on that machine. As of 6 Oct 2026 nobody outside Karhu TV can
+          check those signatures, the log carries no anchor outside itself, and our backups of it
+          are mirrors that a later copy overwrites: the hashes are plain SHA-256, so someone holding
+          the day files could rewrite a record and recompute every hash after it, in that file and
+          every later one, and only a hash kept out of their reach would show the change.
           <a href="/as-run.html">What verifying the log proves, and what it does not</a>.
         </p>
         <p>
@@ -889,12 +896,19 @@
 
         <div class="reg-item">
           <h3>Loudness monitoring on air</h3>
-          <p class="reg-why">We have a full BS.1770 loudness meter in the codebase — and on the SDI
-            product it is wired to nothing an operator can see. As built it reads decoded source
-            audio, upstream of the output mix, so even wired it could not see a conform error. A
-            number from it would describe the file, not the transmission.</p>
-          <p class="reg-earn"><span>Would earn it:</span> metering the output bed itself, on its
-            own thread. Designed; not built.</p>
+          <p class="reg-why">Since 3 Oct 2026 the first unit measures each airing&rsquo;s integrated
+            loudness and true peak, to BS.1770 and EBU R128, on the audio it hands on towards the card
+            &mdash; after the output mix, not from the source file &mdash; and writes both into the
+            as-run log&rsquo;s record of that airing. Against FFmpeg&rsquo;s own measurement of the same
+            stretch of the same file, without a card, on 3 Oct 2026, every airing we could compare
+            agreed within the tolerances of EBU Tech 3341. It is measured inside the engine, not at
+            the connector; no operator&rsquo;s screen shows it; and the second unit has none of it.
+            Until then this row said we had &ldquo;a full BS.1770 loudness meter in the
+            codebase&rdquo;. It was not full: its &ldquo;true peak&rdquo; was a sample peak, and it
+            gave the 5.1 surround channels the wrong weight. Both were fixed on 3 Oct 2026, and no
+            figure we published came from it.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the figure on an operator&rsquo;s screen
+            while the item airs, and the same figure read by a meter on the SDI output.</p>
         </div>
       </div>
 
@@ -906,25 +920,29 @@
             <p class="reg-why">The as-run is a tamper-evident hash chain and we stand behind it:
               120,483,920 records checked as of 21 August 2026, no false positives, six forgery vectors closed, known breaks from before the 339-hour run of August 2026 &mdash; one between two day files (20&rarr;21 June 2026), and others inside day files, among them 20 and 21 June and 17 July 2026. It
               records <strong>one entry per source frame</strong>, and that entry is not exact about
-              what played or when: a fault in our log, found in July 2026 and open as of 29 Sep 2026.
+              what played or when: a fault in our log, found in July 2026 and open as of 6 Oct 2026.
               Each entry is written as the engine hands its frame on towards the card, and stamped
               with the time of the engine clock tick the frame was made for rather than when the
-              frame leaves the SDI output; and a frame the engine then discards to absorb the
-              card&rsquo;s drift keeps any entry it had, so the log can say a frame played that
-              never reached the card
-              (<a href="/as-run.html">the as-run page</a> has the detail). What it does not carry is an <em>item</em> boundary &mdash; so
-              two consecutive plays of the same file read as one continuous run of double the
-              length. That is not hypothetical: RET-122, a defect open as of 27 Sep 2026, airs the
-              head of a looping region twice per loop, as it did on the first unit through the
-              339-hour run of August 2026, and this log cannot show it. <strong>The chain proves its
-              records are the ones written, in the order written; it does not prove they were true,
-              or that nobody rewrote them all, and it carries no item boundaries</strong> &mdash; and
-              we would rather tell you which is which than let the first imply the rest.</p>
-          <p class="reg-earn"><span>Would earn it:</span> an item-boundary record, and frame entries
-            written from what the card reports it played rather than from the hand-off. The
-            obstacle to the first is that our record format is frozen — adding a field would
-            invalidate every archive written to date — so it needs a versioned format change, done
-            deliberately.</p>
+              frame leaves the SDI output
+              (<a href="/as-run.html">the as-run page</a> has the detail). In the log as it was
+              written until 3 Oct 2026, and as the second unit still writes it, there is no
+              <em>item</em> boundary &mdash; so two consecutive plays of the same file read as one
+              continuous run of double the length &mdash; and a frame the engine then discards to absorb
+              the card&rsquo;s drift keeps any entry it had, so the log can say a frame played that
+              never reached the card. That is not hypothetical: RET-122 airs the head of a looping
+              region twice per loop, as it did on the first unit through the 339-hour run of August
+              2026, and that log cannot show it. Since 3 Oct 2026 the first unit&rsquo;s log records each
+              airing of a schedule item, so a second play is a second airing, and withdraws the entry
+              of a discarded frame whose picture does not air; that every discard is accounted for is
+              not established. <strong>The chain proves its records are the ones written, in the order
+              written; it does not prove they were true, or that nobody rewrote them all</strong>
+              &mdash; and we would rather tell you which is which than let the first imply the
+              rest.</p>
+          <p class="reg-earn"><span>Would earn it:</span> an item-boundary record &mdash; on the
+            first unit since 3 Oct 2026, through the versioned format change this row asked for.
+            Still to earn: frame entries written from what the card reports it played rather than
+            from the hand-off, and a run of 50p material only, under a test written down beforehand,
+            in which every discard is withdrawn.</p>
         </div>
 
         <div class="reg-item">

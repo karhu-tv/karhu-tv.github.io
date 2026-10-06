@@ -236,8 +236,17 @@
     <strong>A chain that checks out shows that its records are the ones that were written, in the
     order they were written. It does not show that what was written was true, and on its own it
     cannot show that nobody rewrote the whole log.</strong> Both are set out
-    <a href="#not-proved">below</a>. Everything on this page is as of 29 Sep 2026 unless it
-    carries another date; how the log works was read from our own code that day.
+    <a href="#not-proved">below</a>. Everything on this page is as of 6 Oct 2026 unless it
+    carries another date; how the log works was read from our own code that day, and what the
+    verifier does with each case below was tried on it that day.
+  </p>
+  <p class="page-body">
+    <strong>Two versions of the log are in use.</strong> Since 3 Oct 2026 the first unit has
+    written a second version, which adds a record for each airing of a schedule item, a record
+    withdrawing a frame the engine discarded after recording it, and a signature on each seal.
+    The second unit, on the build it has run since 18 Sep 2026, writes the first version. Where
+    something below belongs to one version only, it says so; the
+    <a href="/hardware.html">hardware page</a> says which machine is which.
   </p>
 </div>
 
@@ -250,6 +259,13 @@
       frame on towards the card. The record carries the time of the engine clock tick the frame
       was made for, and the name of the source file. Each channel has a chain of its own, kept in
       one file per UTC day.</li>
+    <li><strong>In the second version, a record for each airing.</strong> Where an airing of a
+      schedule item starts, a record names the item, how it came to start and, where the schedule
+      gives one, the item&rsquo;s key from a traffic system. Where it ends, a record gives the
+      number of frames handed on, why it ended, and the airing&rsquo;s loudness and true peak. An
+      item that airs twice is two airings, numbered in turn, and a scheduled item that never aired
+      gets a record saying why. These records carry the engine clock tick&rsquo;s time, as the frame
+      records do.</li>
     <li><strong>Each record commits to the one before it.</strong> A record&rsquo;s SHA-256 hash
       covers the hash of the record before it and everything else in the record, so changing,
       removing, inserting or reordering a record breaks the chain at that point.</li>
@@ -257,17 +273,20 @@
       records the writer has the operating system write the file out to the drive, and only then
       adds a seal: one hash over that block&rsquo;s records. If the write-out fails, the seal is
       withheld and the failure is recorded in the chain instead, so no seal vouches for records
-      that may not have reached the drive.</li>
+      that may not have reached the drive. In the second version each seal is also signed, with a
+      key made on that machine whose private half does not leave it; what that shows, and what it
+      does not, is <a href="#not-proved">below</a>.</li>
     <li><strong>Day files are chained across midnight.</strong> Each day&rsquo;s file opens with a
       record carrying the hash of the last record of the day before, so a run of day files checks
       as one chain.</li>
     <li><strong>A restart continues the chain, or begins a new one.</strong> An engine
-      restarted during the day carries on in that day&rsquo;s file, from its last record, when it
-      can read the end of that file. An engine started on a day that has no file &mdash; because it was
+      restarted during the day carries on in that day&rsquo;s file, from its last complete record.
+      An engine started on a day that has no file &mdash; because it was
       stopped across midnight &mdash; begins a new chain. Checking reports that as a new segment,
-      not as a fault, because stopping the engine is not tampering with its log. A restart that
-      cannot read the end of the day&rsquo;s file is the exception, and is set out
-      <a href="#proved">below</a>.</li>
+      not as a fault, because stopping the engine is not tampering with its log. The exception,
+      set out <a href="#proved">below</a>, is a restart that finds no complete record to carry on
+      from: since 3 Oct 2026 the first unit&rsquo;s engine searches back through the whole file for
+      one, where the second unit&rsquo;s reads only the end of the file.</li>
     <li><strong>The clock does not wait for the log.</strong> Records reach the writer through a
       queue, so writing to the drive never holds up the engine&rsquo;s clock. If the queue is
       full, the newest record is dropped rather than stall the clock, and the writer records in
@@ -294,32 +313,37 @@
       text must be exactly the form the writer produces for the record it holds. An added field,
       extra spaces inside the record, an escaped character or a repeated key &mdash; edits a person
       reading the file would see, but that leave the parsed record, and so its hash, unchanged
-      &mdash; fail the check. What lies between records is not held to that, as of 29 Sep 2026:
-      spaces or a carriage return at either end of a line, and blank lines, are ignored; and one
-      unreadable line directly before an engine restart that continues the chain is accepted as
-      crash damage, whatever it says, with no message. We tried each of these on the verifier on
-      29 Sep 2026.</li>
+      &mdash; fail the check. What lies between records is not held to that: spaces or a carriage
+      return at either end of a line, and blank lines, hold no record and are ignored, and the
+      verifier reports each kind once per file, with a count, as a sign that something other than
+      the writer has rewritten the file. We tried each of these on the verifier on 6 Oct 2026.</li>
     <li><strong>The structure is the writer&rsquo;s.</strong> A chain opens with a first record, or
       with a record naming the one it continues; no chain opens twice; in each file, no frame
       record comes before the engine&rsquo;s clock is recorded as locking to TAI, in that file or,
       for a file that continues another, in the one before it &mdash; a restart during the day
       does not need a new lock record to pass; and every seal matches the records it covers
-      &mdash; their number, their time span and the hash over them.</li>
+      &mdash; their number, their time span and the hash over them. In the second version, too,
+      every airing&rsquo;s end record matches the start record before it, airings are numbered one
+      after another, and the frames an end record counts match the frame records between the
+      two.</li>
     <li><strong>Day files follow one another.</strong> A file that continues the one before it
       must open with the actual hash of that file&rsquo;s last record, and the clock&rsquo;s lock
       to TAI is carried from file to file rather than assumed. A file that begins a new chain
       instead is reported as a new segment, naming the files either side of it, not as a
       fault.</li>
-    <li><strong>A torn last line is not read as tampering.</strong> A last line cut short by a
-      crash is reported as a torn line, and the chain up to it still checks; a single torn line
-      directly before a restart that continues the chain is accepted too, without a message, as
-      above. Other crash and outage shapes are
-      still reported as breaks, as of 29 Sep 2026: a restart that cannot read the end of the
-      day&rsquo;s file begins a new chain inside that file, which fails it, and so do two or more
-      torn lines left by one recovery. One of the breaks in our archive, in a day file from June
-      2026, is that first shape: until a change to our writer, every restart began a new chain
-      inside the day&rsquo;s file.</li>
+    <li><strong>Crash damage is not read as tampering.</strong> A last line cut short by a
+      crash is reported as a torn line, and the chain up to it still checks. Lines a crash damaged
+      directly before a restart that continues the chain &mdash; a record cut short, or a run of
+      zero bytes &mdash; are accepted too, one or several, and each is reported. A complete line of
+      anything else in that place fails the file. One crash shape still fails it: a restart that
+      found no complete record to carry on from, and so began a new chain inside the day&rsquo;s
+      file. One of the breaks in our archive, in a day file from June 2026, is that shape: until a
+      change to our writer, every restart began a new chain inside the day&rsquo;s file.</li>
   </ul>
+  <p class="after-list">These rules changed on 3 Oct 2026, as the second correction at the end of
+    this page says. Before relying on the change we screened every closed day file in our archive
+    for a line the changed rules act on, on 2 Oct 2026: five such lines, in four files, all of them
+    crash damage, and none of those four files changes its result.</p>
   <p class="after-list">It has found real faults. Over our whole archive &mdash;
     <strong>&ge;&nbsp;120,483,920 records, re-verified on 21 Aug 2026</strong> &mdash; it found breaks
     from before the 339-hour run of August 2026: one between two day files, and others inside day
@@ -333,37 +357,56 @@
     <p>The part to read before relying on the log. Each of these is open.</p>
   </div>
   <div class="known-issues">
-    <p class="ki-date">As of 29 Sep 2026</p>
+    <p class="ki-date">As of 6 Oct 2026</p>
     <ol class="ki-list">
       <li>
         <p><strong>That the log was right when it was written.</strong> Checking shows the records
           are as written, not that they were true. This is a fault in our log, found in July 2026
-          and open as of 29 Sep 2026.</p>
-        <p>A frame is recorded as the engine hands it on towards the card. If the engine then
-          discards it to absorb the card&rsquo;s clock drift, the record stays, so the log says that
-          frame played when it never reached the card: up to one false record for each frame
-          discarded, since the frame discarded can be a repeat, which has no record of its own. We
-          saw this in the log itself in July 2026: at each of the four discards we checked, every
-          frame around it had a record. How often the engine discards one is in the
-          register&rsquo;s &ldquo;Never drops a frame&rdquo; row, under
+          and open as of 6 Oct 2026.</p>
+        <p>A frame is recorded as the engine hands it on towards the card, and the engine can then
+          discard it to absorb the card&rsquo;s clock drift. In the first version of the log the
+          record stays, so the log says that frame played when it never reached the card: up to one
+          false record for each frame discarded, since the frame discarded can be a repeat, which
+          has no record of its own. We saw this in the log itself in July 2026: at each of the four
+          discards we checked, every frame around it had a record. How often the engine discards one
+          is in the register&rsquo;s &ldquo;Never drops a frame&rdquo; row, under
           <a href="/#register">what we don&rsquo;t claim</a>.</p>
+        <p>In the second version the engine then writes a record withdrawing the frame&rsquo;s
+          record, and the verifier counts it against the airing it fell in. Since 5 Oct 2026 it
+          does so only when the picture will not air at all: a discarded frame whose picture airs
+          once more, as the repeat queued behind it, keeps its record. That every discard is
+          accounted for is not established. On the first unit&rsquo;s runs of 3&ndash;5 Oct 2026,
+          every discard in 50p material was withdrawn, and the discards that were not were all in
+          25p material, which we believe, and have not shown, is because those frames were repeats,
+          with no record to withdraw. The test we wrote down beforehand for this needs a run of 50p
+          material only, and has not been run.</p>
         <p>The time in each record is the time of the engine clock tick the frame was made for,
           not the moment the frame left the SDI output, nor even the moment of hand-off: a tick that
           runs late hands its frame on late, and the record still carries the tick&rsquo;s own time.
           A frame the engine repeats &mdash; a slower source filled out to
           the channel&rsquo;s rate, or the last frame, or black, held while a source is late &mdash;
           gets no record; so a gap in the records&rsquo; frame numbers does not mean a frame was
-          dropped, and no gap does not mean none was. Two fields say nothing: the scan type reads
-          progressive whatever the channel is set to (every channel on our two units was
-          progressive on 29 Sep 2026, <a href="/hardware.html#duty">as the hardware page lists</a>),
-          and the loudness fields are always empty.</p>
+          dropped, and no gap does not mean none was. The airing records&rsquo; times are tick times
+          too.</p>
+        <p>In the first version two fields say nothing: the scan type reads progressive whatever
+          the channel is set to, and the loudness fields are always empty. In the second, the scan
+          type says how the channel aired (every channel on our two units was progressive on
+          6 Oct 2026, <a href="/hardware.html#duty">as the hardware page lists</a>); each frame
+          record&rsquo;s loudness fields are still empty; and an airing&rsquo;s loudness and true
+          peak, in its end record, are measured inside the engine on the audio it hands on towards
+          the card, not at the connector, and left empty where they cannot be stated, such as
+          silence or less than 400 ms of audio. We checked those figures against FFmpeg&rsquo;s own
+          loudness measurement of the same stretch of the same file, without a card, on
+          3 Oct 2026: every airing we could compare agreed within the tolerances of EBU Tech 3341.</p>
       </li>
       <li>
-        <p><strong>Where one item ends and another begins.</strong> Records name the source file,
-          not the schedule item, so two consecutive plays of one file read as one run of twice the
-          length. The register&rsquo;s &ldquo;Item-level granularity&rdquo; row, under
-          <a href="/#register">what we don&rsquo;t claim</a>, has the detail, including an open
-          defect that this log cannot show.</p>
+        <p><strong>Where one item ends and another begins, in the first version.</strong> Records
+          name the source file, not the schedule item, so two consecutive plays of one file read as
+          one run of twice the length. The register&rsquo;s &ldquo;Item-level granularity&rdquo; row,
+          under <a href="/#register">what we don&rsquo;t claim</a>, has the detail, including a defect
+          that this version cannot show. The second version&rsquo;s airing records name the item and
+          count two plays as two airings. What they count is frames handed on towards the card, less
+          those withdrawn: not frames seen at the output.</p>
       </li>
       <li>
         <p><strong>That nothing is missing from the end.</strong> Records removed from the end of
@@ -373,23 +416,32 @@
           been stopped for that time. A writing outage that lasts until the engine stops leaves no
           record of itself either: the file just ends. And records written since the latest seal,
           or left unsealed by a crash or a writing outage, are in the chain but under no
-          seal.</p>
+          seal; the verifier counts them. Signing does not change any of this: what was cut away
+          left nothing signed behind it.</p>
       </li>
       <li>
-        <p><strong>That nobody rewrote it.</strong> The hashes are plain SHA-256. The log carries
-          no key, no signature and no anchor outside itself. Someone holding the day files who
+        <p><strong>That nobody rewrote it.</strong> The hashes are plain SHA-256, and the log
+          carries no anchor outside itself. Someone holding the day files who
           knows how their hashes are computed could change a record and recompute every hash after
           it, in that file and every later one, and the result would check as clean. The chain is
           evidence against that only beside a hash from later in it that was kept where the
           rewriter could not reach it. Our own backups of the log are not that: they are mirrors,
           and a later copy overwrites a changed file. We established this by reading the code on
-          29 Sep 2026 and confirmed it the same day: a chain written from scratch by a short script
-          outside the engine, with no key, checked as valid.</p>
+          29 Sep 2026 and confirmed it the same day, and again on 6 Oct 2026 on the verifier as it
+          stands: a chain written from scratch by a short script outside the engine, with no key,
+          checked as valid.</p>
+        <p>The second version&rsquo;s signatures are meant to close this: a rewriter without the
+          machine&rsquo;s key cannot sign a seal. As of 6 Oct 2026 they do not close it for anyone
+          else. The key&rsquo;s public half is not published, so nobody outside Karhu TV can check a
+          signature; nothing published ties the key to us; and the verifier, told to require
+          signatures and given the first unit&rsquo;s key, still passes a chain with no seals at all,
+          like the one above. Until all three change, the paragraph above is the one to rely
+          on.</p>
       </li>
       <li>
         <p><strong>What reached the wire.</strong> The engine writes the log, and nothing in it is a
           measurement of the SDI output. Whether a frame left the card, and what it looked and
-          sounded like at the connector, is outside it. On 29 Sep 2026 no recorder watched our
+          sounded like at the connector, is outside it. On 6 Oct 2026 no recorder watched our
           outputs (<a href="/hardware.html#test-kit">the hardware page&rsquo;s test kit</a>).</p>
       </li>
     </ol>
@@ -401,23 +453,28 @@
     <h2 class="sec-title" id="verifier-title">The verifier, as it stands</h2>
     <p><code>opx-verify</code> does the checking described above, and we use it on our own
       archive. It is not released: <a href="/tools.html#opx-verify">the tools page</a> lists it as
-      in progress, and it is not offered for download.</p>
+      in progress, and it is not offered for download. This is the version built on 3 Oct 2026,
+      which checks the first unit&rsquo;s log every night; it reads both versions of the log.</p>
   </div>
   <ul class="facts">
     <li><strong>What it reads.</strong> The files it is given, in the order given, as one chain;
-      or a directory of one channel&rsquo;s day files, in date order. A directory holding more than
-      one chain is refused rather than guessed at.</li>
-    <li><strong>What it skips.</strong> It reads only uncompressed day files, with names ending
-      <code>.jsonl</code>. Any other file in the directory is skipped without a message, and the
-      count of files in its verdict is the only sign that any were. We keep our archive
-      compressed, so we check a decompressed copy and compare the number of files checked with the
-      number in the archive.</li>
+      or a directory of one channel&rsquo;s day files, in date order, compressed or not, from a
+      given day if asked. A day held both ways is checked once if the two copies are identical, and
+      refused if they are not. A directory holding more than one channel&rsquo;s day files is refused
+      unless it is told which channel to check.</li>
+    <li><strong>What it skips.</strong> A file named like a day file but in neither form is named
+      in its output, and not read. Any other file in the directory is skipped without a
+      message.</li>
     <li><strong>What it reports.</strong> Plain text: each file&rsquo;s result, with its first
-      errors where it fails; the breaks between files; each new segment; and a verdict line with
-      the counts of files, segments, broken boundaries and records. A run of files whose first
-      continues one it was not given is reported as checked among themselves, not back to the
-      start of the chain. It exits 0 for a valid chain, 1 for an invalid one, and 2 when it could
-      not run.</li>
+      errors where it fails, and its warnings &mdash; lines outside the records, damage it
+      forgave, records no seal covers; the breaks between files; each new segment; and a verdict
+      line with the counts of files, segments, broken boundaries and records. A run of files whose
+      first continues one it was not given is reported as checked among themselves, not back to the
+      start of the chain. Without a key, it reports whether each seal is signed, not whether the
+      signature is good; given the machine&rsquo;s public key, a signature that does not check, or
+      that names another key, fails the chain. From a chain that checks, it can also list the
+      airings, one per line, with what was scheduled and what aired. It exits 0 for a valid chain,
+      1 for an invalid one, and 2 when it could not run.</li>
   </ul>
   <p class="after-list" data-record><strong>A correction.</strong> From 21 Aug to 28 Sep 2026 this
     site said our archive had one break, between two day files, and no other. It had others,
@@ -426,6 +483,13 @@
     its verdict and the breaks between files, and left out the files that failed on their own. The
     summary now prints every file that fails, and <a href="/#evidence">the evidence table</a> lists
     the breaks.</p>
+  <p class="after-list" data-record><strong>A second correction.</strong> From 3 to 6 Oct 2026
+    this page described the log and the verifier as they were on 29 Sep 2026, while the first unit
+    ran newer versions of both. It said that one unreadable line before a restart was forgiven
+    whatever it said, with no message, and that two torn lines from one recovery failed a file.
+    From 3 Oct the verifier checking the first unit failed the first unless it was crash damage,
+    and passed the second, with a warning for each line. Our own list of what that change had to
+    carry named this page, and we made the change without it.</p>
 </section>
 
 </main>
