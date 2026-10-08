@@ -357,7 +357,7 @@
     <p>The part to read before relying on the log. Each of these is open.</p>
   </div>
   <div class="known-issues">
-    <p class="ki-date">As of 6 Oct 2026</p>
+    <p class="ki-date">As of 8 Oct 2026</p>
     <ol class="ki-list">
       <li>
         <p><strong>That the log was right when it was written.</strong> Checking shows the records
@@ -390,8 +390,9 @@
           too.</p>
         <p>In the first version two fields say nothing: the scan type reads progressive whatever
           the channel is set to, and the loudness fields are always empty. In the second, the scan
-          type says how the channel aired (every channel on our two units was progressive on
-          6 Oct 2026, <a href="/hardware.html#duty">as the hardware page lists</a>); each frame
+          type says how the channel aired: every channel on our two units was progressive until
+          20:17&nbsp;UTC on 6 Oct 2026, when the first unit began airing a second channel at 1080i50,
+          and from then that channel&rsquo;s records say so (<code>tff</code>, top field first); each frame
           record&rsquo;s loudness fields are still empty; and an airing&rsquo;s loudness and true
           peak, in its end record, are measured inside the engine on the audio it hands on towards
           the card, not at the connector, and left empty where they cannot be stated, such as
@@ -437,6 +438,16 @@
           signatures and given the first unit&rsquo;s key, still passes a chain with no seals at all,
           like the one above. Until all three change, the paragraph above is the one to rely
           on.</p>
+      </li>
+      <li>
+        <p><strong>That a file carries the right channel&rsquo;s name.</strong> Checking shows a chain
+          is intact, not which output wrote it; nothing in the chain records that. On 6 Oct 2026, from
+          20:17 to 20:38&nbsp;UTC, the first unit wrote its third channel&rsquo;s log under its second
+          channel&rsquo;s name, in the file&rsquo;s name and in the chain&rsquo;s first record, after we
+          turned the second channel off to free its connector for a recording test. The
+          channel&rsquo;s identifier, in both places, was right; its name, in both, was the other
+          channel&rsquo;s. We fixed the engine at 20:38&nbsp;UTC and kept those 21 minutes as
+          written. That checking cannot catch a wrong name stays open.</p>
       </li>
       <li>
         <p><strong>What reached the wire.</strong> The engine writes the log, and nothing in it is a
@@ -490,6 +501,10 @@
     From 3 Oct the verifier checking the first unit failed the first unless it was crash damage,
     and passed the second, with a warning for each line. Our own list of what that change had to
     carry named this page, and we made the change without it.</p>
+  <p class="after-list" data-record><strong>A third correction.</strong> From 6 to 8 Oct 2026 this
+    page said every channel on our two units was progressive on 6 Oct 2026, and pointed for it to a
+    list on our hardware page dated 29 Sep. From 20:17&nbsp;UTC on 6 Oct the first unit aired a
+    second channel at 1080i50.</p>
 </section>
 
 </main>

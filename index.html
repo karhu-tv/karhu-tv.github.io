@@ -949,9 +949,10 @@
           <h3>Cross-family rates on one card <em>while genlocked</em></h3>
           <p class="reg-why">Mixed <em>source</em> rates into one output rate are supported and normal, and the picture
             is proven on hardware &mdash; the sound across a change of source rate carried a defect for
-            sixty days, found and fixed on 16 Sep 2026 (the audio-continuity row above). The engine
-            binds one output rate per box, and as of 27 Sep 2026 no 1001-family (NTSC) frame had been
-            on the wire from it. This row is about one specific edge, so
+            sixty days, found and fixed on 16 Sep 2026 (the audio-continuity row above). Until 5 Oct 2026
+            the engine bound one output rate per box; from then the first unit&rsquo;s engine runs rates
+            that divide one another from one tick, and the second unit&rsquo;s still binds one. As of
+            27 Sep 2026 no 1001-family (NTSC) frame had been on the wire from it. This row is about one specific edge, so
             here is the whole map rather than a caveat that sounds bigger than it is.</p>
           <div class="matrix" role="table" aria-label="Frame-rate combinations by sync mode">
             <div class="mx-row mx-head" role="row">
@@ -961,18 +962,18 @@
             </div>
             <div class="mx-row" role="row">
               <span role="rowheader">Genlocked to house reference</span>
-              <span class="maybe" role="cell">By design &mdash; decimated from one tick; not built. Lock itself observed 27 Sep 2026, every output at one rate; see below.</span>
+              <span class="maybe" role="cell">Built (the free-running cell below); not tried under a reference, which we switched off on 27 Sep 2026, before it was built. Lock itself observed 27 Sep 2026, every output at one rate; see below.</span>
               <span class="maybe" role="cell">Not tested. One REF&nbsp;IN serves all four sub-devices, so we expect one family per card &mdash; an inference, not a measurement.</span>
             </div>
             <div class="mx-row" role="row">
               <span role="rowheader">Free-running on internal sync</span>
-              <span class="maybe" role="cell">By design &mdash; one tick decimated per channel; not built. Free-running is the mode the clock was designed for.</span>
+              <span class="maybe" role="cell">Built &mdash; one tick, decimated per channel, on the first unit since 5 Oct 2026, and on air there since 20:17&nbsp;UTC on 6 Oct 2026: 1080p50 beside 1080i50 on one card. 59.94 + 29.97 is built the same way and has not aired. The tests we wrote down for it on the wire have not run.</span>
               <span class="maybe" role="cell">Not barred by the hardware &mdash; barred by us. See below.</span>
             </div>
           </div>
           <p class="reg-why">The genlocked cross-family cell is an inference, not a measurement: one reference input
             feeds the whole card, and whether two of its outputs can lock in different families has
-            not been tried. The genlocked <em>by design</em> is still exactly that. A house reference has now been on this bench &mdash; on 27 Sep 2026 every running output on both units locked to one, as the holdover row above sets out &mdash; but all of them at one rate, 1080p50, since the engine binds one output rate per box; two rates from one tick under a reference remain intent rather than measurement. The
+            not been tried. A house reference has now been on this bench &mdash; on 27 Sep 2026 every running output on both units locked to one, as the holdover row above sets out &mdash; but all of them at one rate, 1080p50, since the engine then bound one output rate per box; two rates from one tick under a reference have not been tried. Until 8 Oct 2026 this row said the same-family cells were not built and that the engine binds one output rate per box; the first unit had run them since 5 Oct. The
             free-running cell is <strong>our</strong> limit, not the card's: below the master clock
             the pipeline is already per-channel, and two Duo 2 cards have each accepted 50 and
             59.94 on two outputs at once (14 and 17 Sep 2026), one of them completing frames at both
