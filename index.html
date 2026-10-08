@@ -522,14 +522,19 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with two known exceptions. RET-122, in the register below: the head of a looping region
+          with three known exceptions. RET-122, in the register below: the head of a looping region
           airs twice per loop, and displaces what follows; the first unit has carried a fix since
           3 Oct 2026, not accepted as of 6 Oct, and the second unit has none. And RET-142, found off
           air on 4 Oct 2026: a schedule whose first item lay more than a minute ahead of the
           engine&rsquo;s start aired that item at once, early by almost the whole lead. Neither unit&rsquo;s
           schedules start that far ahead. Under the first unit&rsquo;s fix, since 5 Oct 2026, such an
           item waits and airs at most 313&nbsp;ms after its instant in our tests without a card
-          &mdash; which is still late; the second unit has no fix.
+          &mdash; which is still late; the second unit has no fix. And RET-146, found on 8 Oct 2026: on
+          the first unit every item has aired a constant 43&ndash;58&nbsp;ms after its instant (the median
+          of each of nine runs, 5&ndash;8 Oct 2026; some items a further 40&nbsp;ms later), the figure set
+          partly by when each run started &mdash; frames were stamped a frame late, and handed to the
+          output a moment after the tick that should have aired them. A fix is built and is not yet on
+          either unit; the second unit runs the same code and was not measured.
         </p>
         <p>
           <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we first put to the test on 27 Sep 2026, as far as our own instruments reach; the register below has what that showed, what locking cost here, and what it did not cover. Take
