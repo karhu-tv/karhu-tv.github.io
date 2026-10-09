@@ -530,11 +530,20 @@
           schedules start that far ahead. Under the first unit&rsquo;s fix, since 5 Oct 2026, such an
           item waits and airs at most 313&nbsp;ms after its instant in our tests without a card
           &mdash; which is still late; the second unit has no fix. And RET-146, found on 8 Oct 2026: on
-          the first unit every item has aired a constant 43&ndash;58&nbsp;ms after its instant (the median
-          of each of nine runs, 5&ndash;8 Oct 2026; some items a further 40&nbsp;ms later), the figure set
-          partly by when each run started &mdash; frames were stamped a frame late, and handed to the
-          output a moment after the tick that should have aired them. A fix is built and is not yet on
-          either unit; the second unit runs the same code and was not measured.
+          the first unit every item aired a constant 41&ndash;58&nbsp;ms after its instant (the median
+          of each of its eleven runs of 5&ndash;9 Oct 2026 before the fix; some items a further 40&nbsp;ms
+          later), the figure set partly by when each run started &mdash; frames were stamped a frame late,
+          and handed to the output a moment after the tick that should have aired them. The first unit
+          has carried a fix since 00:33&nbsp;UTC on 9 Oct 2026, not accepted as of that day. Across its
+          first four runs on the fix, 77 of the 80 items of a schedule&rsquo;s first pass started on
+          their instants to within a millisecond, and three &mdash; the same item each time &mdash;
+          20&nbsp;ms early. That was a second fault, found once the fix was on air: a looping region never
+          took a fresh time from the schedule, so the part-frames left over where a 29.97 clip was cut
+          added up until one of its airings ended 20&nbsp;ms short. It was fixed on the first unit at
+          20:13&nbsp;UTC the same day, and in that run&rsquo;s first pass all 20 started on their instants. Putting the fix
+          on air also showed that, on a schedule with no times, it cut two frames from each of the
+          first eleven items after a start; that was fixed on the first unit at 11:20&nbsp;UTC. The
+          second unit runs the code from before all of this, with none of these fixes, and was not measured.
         </p>
         <p>
           <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we first put to the test on 27 Sep 2026, as far as our own instruments reach; the register below has what that showed, what locking cost here, and what it did not cover. Take
