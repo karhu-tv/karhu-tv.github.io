@@ -909,6 +909,26 @@
         </div>
 
         <div class="reg-item">
+          <h3>An engine that does not crash</h3>
+          <p class="reg-why">At 08:58&nbsp;UTC on 7 Oct 2026 the first unit&rsquo;s engine crashed, and both
+            of its channels were off air for at least 13&nbsp;seconds until the service manager restarted it.
+            Nothing paged us; we found it a day and a half later, reviewing our own instruments. It
+            crashed inside Intel&rsquo;s video driver, which does not keep the fetch of a decoded frame
+            from the graphics memory apart from the teardown of the decoder that made it &mdash; and our
+            engine let the two overlap at the end of a clip. A probe of ours, outside the engine, crashed
+            the same way in ten runs out of ten, and not once in 35,000 tries with the two kept apart.
+            The same day the same fetch failed once without a crash, and one interlaced frame aired built
+            from one source picture instead of two. Since 16:18&nbsp;UTC on 9 Oct 2026 the first unit&rsquo;s engine
+            keeps the two apart, and since that day a crash on the first unit pages us, with the
+            kernel&rsquo;s own line for the fault. The second unit has neither, and whether its engine has
+            ever met the race was not checked.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the fix through a week of the first unit&rsquo;s
+            airing without a crash or a failed fetch, which is how we will accept it &mdash; a week that
+            would show the fix holds, not that the engine never stops. That would take the 90 days the
+            uptime row below asks for.</p>
+        </div>
+
+        <div class="reg-item">
           <h3>Loudness monitoring on air</h3>
           <p class="reg-why">Since 3 Oct 2026 the first unit measures each airing&rsquo;s integrated
             loudness and true peak, to BS.1770 and EBU R128, on the audio it hands on towards the card
