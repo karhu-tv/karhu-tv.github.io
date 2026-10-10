@@ -236,9 +236,9 @@
     <strong>A chain that checks out shows that its records are the ones that were written, in the
     order they were written. It does not show that what was written was true, and on its own it
     cannot show that nobody rewrote the whole log.</strong> Both are set out
-    <a href="#not-proved">below</a>. Everything on this page is as of 6 Oct 2026 unless it
-    carries another date; how the log works was read from our own code that day, and what the
-    verifier does with each case below was tried on it that day.
+    <a href="#not-proved">below</a>. Everything on this page is as of 10 Oct 2026 unless it
+    carries another date; how the log works was read from our own code on 6 Oct 2026, and what the
+    verifier does with each case below was tried on it on 10 Oct 2026.
   </p>
   <p class="page-body">
     <strong>Two versions of the log are in use.</strong> Since 3 Oct 2026 the first unit has
@@ -311,28 +311,40 @@
       <a href="#not-proved">what it does not prove</a>.</li>
     <li><strong>Each record&rsquo;s line is the record.</strong> Within a record&rsquo;s line, the
       text must be exactly the form the writer produces for the record it holds. An added field,
-      extra spaces inside the record, an escaped character or a repeated key &mdash; edits a person
+      extra spaces inside the record, an escaped character, a repeated key or a hash written in
+      capital letters &mdash; edits a person
       reading the file would see, but that leave the parsed record, and so its hash, unchanged
       &mdash; fail the check. What lies between records is not held to that: spaces or a carriage
       return at either end of a line, and blank lines, hold no record and are ignored, and the
       verifier reports each kind once per file, with a count, as a sign that something other than
-      the writer has rewritten the file. We tried each of these on the verifier on 6 Oct 2026.</li>
+      the writer has rewritten the file. We tried each of these on the verifier on 10 Oct 2026.</li>
     <li><strong>The structure is the writer&rsquo;s.</strong> A chain opens with a first record, or
       with a record naming the one it continues; no chain opens twice; in each file, no frame
       record comes before the engine&rsquo;s clock is recorded as locking to TAI, in that file or,
       for a file that continues another, in the one before it &mdash; a restart during the day
       does not need a new lock record to pass; and every seal matches the records it covers
-      &mdash; their number, their time span and the hash over them. In the second version, too,
-      every airing&rsquo;s end record matches the start record before it, airings are numbered one
-      after another, and the frames an end record counts match the frame records between the
-      two.</li>
+      &mdash; their number, their time span and the hash over them. A day file that holds no
+      record at all, empty or nothing but zero bytes, fails: the writer opens every one with a
+      first record. In the second version, too, every airing&rsquo;s end record matches the start
+      record before it, airings are numbered one after another, and the frames an end record counts
+      match the frame records between the two; and the frame records agree with their airing: the
+      first is on the tick its start record gives, each names the source file its start record
+      names (where it names one), each is later than the one before, and none follows the one before by more than a quarter of a
+      second (250&nbsp;ms). One record excuses one jump in those times: a record saying the
+      engine&rsquo;s clock stepped, and by how much, excuses a jump of that size at the next frame
+      record, once. As of 10 Oct 2026 no engine on our units writes it.</li>
     <li><strong>Day files follow one another.</strong> A file that continues the one before it
       must open with the actual hash of that file&rsquo;s last record, and the clock&rsquo;s lock
       to TAI is carried from file to file rather than assumed. A file that begins a new chain
       instead is reported as a new segment, naming the files either side of it, not as a
-      fault.</li>
+      fault. And each day file is held to its name: the records that open its chains must name
+      the channel and the channel identifier its name gives, and its first record must fall on the
+      UTC day it names, so another channel&rsquo;s or another day&rsquo;s log under that name
+      fails.</li>
     <li><strong>Crash damage is not read as tampering.</strong> A last line cut short by a
-      crash is reported as a torn line, and the chain up to it still checks. Lines a crash damaged
+      crash is reported as a torn line, and the chain up to it still checks; a complete line of
+      anything else in that place fails the file. A whole record whose newline a power cut turned
+      to zero bytes is read as itself, and reported. Lines a crash damaged
       directly before a restart that continues the chain &mdash; a record cut short, or a run of
       zero bytes &mdash; are accepted too, one or several, and each is reported. A complete line of
       anything else in that place fails the file. One crash shape still fails it: a restart that
@@ -343,7 +355,12 @@
   <p class="after-list">These rules changed on 3 Oct 2026, as the second correction at the end of
     this page says. Before relying on the change we screened every closed day file in our archive
     for a line the changed rules act on, on 2 Oct 2026: five such lines, in four files, all of them
-    crash damage, and none of those four files changes its result.</p>
+    crash damage, and none of those four files changes its result. They changed again on
+    10 Oct 2026, to the rules this list now gives. Before the change, the same day, we checked
+    with the new verifier every record our first unit had written from 2 Oct 2026 to that
+    evening &mdash; <strong>&ge;&nbsp;31,094,543 records</strong>, in three channels&rsquo; logs,
+    most of them in the second version &mdash; and it found them valid, as the verifier it
+    replaced did.</p>
   <p class="after-list">It has found real faults. Over our whole archive &mdash;
     <strong>&ge;&nbsp;120,483,920 records, re-verified on 21 Aug 2026</strong> &mdash; it found breaks
     from before the 339-hour run of August 2026: one between two day files, and others inside day
@@ -357,12 +374,15 @@
     <p>The part to read before relying on the log. Each of these is open.</p>
   </div>
   <div class="known-issues">
-    <p class="ki-date">As of 8 Oct 2026</p>
+    <p class="ki-date">As of 10 Oct 2026</p>
     <ol class="ki-list">
       <li>
         <p><strong>That the log was right when it was written.</strong> Checking shows the records
           are as written, not that they were true. This is a fault in our log, found in July 2026
-          and open as of 6 Oct 2026.</p>
+          and open as of 10 Oct 2026. Since 10 Oct 2026 checking holds each airing&rsquo;s frame
+          records to the airing (<a href="#proved">above</a>), so a writer whose frame records
+          disagree with their airing &mdash; another source file, a time out of order, a hole
+          &mdash; is caught; a writer that wrote a consistent false account is not.</p>
         <p>A frame is recorded as the engine hands it on towards the card, and the engine can then
           discard it to absorb the card&rsquo;s clock drift. In the first version of the log the
           record stays, so the log says that frame played when it never reached the card: up to one
@@ -417,8 +437,10 @@
           been stopped for that time. A writing outage that lasts until the engine stops leaves no
           record of itself either: the file just ends. And records written since the latest seal,
           or left unsealed by a crash or a writing outage, are in the chain but under no
-          seal; the verifier counts them. Signing does not change any of this: what was cut away
-          left nothing signed behind it.</p>
+          seal; the verifier counts them, and its verdict names how many records follow the last
+          seal. Told to require signatures, it fails a chain with more frame records after its last
+          seal than a sealed block holds. Signing does not change the rest: what was cut away left
+          nothing signed behind it.</p>
       </li>
       <li>
         <p><strong>That nobody rewrote it.</strong> The hashes are plain SHA-256, and the log
@@ -428,26 +450,29 @@
           evidence against that only beside a hash from later in it that was kept where the
           rewriter could not reach it. Our own backups of the log are not that: they are mirrors,
           and a later copy overwrites a changed file. We established this by reading the code on
-          29 Sep 2026 and confirmed it the same day, and again on 6 Oct 2026 on the verifier as it
+          29 Sep 2026 and confirmed it the same day, and again on 10 Oct 2026 on the verifier as it
           stands: a chain written from scratch by a short script outside the engine, with no key,
           checked as valid.</p>
         <p>The second version&rsquo;s signatures are meant to close this: a rewriter without the
-          machine&rsquo;s key cannot sign a seal. As of 6 Oct 2026 they do not close it for anyone
+          machine&rsquo;s key cannot sign a seal. As of 10 Oct 2026 they do not close it for anyone
           else. The key&rsquo;s public half is not published, so nobody outside Karhu TV can check a
-          signature; nothing published ties the key to us; and the verifier, told to require
-          signatures and given the first unit&rsquo;s key, still passes a chain with no seals at all,
-          like the one above. Until all three change, the paragraph above is the one to rely
+          signature, and nothing published ties the key to us. Until 10 Oct 2026 there was a third
+          gap: the verifier, told to require signatures and given the first unit&rsquo;s key, passed a
+          chain with no seals at all, like the one above. Since then it fails a chain that no signed
+          seal vouches for. Until the other two change, the paragraph above is the one to rely
           on.</p>
       </li>
       <li>
         <p><strong>That a file carries the right channel&rsquo;s name.</strong> Checking shows a chain
-          is intact, not which output wrote it; nothing in the chain records that. On 6 Oct 2026, from
+          is intact and, since 10 Oct 2026, that its records name the channel its file&rsquo;s name
+          gives; not which output wrote it. Nothing in the chain records that. On 6 Oct 2026, from
           20:17 to 20:38&nbsp;UTC, the first unit wrote its third channel&rsquo;s log under its second
           channel&rsquo;s name, in the file&rsquo;s name and in the chain&rsquo;s first record, after we
           turned the second channel off to free its connector for a recording test. The
           channel&rsquo;s identifier, in both places, was right; its name, in both, was the other
           channel&rsquo;s. We fixed the engine at 20:38&nbsp;UTC and kept those 21 minutes as
-          written. That checking cannot catch a wrong name stays open.</p>
+          written. A wrong name in both places reads as a right one, and the verifier of
+          10 Oct 2026 checks those 21 minutes as valid; that checking cannot catch it stays open.</p>
       </li>
       <li>
         <p><strong>What reached the wire.</strong> The engine writes the log, and nothing in it is a
@@ -464,16 +489,18 @@
     <h2 class="sec-title" id="verifier-title">The verifier, as it stands</h2>
     <p><code>opx-verify</code> does the checking described above, and we use it on our own
       archive. It is not released: <a href="/tools.html#opx-verify">the tools page</a> lists it as
-      in progress, and it is not offered for download. This is the version built on 3 Oct 2026,
-      which checks the first unit&rsquo;s log every night; it reads both versions of the log.</p>
+      in progress, and it is not offered for download. This is the version built on 10 Oct 2026,
+      and since that day the one that checks the first unit&rsquo;s log every night. It reads the two
+      versions of the log in use, and a third that no unit writes as of 10 Oct 2026.</p>
   </div>
   <ul class="facts">
     <li><strong>What it reads.</strong> The files it is given, in the order given, as one chain;
       or a directory of one channel&rsquo;s day files, in date order, compressed or not, from a
-      given day if asked. A day held both ways is checked once if the two copies are identical, and
-      refused if they are not. A directory holding more than one channel&rsquo;s day files is refused
+      given day if asked; a day file held as a link is read as the file it links to. A day held
+      both ways is checked once if the two copies are identical, and refused if they are not. A directory holding more than one channel&rsquo;s day files is refused
       unless it is told which channel to check.</li>
-    <li><strong>What it skips.</strong> A file named like a day file but in neither form is named
+    <li><strong>What it skips.</strong> A file named like a day file but in neither form, and a
+      day file&rsquo;s name on anything it cannot read as a file, such as a link to nothing, is named
       in its output, and not read. Any other file in the directory is skipped without a
       message.</li>
     <li><strong>What it reports.</strong> Plain text: each file&rsquo;s result, with its first
@@ -483,7 +510,10 @@
       first continues one it was not given is reported as checked among themselves, not back to the
       start of the chain. Without a key, it reports whether each seal is signed, not whether the
       signature is good; given the machine&rsquo;s public key, a signature that does not check, or
-      that names another key, fails the chain. From a chain that checks, it can also list the
+      that names another key, fails the chain. The verdict line says what the signatures vouch
+      for: how many seals are signed and checked, and how many records follow the last one. Told to
+      require signatures it must be given the key, and it fails a chain no signed seal vouches
+      for. It counts the clock steps a chain declares. From a chain that checks, it can also list the
       airings, one per line, with what was scheduled and what aired. It exits 0 for a valid chain,
       1 for an invalid one, and 2 when it could not run.</li>
   </ul>
