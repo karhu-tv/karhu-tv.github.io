@@ -227,7 +227,7 @@
   <p class="page-eyebrow">As-run log</p>
   <h1 class="page-title">What it proves,<br>and its limits.</h1>
   <p class="page-body">
-    Rytmi writes an as-run log while it plays: a record for each source frame it hands on
+    Rytmi writes an as-run log while it plays: a record for each frame it hands on
     towards the SDI card, in a chain in which every record commits to the one before it. This
     page says how the log is written, what checking that chain proves, and what it does not
     prove &mdash; the part to read before relying on it.
@@ -261,8 +261,12 @@
     <h2 class="sec-title" id="written-title">How the log is written</h2>
   </div>
   <ul class="facts">
-    <li><strong>One record for each source frame.</strong> The engine writes it as it hands the
-      frame on towards the card. The record carries the time of the engine clock tick the frame
+    <li><strong>One record for each frame.</strong> The engine writes it as it hands the
+      frame on towards the card. That is one source frame, except where a source&rsquo;s frame rate is
+      a whole multiple of its channel&rsquo;s: then each channel frame is made from that many source
+      frames, and gets one record. On the first unit&rsquo;s 1080i50 channel, since 20:17&nbsp;UTC on
+      6 Oct 2026, a 50p source gives one record for every two of its frames, one aired in each field.
+      The record carries the time of the engine clock tick the frame
       was made for, and the name of the source file. Each channel has a chain of its own, kept in
       one file per UTC day.</li>
     <li><strong>In the second version, a record for each airing.</strong> Where an airing of a
@@ -270,7 +274,10 @@
       gives one, the item&rsquo;s key from a traffic system. Where it ends, a record gives the
       number of frames handed on, why it ended, and the airing&rsquo;s loudness and true peak. An
       item that airs twice is two airings, numbered in turn, and a scheduled item that never aired
-      gets a record saying why. These records carry the engine clock tick&rsquo;s time, as the frame
+      gets a record saying why &mdash; with two exceptions we found on 12 Oct 2026, fixed in a build not
+      yet on the first unit: an airing whose only frame the engine drops where one item hands over to
+      the next leaves no record, and that day&rsquo;s check fails; and items after one of unknown length,
+      in a playlist loaded while the channel plays, leave no record, and the check passes. These records carry the engine clock tick&rsquo;s time, as the frame
       records do.</li>
     <li><strong>Each record commits to the one before it.</strong> A record&rsquo;s SHA-256 hash
       covers the hash of the record before it and everything else in the record, so changing,
@@ -389,7 +396,9 @@
           and open as of 10 Oct 2026. Since 10 Oct 2026 checking holds each airing&rsquo;s frame
           records to the airing (<a href="#proved">above</a>), so a writer whose frame records
           disagree with their airing &mdash; another source file, a time out of order, a hole
-          &mdash; is caught; a writer that wrote a consistent false account is not.</p>
+          &mdash; is caught; a writer that wrote a consistent false account is not. One limit, found on
+          13 Oct 2026 and fixed in a build not yet on the first unit: an airing that runs across midnight is
+          held to its frame records only up to midnight, so what it wrote after midnight is not checked.</p>
         <p>A frame is recorded as the engine hands it on towards the card, and the engine can then
           discard it to absorb the card&rsquo;s clock drift. In the first version of the log the
           record stays, so the log says that frame played when it never reached the card: up to one
@@ -542,6 +551,10 @@
     page said every channel on our two units was progressive on 6 Oct 2026, and pointed for it to a
     list on our hardware page dated 29 Sep. From 20:17&nbsp;UTC on 6 Oct the first unit aired a
     second channel at 1080i50.</p>
+  <p class="after-list" data-record><strong>A fourth correction.</strong> From 20:17&nbsp;UTC on
+    6 Oct to 13 Oct 2026 this page said the log holds a record for each source frame. On the first
+    unit&rsquo;s 1080i50 channel a 50p source had one record for every two of its frames, as it still
+    has; the page now says so.</p>
 </section>
 
 </main>
