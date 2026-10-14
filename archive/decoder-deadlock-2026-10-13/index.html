@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>A decoder deadlock at a failed open, found by review and fixed on air the same night — Karhu TV</title>
+<meta name="description" content="A Rust lock held through a failed file open could deadlock our playout engine&#x27;s decoder when a playlist load arrived at the wrong moment: how a review found it, how we proved it, and the one-line fix on air on 14 Oct 2026.">
+<link rel="canonical" href="https://karhu.tv/archive/decoder-deadlock-2026-10-13/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/decoder-deadlock-2026-10-13/">
+<meta property="og:title" content="A decoder deadlock at a failed open, found by review and fixed on air the same night">
+<meta property="og:description" content="A Rust lock held through a failed file open could deadlock our playout engine&#x27;s decoder when a playlist load arrived at the wrong moment: how a review found it, how we proved it, and the one-line fix on air on 14 Oct 2026.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-10-14">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A decoder deadlock at a failed open, found by review and fixed on air the same night">
+<meta name="twitter:description" content="A Rust lock held through a failed file open could deadlock our playout engine&#x27;s decoder when a playlist load arrived at the wrong moment: how a review found it, how we proved it, and the one-line fix on air on 14 Oct 2026.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "One line held a lock too long: a decoder deadlock, 13 October 2026",
+ "description": "A Rust lock held through a failed file open could deadlock our playout engine's decoder when a playlist load arrived at the wrong moment: how a review found it, how we proved it, and the one-line fix on air on 14 Oct 2026.",
+ "datePublished": "2026-10-14",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/decoder-deadlock-2026-10-13/",
+ "mainEntityOfPage": "https://karhu.tv/archive/decoder-deadlock-2026-10-13/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-10-02/2026-10-14"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-10-14">14 Oct 2026</time></p>
+        <h1 id="entry-title">One line held a lock too long: a decoder deadlock, 13 October 2026</h1>
+        <p class="dek">A review of our own code found that a file failing to open at a programme change, while a playlist load was waiting to write, would stop a channel's decoder for good. It had been in our first unit's builds for eleven days. We proved it with a deliberately slow open, fixed it with one line, and put the fix on air as a restart of its own.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>What we found</h2>
+<p>On the night of 13 October 2026 a read-only review of the engine&rsquo;s newest code, one of the probe-and-invert passes we run on our own work, turned up an older fault outside the code it was looking at. At every change from one programme item to the next, the decoder reads the next item&rsquo;s Media ID from the schedule and opens its file. The read sat inside the expression the open&rsquo;s result was matched on. In Rust (the 2021 edition the engine is built with), the temporaries of that expression live until the whole match ends, and the schedule&rsquo;s read lock was one of them. So the decoder held that lock through the open, and through the branch that handles an open failing, which reads the schedule again on the same thread.</p>
+<p>Rust&rsquo;s standard reader-writer lock does not grant a new read while a writer is waiting. If something asked to write the schedule while the open ran, such as an operator loading a playlist or the background pass that measures files&rsquo; lengths, the writer waited for the decoder&rsquo;s lock. If the open then failed, the decoder&rsquo;s second read waited for the writer. Neither could go on.</p>
+</section>
+<section>
+<h2>What it would have done on air</h2>
+<p>Both halves had to coincide: a file that fails to open at the moment its item is due (missing, unreadable, or slow to fail, for instance on a stalled network path), and a schedule write arriving during that open. A missing local file fails in microseconds, so the window is narrow. When both happen the consequence is total for that channel. The decoder stops; nothing covers the gap, not even our safety net, which airs emergency material before black; nothing after it airs; and the playlist load that asked to write never returns, so every load after it waits too.</p>
+<p>The fault was in every build on our first unit since 2 October 2026. We have not seen it happen on air, and our logs hold no sign that it did. We are not counting that as evidence that it could not.</p>
+</section>
+<section>
+<h2>How we proved it</h2>
+<p>We made the narrow window wide on purpose. In a cardless test of the engine, without the SDI card, the item due next was a named pipe rather than a file, so its open blocked until something wrote to the pipe. With the open held, the test loaded a new playlist, then closed the pipe so the open failed.</p>
+<ul>
+<li><strong>On the code then on air:</strong> the decoder thread sat in a lock wait, nothing aired after the item before, and the playlist load never returned.</li>
+<li><strong>With the fix:</strong> the load returned at once, the failed item was recorded as such, the safety net covered the gap, and the next item aired.</li>
+<li><strong>Two staged builds checked:</strong> we ran the same test on the two builds we had already staged for later restarts. Both deadlocked. Each was rebuilt with the fix before going any further, and the scripts that install them now refuse any build that does not carry what is already on air.</li>
+</ul>
+</section>
+<section>
+<h2>The fix, and getting it on air</h2>
+<p>The fix is one line moved: the Media ID is read into its own variable before the open, so the lock is released before the file is touched. It went on air on our first unit on 14 October 2026 at 00:00:28 UTC, as a restart of its own carrying nothing else. The channel was off air for 3.4 seconds. Every acceptance check after the restart passed, including the first items on their exact frames, no frame lost across three minutes of programme changes, and both channels&rsquo; compliance logs verifying across the restart. The night&rsquo;s rotation of those logs passed too.</p>
+</section>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>
