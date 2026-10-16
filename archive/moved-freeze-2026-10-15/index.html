@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>A fix we took out: it moved a frozen frame instead of removing it — Karhu TV</title>
+<meta name="description" content="A rule meant to stop a one-frame freeze in our playout engine only moved it, and put emergency material between programmes in cases it was never meant for: how our reviews found it, how we measured it, and why we took the rule out.">
+<link rel="canonical" href="https://karhu.tv/archive/moved-freeze-2026-10-15/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/moved-freeze-2026-10-15/">
+<meta property="og:title" content="A fix we took out: it moved a frozen frame instead of removing it">
+<meta property="og:description" content="A rule meant to stop a one-frame freeze in our playout engine only moved it, and put emergency material between programmes in cases it was never meant for: how our reviews found it, how we measured it, and why we took the rule out.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-10-15">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A fix we took out: it moved a frozen frame instead of removing it">
+<meta name="twitter:description" content="A rule meant to stop a one-frame freeze in our playout engine only moved it, and put emergency material between programmes in cases it was never meant for: how our reviews found it, how we measured it, and why we took the rule out.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Moving a frozen frame is not removing it: a fix we took out, 15 October 2026",
+ "description": "A rule meant to stop a one-frame freeze in our playout engine only moved it, and put emergency material between programmes in cases it was never meant for: how our reviews found it, how we measured it, and why we took the rule out.",
+ "datePublished": "2026-10-15",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/moved-freeze-2026-10-15/",
+ "mainEntityOfPage": "https://karhu.tv/archive/moved-freeze-2026-10-15/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-10-13/2026-10-15"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-10-15">15 Oct 2026</time></p>
+        <h1 id="entry-title">Moving a frozen frame is not removing it: a fix we took out, 15 October 2026</h1>
+        <p class="dek">We built a rule to stop a one-frame freeze in our playout engine. Two of our own reviews found that it only moved the freeze, and in cases it was never meant for it put frames of emergency material between programmes. We took it out and measured that nothing else changed.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>The freeze it was meant to remove</h2>
+<p>An event in a schedule shorter than one frame of its channel cannot air: there is no frame to put it on. Since 12 October 2026 our engine refuses such an event when a schedule is loaded and when the engine starts. If one reaches the decoder anyway, the decoder passes over it and the compliance log records it as skipped. Its slot, a fraction of a frame, still has to go somewhere. The channel repeats its last frame once, a one-frame freeze at that programme change, and the log declares it as a source arriving late.</p>
+</section>
+<section>
+<h2>The rule we built, and the cost we stated</h2>
+<p>On 14 October 2026 we built a rule to remove that freeze. Where the next item&rsquo;s first frame would miss the frame the change itself airs on, the item would start at once, at the change, instead of waiting for its own time. We wrote down its cost before building it: such an item starts up to half a frame early, and the difference rides on to the next item fixed to a time, which starts on its time as every fixed item does.</p>
+</section>
+<section>
+<h2>What our reviews found</h2>
+<p>We run a read-only review of our own newest work, probing it and inverting its claims. The first one after the rule found the stated cost was wrong. On items that end a little short of their scheduled length, for instance a file whose sound outlasts its picture by a quarter to half a frame, each item started a little earlier than the one before. Within three or four items the difference reached a whole frame, and the engine aired a frame of its emergency material between two programmes. In one test at 25 frames a second there were three such frames and ten of twelve items aired a frame early. The build before the rule had four one-frame freezes there, with every item on time.</p>
+<p>We narrowed the rule to the one case it was raised for. The next review, in the early hours of 15 October 2026, found that even there the freeze was moved, not removed. It now landed just before the next fixed-time item, and every item before that aired a frame early. Our own record of the narrowed rule had said there was no freeze anywhere. We had read that off a test printout that listed freezes only beside cue messages, and that test had no cue. We corrected the record in each place it appeared.</p>
+</section>
+<section>
+<h2>What we did</h2>
+<p>We took the rule out, as two commits that undo it; nothing in our history was rewritten. Then we ran the twenty scenarios both reviews had built, on the engine without its SDI card, against the build from before the rule. What aired was the same on both: every item&rsquo;s first frame, every freeze and every frame of emergency material between items. Splice cues for downstream ad insertion agreed to within a hundredth of a frame.</p>
+<p>The rule was only ever in our development tree. It was never deployed, and nothing described here went on air.</p>
+</section>
+<section>
+<h2>What remains</h2>
+<p>An event under a frame that is passed over costs one frame, a freeze where it was. Every item airs on time, as before the rule.</p>
+<p>The same review found an older rule of ours behaving the same way: a gap shorter than a frame is not a gap, so an item between half a frame and a frame past its programme change started at once. After several items each ending a little short, that could add up to a frame or two of emergency material between programmes. We measured two ways of fixing it and, on 15 October 2026, changed the rule. Such an item now waits for its own time: the change holds one frame, every item airs on time, and nothing compounds. In the tests that showed the problem, five frames of emergency material and four early items in eleven changes became seven one-frame freezes and none early. This change, too, is in our development tree and has not gone on air.</p>
+<p>Our next review, on 16 October 2026, found the same band in a rule that runs after a clock step, and found the held frame being counted as the decoder running dry, which would have raised false alarms. We changed both the same day, in our development tree.</p>
+</section>
+
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>
