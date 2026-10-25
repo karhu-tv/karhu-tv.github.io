@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Why we build our own FFmpeg — Karhu TV</title>
+<meta name="description" content="Why Karhu Player builds its own FFmpeg: a ready-made Windows build labelled LGPL carried GPL-licensed code, how we found it, and the test that now refuses anything not on our list.">
+<link rel="canonical" href="https://karhu.tv/archive/lgpl-ffmpeg-build-2026-10-25/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/lgpl-ffmpeg-build-2026-10-25/">
+<meta property="og:title" content="Why we build our own FFmpeg">
+<meta property="og:description" content="Why Karhu Player builds its own FFmpeg: a ready-made Windows build labelled LGPL carried GPL-licensed code, how we found it, and the test that now refuses anything not on our list.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-10-25">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why we build our own FFmpeg">
+<meta name="twitter:description" content="Why Karhu Player builds its own FFmpeg: a ready-made Windows build labelled LGPL carried GPL-licensed code, how we found it, and the test that now refuses anything not on our list.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Why we build our own FFmpeg: a ready-made “LGPL” build that carried GPL code, 25 October 2026",
+ "description": "Why Karhu Player builds its own FFmpeg: a ready-made Windows build labelled LGPL carried GPL-licensed code, how we found it, and the test that now refuses anything not on our list.",
+ "datePublished": "2026-10-25",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/lgpl-ffmpeg-build-2026-10-25/",
+ "mainEntityOfPage": "https://karhu.tv/archive/lgpl-ffmpeg-build-2026-10-25/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-10-25/2026-10-25"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-10-25">25 Oct 2026</time></p>
+        <h1 id="entry-title">Why we build our own FFmpeg: a ready-made &ldquo;LGPL&rdquo; build that carried GPL code, 25&nbsp;October&nbsp;2026</h1>
+        <p class="dek">Karhu Player carries FFmpeg&rsquo;s libraries beside a program whose source we do not publish, which their licence allows on terms. Checking a ready-made Windows build labelled LGPL before shipping it, we found GPL-licensed code inside it. We now build FFmpeg ourselves for both systems, and a test refuses anything not on our list.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>What the licence asks of us</h2>
+<p>Karhu Player plays media with FFmpeg&rsquo;s libraries, and we do not publish the player&rsquo;s own source. FFmpeg&rsquo;s libraries allow that under the GNU Lesser General Public License, the LGPL, on terms: they ship as separate files beside the player, anyone may replace them with a build of their own, and their source is offered with them. The GNU General Public License, the GPL, does not allow it: a program combined with GPL code must offer its own source too. So every piece of code compiled into the libraries we ship has to be under the LGPL or a more permissive licence. Our player cannot carry GPL code and stay as it is.</p>
+</section>
+<section>
+<h2>What we found in a ready-made build</h2>
+<p>For Linux we already built FFmpeg ourselves. For Windows we had started from a set of ready-made FFmpeg builds published on GitHub, in the variant its makers label LGPL. Before shipping we went through those libraries to write the licence notices that must go with them, and found that one of them, <code>avformat-61.dll</code>, has FFTW 3.3.11 compiled into it. FFTW is a fast Fourier transform library licensed under the GPL, version 2 or later; it comes in with an audio fingerprinting library that uses it. The libraries also describe their own licence as &ldquo;LGPL version 3 or later&rdquo;, and the licence text in the download is the LGPL version 3 alone, with no notice for FFTW.</p>
+<p>A list of notices could not have fixed that: GPL code inside a library we ship beside a program whose source we do not publish is the case the licence rules out. Our own test had not caught it either. It checked that the libraries were the version we expected and named the LGPL, and this build passed.</p>
+</section>
+<section>
+<h2>What we did</h2>
+<p>We now build FFmpeg ourselves for Windows too, from FFmpeg&rsquo;s own release source, cross-compiled on Linux. Both systems compile the same FFmpeg components under the LGPL version&nbsp;2.1, with the dav1d AV1 decoder (BSD licence) built in. Windows adds zlib, built in; otherwise each system uses its own video decoding and TLS: VA-API, zlib and OpenSSL on Linux, D3D11VA and Schannel on Windows. The Windows build takes nothing it was not asked for.</p>
+<p>The test is now a list of what is allowed, for each system. It requires the libraries to describe their licence as the LGPL version&nbsp;2.1 or later, and every outside library FFmpeg is configured with to be on our list; anything else fails it. The only two built in, dav1d and zlib, are built from their own source by the same script. Run against the ready-made build, it fails on that build&rsquo;s licence, as it should.</p>
+<p>Some of the code inside FFmpeg is under other permissive licences whose conditions travel with a binary: the Independent JPEG Group&rsquo;s, and BSD, MIT and ISC texts. We gather those notices from the build itself, file by file, and ship them with the player. The source of the libraries, the release tarballs they were built from and the script that built them with every setting, is packaged beside each package of the player.</p>
+</section>
+<aside class="open">
+<h2>What remains open</h2>
+<ul>
+<li>This is our reading of the licences. It has not been reviewed by a lawyer.</li>
+<li>Karhu Player is not released, so no one has downloaded these libraries from us. The test runs at every change to the player; the notices and the source package are made and checked with every package of it.</li>
+</ul>
+</aside>
+<p class="record">Written on 25 October 2026 from the record: Karhu Player&rsquo;s status log for 25 October 2026, its FFmpeg build scripts, and the ready-made build&rsquo;s own files as downloaded.</p>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

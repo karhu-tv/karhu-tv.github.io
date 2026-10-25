@@ -98,6 +98,11 @@
   <p class="entry-dek">We measured where Karhu Player&rsquo;s sound lands against its picture where a viewer meets them, on the screen and at the earpiece. It found a fault on Windows that none of our counters showed. After the fixes, on 24 October 2026, the sound arrived 9.9&nbsp;ms after its picture under Ubuntu and 21.5&nbsp;ms after under Windows.</p>
 </li>
 <li>
+  <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
+  <h3><a href="/archive/lgpl-ffmpeg-build-2026-10-25/">Why we build our own FFmpeg: a ready-made &ldquo;LGPL&rdquo; build that carried GPL code, 25&nbsp;October&nbsp;2026</a></h3>
+  <p class="entry-dek">Karhu Player carries FFmpeg&rsquo;s libraries beside a program whose source we do not publish, which their licence allows on terms. Checking a ready-made Windows build labelled LGPL before shipping it, we found GPL-licensed code inside it. We now build FFmpeg ourselves for both systems, and a test refuses anything not on our list.</p>
+</li>
+<li>
   <p class="entry-date"><time datetime="2026-10-15">15 Oct 2026</time></p>
   <h3><a href="/archive/moved-freeze-2026-10-15/">Moving a frozen frame is not removing it: a fix we took out, 15 October 2026</a></h3>
   <p class="entry-dek">We built a rule to stop a one-frame freeze in our playout engine. Two of our own reviews found that it only moved the freeze, and in cases it was never meant for it put frames of emergency material between programmes. We took it out and measured that nothing else changed.</p>
