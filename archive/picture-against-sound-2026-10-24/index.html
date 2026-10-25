@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Picture against sound, measured on the screen — Karhu TV</title>
+<meta name="description" content="How we measured Karhu Player&#x27;s sound against its picture with a camera and a microphone, a fault on Windows that our counters missed, and the delay that remains.">
+<link rel="canonical" href="https://karhu.tv/archive/picture-against-sound-2026-10-24/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/picture-against-sound-2026-10-24/">
+<meta property="og:title" content="Picture against sound, measured on the screen">
+<meta property="og:description" content="How we measured Karhu Player&#x27;s sound against its picture with a camera and a microphone, a fault on Windows that our counters missed, and the delay that remains.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-10-25">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Picture against sound, measured on the screen">
+<meta name="twitter:description" content="How we measured Karhu Player&#x27;s sound against its picture with a camera and a microphone, a fault on Windows that our counters missed, and the delay that remains.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Picture against sound, measured on the screen: what a camera and a microphone found, 24 October 2026",
+ "description": "How we measured Karhu Player's sound against its picture with a camera and a microphone, a fault on Windows that our counters missed, and the delay that remains.",
+ "datePublished": "2026-10-25",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/picture-against-sound-2026-10-24/",
+ "mainEntityOfPage": "https://karhu.tv/archive/picture-against-sound-2026-10-24/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-10-24/2026-10-24"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-10-25">25 Oct 2026</time></p>
+        <h1 id="entry-title">Picture against sound, measured on the screen: what a camera and a microphone found, 24&nbsp;October&nbsp;2026</h1>
+        <p class="dek">We measured where Karhu Player&rsquo;s sound lands against its picture where a viewer meets them, on the screen and at the earpiece. It found a fault on Windows that none of our counters showed. After the fixes, on 24 October 2026, the sound arrived 9.9&nbsp;ms after its picture under Ubuntu and 21.5&nbsp;ms after under Windows.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>Why measure on the screen</h2>
+<p>A player can tell when it hands a picture to the display and a sound to the audio device. It cannot see what happens after that: the display takes its own time to show the picture, and the audio device its own to play the sound. A viewer meets the two only on the screen and at the ear. So to know where Karhu Player&rsquo;s sound lands against its picture, we measured it there, outside the player, with a camera and a microphone.</p>
+</section>
+<section>
+<h2>How we measured it</h2>
+<p>A test clip flashes the screen white and beeps at the same frame, once a second. The laptop&rsquo;s camera, at 30 frames a second with its exposure fixed at 10&nbsp;ms, faced the screen, and the headset&rsquo;s earpiece rested on the laptop&rsquo;s microphone, so one recording holds both the flash and the beep.</p>
+<p>A camera and its own microphone are not in step either. In our recordings the camera&rsquo;s picture ran between about 70 and 165&nbsp;ms behind its sound, by a different amount in each session. So each session began with a pen tapped on a jar in front of the screen, resting on the jar at each impact: one event seen and heard at once. The offset between the taps&rsquo; picture and sound is subtracted from every flash and beep in that session. The camera reads its picture from top to bottom, so the flashes are timed in the same rows as the taps.</p>
+<p>The player ran on a mini PC with an Intel N100, full screen on a monitor over HDMI, its sound on a USB headset, under Ubuntu and under Windows&nbsp;11. To compare builds without moving anything, the player before a change and after it took turns, three times each, in one recording.</p>
+</section>
+<section>
+<h2>What it found on Windows first</h2>
+<p>The first Windows readings were wrong for a reason none of our counters showed. The player&rsquo;s audio thread ran at ordinary priority, beside decoding and drawing. On the mini PC it woke late many times a minute, up to 39&nbsp;ms late when it was due every 10&nbsp;ms, and each late wake left a short gap in the sound. Nothing in the player was dropped, so nothing counted it. Heard through the headset, the beeps drifted until the sound ran about 150&nbsp;ms late after a minute. Windows&rsquo; own media player, on the same headset, kept them a second apart to within half a millisecond.</p>
+<p>The audio thread now registers with Windows&rsquo; multimedia scheduler as professional audio. With that, a minute of playback had no late wakes, and its longest gap between deliveries was 10.8&nbsp;ms. Every Windows reading taken before this change carried the fault, so none of them is used below.</p>
+</section>
+<section>
+<h2>What it found on both systems</h2>
+<p>The player had not counted the time the audio system itself takes to play a sound, which the system reports. It now does. Measured on the screen and at the earpiece, with positive numbers meaning the sound arrives after its picture:</p>
+<table class="facts">
+<thead><tr><th scope="col">Measurement</th><th scope="col">Value</th><th scope="col">When and how</th></tr></thead>
+<tbody>
+<tr><th scope="row">Ubuntu, before and after</th><td class="v">+53.8&nbsp;ms, then +9.9&nbsp;ms</td><td class="src">24 Oct 2026. It moved 43.9&nbsp;ms; the audio system reported 42.6&nbsp;ms of latency.</td></tr>
+<tr><th scope="row">Windows&nbsp;11, before and after</th><td class="v">+32.4&nbsp;ms, then +21.5&nbsp;ms</td><td class="src">24 Oct 2026, with the audio thread fixed. It moved 10.9&nbsp;ms; Windows reported 12&nbsp;ms.</td></tr>
+</tbody>
+</table>
+<p>The tolerance EBU&nbsp;R37 sets for a broadcast chain allows the sound to arrive up to 60&nbsp;ms after its picture, so both readings were within it before the change and after. But at 25 frames a second +53.8&nbsp;ms is more than a frame, and a player meant for checking sync should not add a frame of its own.</p>
+</section>
+<aside class="open">
+<h2>What remains open</h2>
+<ul>
+<li>About 10&nbsp;ms on Ubuntu and 22&nbsp;ms on Windows remain, delay that no device reported to us. We have not separated the display&rsquo;s share from the headset&rsquo;s, and we have not corrected for it. Measuring the display alone, and more displays and headsets, would settle how much of it is the player&rsquo;s to correct.</li>
+<li>These are one mini PC, one monitor and one headset. They say nothing about another machine.</li>
+</ul>
+</aside>
+<p class="record">Written on 25 October 2026 from the record: Karhu Player&rsquo;s status log for 24 October 2026, and the recordings and timing scripts it names.</p>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

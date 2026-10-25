@@ -231,6 +231,7 @@
     </a>
     <nav aria-label="Site">
       <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
       <a href="/#evidence">Evidence</a>
       <a href="/as-run.html">As-run</a>
       <a href="/tools.html">Tools</a>
@@ -445,7 +446,8 @@
 <section class="hw-section" id="test-kit" aria-labelledby="kit-title">
   <div class="sec-head">
     <h2 class="sec-title" id="kit-title">Test kit</h2>
-    <p>The instruments we test the two units with, and what each is for, as of 29 Sep 2026.</p>
+    <p>The instruments we test the two units with, and what each is for, as of 29 Sep 2026; the
+      capture drive as of 25 Oct 2026.</p>
   </div>
   <div class="tbl-scroll" role="region" aria-label="Test kit table" tabindex="0">
     <table class="kit">
@@ -469,6 +471,15 @@
         <tr><th scope="row">Picture monitor</th>
           <td>An SDI monitor from Blackmagic&rsquo;s SmartScope range</td>
           <td>Looking at the picture on an SDI output.</td></tr>
+        <tr><th scope="row">Capture drive</th>
+          <td>A Samsung 990 PRO 2&nbsp;TB NVMe SSD in an ICY BOX IB-1807MT-C31 USB enclosure
+            (USB&nbsp;3.2 Gen&nbsp;2, 10&nbsp;Gb/s)</td>
+          <td>Recording an SDI output uncompressed, on a drive of its own, never the one holding the
+            compliance log. Before it held a recording it wrote for an hour on the first unit beside
+            the playing engine, on 6 Oct 2026: every minute at 440&nbsp;MB/s, more than twice what one
+            1080p50 channel needs uncompressed, with no error and the engine&rsquo;s counters
+            unmoved. In the first recording sessions, on 7 Oct 2026, one write was held up for
+            6.8&nbsp;s after the drive had sat idle; its cause is not found.</td></tr>
       </tbody>
     </table>
   </div>
