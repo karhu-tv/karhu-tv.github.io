@@ -514,7 +514,7 @@
           card's own clock unmeasured. Pace from the host and you assume the SDI card agrees
           with it; lock to house sync and you assume the reference will always be there. Either
           way nobody is watching the crystal in the card, and it is a few parts per million off
-          — ours by about −3.7 ppm through 1 Aug 2026, which is one slipped frame every hour and
+          — ours by about −3.7 ppm through 1 Aug 2026, on the card the first unit then carried, which is one slipped frame every hour and
           a half or so if nothing corrects
           for it.
         </p>
@@ -523,7 +523,7 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with three known exceptions. RET-122, in the register below: the head of a looping region
+          with four known exceptions. RET-122, in the register below: the head of a looping region
           airs twice per loop, and displaces what follows; the first unit has carried a fix since
           3 Oct 2026, not accepted as of 6 Oct, and the second unit has none. And RET-142, found off
           air on 4 Oct 2026: a schedule whose first item lay more than a minute ahead of the
@@ -547,6 +547,12 @@
           on air also showed that, on a schedule with no times, it cut two frames from each of the
           first eleven items after a start; that was fixed on the first unit at 11:20&nbsp;UTC. The
           second unit runs the code from before all of this, with none of these fixes, and was not measured.
+          And RET-128, found without a card on 13 Oct 2026: a fixed-time item that follows a source
+          faster than its channel waits for that source, which plays slow, and airs late by as much
+          as the source has fallen behind &mdash; 2.5 and 3.9&nbsp;s in two tests. On the first unit
+          that holds only where the faster rate is not a whole multiple of the channel&rsquo;s; on
+          the second unit, for every faster source. A fix made on 13 Oct 2026 is on neither unit as
+          of 29 Oct 2026.
         </p>
         <p>
           <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we first put to the test on 27 Sep 2026, as far as our own instruments reach; the register below has what that showed, what locking cost here, and what it did not cover. Take
@@ -576,9 +582,10 @@
           <a href="/as-run.html">What verifying the log proves, and what it does not</a>.
         </p>
         <p>
-          <strong>And it is software, not an appliance.</strong> The machine behind every
-          figure on this page is one of two machines built around stock Intel desktop processors, each
-          with a DeckLink card any broadcast dealer stocks. Their motherboards, memory and drives are
+          <strong>And it is software, not an appliance.</strong> The machines behind the on-air
+          figures on this page are two built around stock Intel desktop processors, each with a
+          DeckLink card any broadcast dealer stocks; the figures we mark as measured without a card
+          come from our development laptops, stock parts too. Their motherboards, memory and drives are
           standard retail parts too, <a href="/hardware.html">listed part by part</a> with the
           software versions each machine runs. The nanoseconds come from measurement, not from custom silicon —
           the engine treats every clock in the box as something to verify rather than trust,
@@ -595,7 +602,7 @@
           market.
         </p>
         <p class="note">
-          Four independent SDI outputs per card &mdash; first driven from one process on 5 Sep 2026, on the second unit, which has since run all four unattended &mdash; 221 hours unbroken, 18&ndash;27 Sep 2026, every output playing the same mixed-source schedule at one output rate, the engine counting no late frame. On 14 Sep 2026 a 220&nbsp;ms stall during a test of ours cost three of its four outputs their card buffer, and an ordinary clip change twelve minutes later began an hour of frames dropped at the card; they did not recover without a restart (open). A source faster than the channel&rsquo;s output rate airs slow, by the ratio of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The engine does not refuse it, and flags it in its log only for the items it checks at start-up &mdash; by default the first 30, and any due within 30 minutes. Runs on Ubuntu. Binary-only, under NDA — the
+          Four independent SDI outputs per card &mdash; first driven from one process on 5 Sep 2026, on the second unit, which has since run all four unattended &mdash; 221 hours unbroken, 18&ndash;27 Sep 2026, and 433 hours, 27 Sep&ndash;15 Oct 2026, until the crash in the register below, every output playing the same mixed-source schedule at one output rate, the engine counting no late frame. On 14 Sep 2026 a 220&nbsp;ms stall during a test of ours cost three of its four outputs their card buffer, and an ordinary clip change twelve minutes later began an hour of frames dropped at the card; they did not recover without a restart (open). A source faster than the channel&rsquo;s output rate airs slow, by the ratio of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The exception, on the first unit since 5 Oct 2026, is a source at a whole multiple of the channel&rsquo;s rate, such as 50p on its 1080i50 channel: it airs at its own speed, one source frame to each field. The second unit has no such exception. The engine does not refuse it, and flags it in its log only for the items it checks at start-up &mdash; by default the first 30, and any due within 30 minutes. Runs on Ubuntu. Binary-only, under NDA — the
           timing core is the company, so it isn't published.
         </p>
       </div>
@@ -768,7 +775,7 @@
           <tr>
             <td>Card crystal error vs TAI</td>
             <td class="v">−3.7 ppm</td>
-            <td class="src">median over 26 Jul–1 Aug 2026 on the first unit; over 9–14 Sep 2026, free-running, the medians were −2.9&nbsp;ppm on its card and −7.2&nbsp;ppm on the second unit&rsquo;s. Dated because it is not a constant: the crystal is temperature-sensitive, and this is measured against CLOCK_TAI, which NTP disciplines — so a clock correction is arithmetically indistinguishable from crystal drift in it. Two further caveats, found on 21 Aug 2026 when the fortnight's logs were re-read: the instrument is a <em>run-cumulative mean</em> rather than an instantaneous rate, so it lags, and after 339 hours it understated the true value by about 16&nbsp;%; and the true instantaneous drift moved between −2.2 and −4.2&nbsp;ppm across that run, tracking case temperature at roughly −0.34&nbsp;ppm/&deg;C</td>
+            <td class="src">on the card the first unit carried until 29 Oct 2026: median over 26 Jul–1 Aug 2026; over 9–14 Sep 2026, free-running, the medians were −2.9&nbsp;ppm on its card and −7.2&nbsp;ppm on the second unit&rsquo;s. Dated because it is not a constant: the crystal is temperature-sensitive, and this is measured against CLOCK_TAI, which NTP disciplines — so a clock correction is arithmetically indistinguishable from crystal drift in it. Two further caveats, found on 21 Aug 2026 when the fortnight's logs were re-read: the instrument is a <em>run-cumulative mean</em> rather than an instantaneous rate, so it lags, and after 339 hours it understated the true value by about 16&nbsp;%; and the true instantaneous drift moved between −2.2 and −4.2&nbsp;ppm across that run, tracking case temperature at roughly −0.34&nbsp;ppm/&deg;C. That card was replaced on 29 Oct 2026; the new card&rsquo;s figure has not been measured as of that day</td>
           </tr>
           <tr>
             <td>Time-to-slip prediction from that drift</td>
@@ -777,8 +784,8 @@
           </tr>
           <tr>
             <td>Longest continuous engine run</td>
-            <td class="v">339 h</td>
-            <td class="src">6&ndash;20 Aug 2026 &mdash; a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the service manager (systemd) reports no restart across 2026-08-06T19:53:26Z&ndash;2026-08-20T23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
+            <td class="v">433 h</td>
+            <td class="src">27 Sep&ndash;15 Oct 2026, on the second unit, all four outputs &mdash; a final figure, not a floor: the run ended at 15:43:56&nbsp;UTC on 15 Oct 2026 when the engine crashed (the crash row in the register below). Derived two ways that agree to within a minute: the service manager (systemd) records no restart from 2026-09-27T14:02:16Z, and the engine&rsquo;s own frame counter read 78,062,150 at 50&nbsp;fps at 15:43&nbsp;UTC on 15 Oct (433.68&nbsp;h); its as-run log has not been verified over that run. The first unit&rsquo;s longest is 339&nbsp;h, 6&ndash;20 Aug 2026 &mdash; also a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the service manager (systemd) reports no restart across 2026-08-06T19:53:26Z&ndash;2026-08-20T23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
           </tr>
         </tbody>
       </table>
@@ -815,9 +822,10 @@
         228-hour run that ended 4 Sep 2026 &mdash; and none of it reached the SDI output;
         and it is not caused by the things it would be convenient to blame. Around twenty
         candidate causes have now been tested and rejected, several of them ours &mdash; and
-        on 21 August the last two that were still standing went the same way. What is left is
-        not a shorter list of the same kind of suspect, and the next step is still a
-        measurement rather than a patch.
+        on 21 August the last two that were still standing went the same way. As of that day what
+        was left was not a shorter list of the same kind of suspect, and the next step was a
+        measurement rather than a patch; the changes we have made since, and why we credit none of
+        them, are in the &ldquo;Worst single tick&rdquo; row above.
       </p>
       <p>
         The same logs carry both halves of this run: the junctions that were exact and the
@@ -864,7 +872,7 @@
           <p class="reg-why">We measured the engine-side component over 200 trials on 30 Jul 2026. It is a
             <em>lower bound</em>: it stops at the point the frame enters the handoff queue, and
             the card pipeline beyond that point adds at least 60&nbsp;ms this number does not
-            include &mdash; the card buffer measured 8 frames, 160&nbsp;ms, unchanged across 1,824 samples over 30&nbsp;h to 1 Aug 2026. Scheduled-event accuracy on the wire is likewise unmeasured; engine-side, the first frame of a scheduled item left our converter 22&ndash;36&nbsp;ms after its due instant at the junctions measured on 30 Jul 2026. Quoting it as glass-to-glass would understate our own latency by an
+            include &mdash; the card buffer measured 8 frames, 160&nbsp;ms, unchanged across 1,824 samples over 30&nbsp;h to 1 Aug 2026. Scheduled-event accuracy on the wire is likewise unmeasured; engine-side, the first frame of a scheduled item left our converter 22&ndash;36&nbsp;ms after its due instant at the junctions measured on 30 Jul 2026, on code since corrected (RET-146, near the top of this page). Since 9 Oct 2026 the first unit&rsquo;s own log has put items on their instants to within a millisecond, which is still engine-side. Quoting it as glass-to-glass would understate our own latency by an
             unknown margin.</p>
           <p class="reg-earn"><span>Would earn it:</span> a capture rig on the SDI output measuring
             the round trip end to end.</p>
@@ -872,7 +880,7 @@
 
         <div class="reg-item">
           <h3>&ldquo;Never drops a frame&rdquo;</h3>
-          <p class="reg-why">The card's crystal ran about 3.7&nbsp;ppm slow against TAI over 26 Jul&ndash;1 Aug 2026, so the
+          <p class="reg-why">The first unit&rsquo;s card at the time had a crystal that ran about 3.7&nbsp;ppm slow against TAI over 26 Jul&ndash;1 Aug 2026, so the
             engine produces marginally faster than the card consumes. A surplus frame is discarded
             from the handoff queue roughly <strong>every 90 minutes</strong> at the drift measured through
             1 Aug 2026 — by design, and at a
@@ -1010,7 +1018,7 @@
             </div>
             <div class="mx-row" role="row">
               <span role="rowheader">Free-running on internal sync</span>
-              <span class="maybe" role="cell">Built &mdash; one tick, decimated per channel, on the first unit since 5 Oct 2026, and on air there since 20:17&nbsp;UTC on 6 Oct 2026: 1080p50 beside 1080i50 on one card. 59.94 + 29.97 is built the same way and has not aired. The tests we wrote down for it on the wire have not run.</span>
+              <span class="maybe" role="cell">Built &mdash; one tick, decimated per channel, on the first unit since 5 Oct 2026, and on air there since 20:17&nbsp;UTC on 6 Oct 2026, through restarts and a change of card on 29 Oct 2026: 1080p50 beside 1080i50 on one card. 59.94 + 29.97 is built the same way and has not aired. The tests we wrote down for it on the wire have not run.</span>
               <span class="maybe" role="cell">Not barred by the hardware &mdash; barred by us. See below.</span>
             </div>
           </div>
@@ -1061,13 +1069,17 @@
         <div class="reg-item">
           <h3>Uptime and reliability figures</h3>
           <p class="reg-why">Our internal threshold for saying &ldquo;reliable&rdquo; is 90 days
-            continuous. The longest run we could evidence from the as-run chain as of
-            <strong>21 August 2026</strong> is <strong>339 hours</strong> &mdash; just over
-            fourteen days. That figure is dated on purpose: runs get longer, and a number
-            stated as current would be wrong the next time one does. It said 39 hours until
-            21 August, which was true when written on 1 August and had been beaten twice before
-            anyone re-derived it. What does not move is the argument — 339 hours is not 90
-            days, and until it is we do not use the word.</p>
+            continuous. The longest run we can evidence as of <strong>29 October 2026</strong> is
+            <strong>433 hours</strong> &mdash; just over eighteen days, on the second unit, and it
+            ended in a crash (the register&rsquo;s crash row); the service manager and the
+            engine&rsquo;s frame counter agree on it, and its as-run log has not been verified over
+            it. The longest the as-run chain itself evidences is 339 hours, on the first unit in
+            August. These figures are dated on purpose: runs get longer, and a number stated as
+            current would be wrong the next time one does. This row said 39 hours until 21 August,
+            which was true when written on 1 August and had been beaten twice before anyone
+            re-derived it, and 339 hours until 29 October, after the 433 had stood for two weeks.
+            What does not move is the argument &mdash; 433 hours is not 90 days, and until it is we
+            do not use the word.</p>
           <p class="reg-earn"><span>Would earn it:</span> 90 days. There is no shortcut and we
             won't paraphrase our way to one.</p>
         </div>
@@ -1076,10 +1088,11 @@
           <h3>ATSC A/85 loudness conformance</h3>
           <p class="reg-why">A/85 assesses the <em>anchor element</em> — dialogue — not integrated
             programme loudness, which is what our meter measures. For dialogue-sparse content the
-            two differ materially. The 2026 revision also requires true peak to be measured before
-            encoding, which a delivered file no longer permits. Our tool therefore returns
-            <span class="inline-code">INCONCLUSIVE</span> for A/85, and it is impossible for it to
-            return a pass: the refusal is enforced in code, before any number is compared.</p>
+            two differ materially. The 2026 revision also asks for true peak to be measured before
+            encoding, which a delivered file no longer permits. The loudness code in Rytmi therefore
+            returns <span class="inline-code">INCONCLUSIVE</span> for A/85, and cannot return a pass:
+            the refusal is enforced in code, before any number is compared. No tool of ours that
+            runs it is released.</p>
           <p class="reg-earn"><span>Would earn it:</span> dialogue-gated measurement. A different
             algorithm, not a threshold change.</p>
         </div>

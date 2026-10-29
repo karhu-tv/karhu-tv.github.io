@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <title>Hardware we build and test on — Karhu TV</title>
-<meta name="description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta name="description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is built and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Karhu TV">
 <meta property="og:url" content="https://karhu.tv/hardware.html">
 <meta property="og:title" content="Hardware we build and test on — Karhu TV">
-<meta property="og:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta property="og:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is built and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
 <meta property="og:image" content="https://karhu.tv/og-card-v1.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hardware we build and test on — Karhu TV">
-<meta name="twitter:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is developed and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
+<meta name="twitter:description" content="The off-the-shelf PC parts and Ubuntu LTS software Rytmi is built and tested on: two machines from different hardware generations, their main parts and software versions listed with when they were read.">
 <meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
 <link rel="canonical" href="https://karhu.tv/hardware.html">
 <meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
@@ -248,8 +248,8 @@
   <p class="page-eyebrow">Hardware</p>
   <h1 class="page-title">Hardware we build<br>and test on.</h1>
   <p class="page-body">
-    Rytmi is developed and tested on two machines built from off-the-shelf PC parts: a desktop
-    Intel processor, a retail motherboard, standard non-ECC memory, NVMe and SATA solid-state
+    Rytmi is tested on two machines built from off-the-shelf PC parts, and each builds the engine
+    it plays. Each has a desktop Intel processor, a retail motherboard, standard non-ECC memory, NVMe and SATA solid-state
     drives, and a Blackmagic DeckLink card. They run Ubuntu 24.04 LTS, with Ubuntu&rsquo;s own
     kernel and FFmpeg packages. <strong>There is no appliance, and no hardware of our own design.</strong>
   </p>
@@ -353,16 +353,18 @@
     <p>As of 29 Sep 2026.</p>
   </div>
   <ul class="duty">
-    <li><strong>The first unit</strong> plays one channel, 1920&times;1080 progressive at 50 frames a
-      second (1080p50), on one of its card&rsquo;s SDI outputs. Of the card&rsquo;s four outputs,
-      three work; the fourth is the <a href="#known-fault">known fault</a> below. From 20:17&nbsp;UTC
-      on 6 Oct 2026 it also plays a second channel, 1920&times;1080 interlaced at 25 frames (50 fields)
-      a second, top field first (1080i50), on another output, and a third connector is set as an
-      input, for recording tests.</li>
+    <li><strong>The first unit</strong> plays two channels: 1920&times;1080 progressive at 50 frames a
+      second (1080p50) on one of its card&rsquo;s SDI outputs, and, since 20:17&nbsp;UTC on 6 Oct 2026,
+      1920&times;1080 interlaced at 25 frames (50 fields) a second, top field first (1080i50), on
+      another. A third connector is set as an input, for recording tests. Its card is a replacement
+      since 29 Oct 2026, and all four of its outputs work (the <a href="#known-fault">fault</a>
+      below); since then the fourth connector takes the second channel&rsquo;s output back in, for
+      checking what leaves the card.</li>
     <li><strong>The second unit</strong> plays four channels, each 1080p50, one on each SDI output.
-      On 27 Sep 2026, the last time its cabling was recorded, none of the four outputs had a cable
-      attached; only the reference input did. So what it played then was counted inside the
-      machine, by the engine and the card, and nothing downstream watched it.</li>
+      Since 7 Oct 2026 one of those outputs has been cabled to the first unit, which records it
+      during tests. On 27 Sep 2026 none of its four outputs had a cable attached, and we have not
+      recorded the other three since. So most of what it plays is counted inside the machine, by
+      the engine and the card, and outside a test nothing downstream watches it.</li>
     <li><strong>Reference.</strong> On 27 Sep 2026 both units took a reference from the sync generator
       listed under test kit. With the generator at 1080i50 their cards did not lock their 1080p50
       outputs; at 720p50 they locked. We switched the generator off the same day, and both units
@@ -371,15 +373,18 @@
   </ul>
 
   <div class="known-issues" id="known-fault">
-    <h3 class="ki-title">Known fault</h3>
-    <div class="ki-date">As of 29 Sep 2026</div>
+    <h3 class="ki-title">Known fault, fixed</h3>
+    <div class="ki-date">Fixed 29 Oct 2026</div>
     <ul class="ki-list">
-      <li><strong>The first unit&rsquo;s fourth SDI output does not work.</strong> It has not worked
-        since the card was fitted, in May 2026. The card&rsquo;s driver still lists all four outputs,
-        and none of our software on the machine has detected the fault.</li>
-      <li><strong>Fix underway.</strong> A replacement card is coming back to us from a warranty
-        return. It takes this card&rsquo;s place, and this card then goes back under warranty
-        itself. Until the swap, the first unit uses three of the four outputs.</li>
+      <li><strong>The first unit&rsquo;s fourth SDI output did not work</strong> from when its card
+        was fitted, in May 2026, until 29 Oct 2026. The card&rsquo;s driver still listed all four
+        outputs, and none of our software on the machine detected the fault. Until the fix the
+        first unit used three of the four outputs.</li>
+      <li><strong>Fixed by a replacement card on 29 Oct 2026.</strong> Before the unit went back on
+        air, all four of the new card&rsquo;s outputs played a test picture for ten minutes at 50
+        frames a second, and a monitor showed each one&rsquo;s picture on its connector. The
+        machine, driver and firmware are the same as before, so the fault was in the old card,
+        which goes back under warranty.</li>
     </ul>
   </div>
 </section>
@@ -388,7 +393,8 @@
   <div class="sec-head">
     <h2 class="sec-title" id="software-title">Software versions</h2>
     <p>The operating system, kernel, DeckLink driver and card firmware, FFmpeg and the Intel media
-      driver, per unit, as of 29 Sep 2026; the card firmware was read on 5&ndash;6 Sep 2026. Of the
+      driver, per unit, as of 29 Oct 2026; the second unit&rsquo;s card firmware was read on
+      5&ndash;6 Sep 2026, the first unit&rsquo;s on its replacement card on 29 Oct 2026. Of the
       versions in this table, the two units differ only in the kernel build.</p>
   </div>
   <div class="tbl-scroll" role="region" aria-label="Software versions table" tabindex="0">
@@ -400,32 +406,35 @@
         <tr><th scope="row">Operating system
             <span class="cell-note">Ubuntu, long-term support release</span></th>
           <td class="ver">Ubuntu 24.04.4 LTS</td><td class="ver">Ubuntu 24.04.4 LTS</td>
-          <td class="asof">29 Sep 2026</td></tr>
+          <td class="asof">29 Oct 2026</td></tr>
         <tr><th scope="row">Linux kernel
             <span class="cell-note">Ubuntu&rsquo;s own kernel package, generic flavour, as published
               in Ubuntu&rsquo;s archive; not rebuilt or patched by us</span></th>
-          <td class="ver">6.8.0-134-generic</td><td class="ver">6.8.0-139-generic</td>
-          <td class="asof">29 Sep 2026</td></tr>
+          <td class="ver">6.8.0-134-generic</td><td class="ver">6.8.0-147-generic
+            <span class="cell-note">The second unit moved to this kernel from 6.8.0-139 when it
+              restarted after a power cut on 27 Oct 2026. The first unit is held on its kernel; the
+              second starts on the newest one installed.</span></td>
+          <td class="asof">29 Oct 2026</td></tr>
         <tr><th scope="row">Blackmagic Desktop Video
             <span class="cell-note">The DeckLink driver and SDK library. Blackmagic&rsquo;s own
               package, not Ubuntu&rsquo;s.</span></th>
           <td class="ver">15.3.1a4</td><td class="ver">15.3.1a4</td>
-          <td class="asof">29 Sep 2026</td></tr>
+          <td class="asof">29 Oct 2026</td></tr>
         <tr><th scope="row">DeckLink Duo 2 firmware
             <span class="cell-note">As Blackmagic&rsquo;s updater reports it</span></th>
           <td class="ver">0x128</td><td class="ver">0x128</td>
-          <td class="asof">5&ndash;6 Sep 2026</td></tr>
+          <td class="asof">29 Oct 2026 (first unit&rsquo;s card, fitted that day); 5&ndash;6 Sep 2026 (second)</td></tr>
         <tr><th scope="row">FFmpeg
             <span class="cell-note">The libraries the engine links or loads: libavcodec 60,
               libavformat 60, libavutil 58, libswresample 4. Ubuntu&rsquo;s own packages.</span></th>
           <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
           <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
-          <td class="asof">29 Sep 2026</td></tr>
+          <td class="asof">29 Oct 2026</td></tr>
         <tr><th scope="row">Intel media driver
             <span class="cell-note">The VA-API driver for hardware video decode on the built-in
               graphics. Ubuntu&rsquo;s own package.</span></th>
           <td class="ver">24.1.0+ds1-1</td><td class="ver">24.1.0+ds1-1</td>
-          <td class="asof">29 Sep 2026</td></tr>
+          <td class="asof">29 Oct 2026</td></tr>
       </tbody>
     </table>
   </div>
@@ -438,7 +447,7 @@
   <p class="after-table">As of 29 Sep 2026, both units had run the same Rytmi source since
     18 Sep 2026, each built on its own machine. That stopped on 3 Oct 2026, when the first unit
     took its first newer build; it has taken others since, while the second unit still ran its
-    18 Sep build when we last read it, on 6 Oct 2026. Setting a machine up for Rytmi also changes some
+    18 Sep build when we last read it, on 29 Oct 2026. Setting a machine up for Rytmi also changes some
     operating-system settings; those are part of how we install Rytmi, and are not listed
     here.</p>
 </section>
@@ -479,13 +488,19 @@
             the playing engine, on 6 Oct 2026: every minute at 440&nbsp;MB/s, more than twice what one
             1080p50 channel needs uncompressed, with no error and the engine&rsquo;s counters
             unmoved. In the first recording sessions, on 7 Oct 2026, one write was held up for
-            6.8&nbsp;s after the drive had sat idle; its cause is not found.</td></tr>
+            6.8&nbsp;s after the drive had sat idle. On 25 Oct 2026 we reproduced it: after 8 minutes
+            idle the drive took about 6.5&nbsp;s to wake, and the first write waited for it; woken
+            first, no write was held up. Our recording tools wake it when a recording is set up in
+            advance; one started by hand on an idle drive can still wait those seconds.</td></tr>
       </tbody>
     </table>
   </div>
   <p class="after-table">We use these by hand, for checks. On 29 Sep 2026 neither unit had a
-    recorder on its SDI outputs, so the other figures on this site are measured inside the
-    machines themselves.</p>
+    recorder on its SDI outputs. Since 7 Oct 2026 the first unit has recorded one of the second
+    unit&rsquo;s outputs during tests, and since 29 Oct 2026 one of its own outputs has been cabled
+    back into one of its inputs. As of 29 Oct 2026 no figure on this site comes from those
+    recordings; apart from the checks above, the figures are measured inside the machines
+    themselves.</p>
 </section>
 
 </main>

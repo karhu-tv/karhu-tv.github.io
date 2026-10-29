@@ -249,7 +249,7 @@
     Since 11 Oct 2026 it writes a third, which is the second with two kinds of record added: one for
     each frame the engine adds or leaves out on purpose to keep pace with the card&rsquo;s clock,
     of which it writes none while that change is switched off, as it is as of 11 Oct 2026; and
-    records for events laid over the programme, such as cues, which no engine writes as of 11 Oct 2026. What this
+    records for events laid over the programme, such as cues, which neither unit&rsquo;s engine writes, as of 29 Oct 2026. What this
     page says of the second version holds for the third. The second unit, on the build it has run
     since 18 Sep 2026, writes the first version. Where
     something below belongs to one version only, it says so; the
@@ -264,9 +264,11 @@
   <ul class="facts">
     <li><strong>One record for each frame.</strong> The engine writes it as it hands the
       frame on towards the card. That is one source frame, except where a source&rsquo;s frame rate is
-      a whole multiple of its channel&rsquo;s: then each channel frame is made from that many source
-      frames, and gets one record. On the first unit&rsquo;s 1080i50 channel, since 20:17&nbsp;UTC on
-      6 Oct 2026, a 50p source gives one record for every two of its frames, one aired in each field.
+      a whole multiple of its channel&rsquo;s: then each channel frame stands for that many source
+      frames and gets one record. On a progressive channel it shows one of them, and the frames in
+      between are not aired and no record names them. On an interlaced channel its two fields can
+      show two: on the first unit&rsquo;s 1080i50 channel, since 20:17&nbsp;UTC on 6 Oct 2026, a 50p
+      source gives one record for every two of its frames, one aired in each field.
       The record carries the time of the engine clock tick the frame
       was made for, and the name of the source file. Each channel has a chain of its own, kept in
       one file per UTC day.</li>
@@ -274,9 +276,11 @@
       schedule item starts, a record names the item, how it came to start and, where the schedule
       gives one, the item&rsquo;s key from a traffic system. Where it ends, a record gives the
       number of frames handed on, why it ended, and the airing&rsquo;s loudness and true peak. An
+      airing that a crash or a power cut stops gets no end record: checking passes it, and lists it
+      as open, with no frame count and no loudness. An
       item that airs twice is two airings, numbered in turn, and a scheduled item that never aired
-      gets a record saying why &mdash; with two exceptions we found on 12 Oct 2026, fixed in a build not
-      yet on the first unit: an airing whose only frame the engine drops where one item hands over to
+      gets a record saying why &mdash; with two exceptions we found on 12 Oct 2026, fixed in a build the
+      first unit does not run, as of 29 Oct 2026: an airing whose only frame the engine drops where one item hands over to
       the next leaves no record, and that day&rsquo;s check fails; and items after one of unknown length,
       in a playlist loaded while the channel plays, leave no record, and the check passes. These records carry the engine clock tick&rsquo;s time, as the frame
       records do.</li>
@@ -398,7 +402,7 @@
           records to the airing (<a href="#proved">above</a>), so a writer whose frame records
           disagree with their airing &mdash; another source file, a time out of order, a hole
           &mdash; is caught; a writer that wrote a consistent false account is not. One limit, found on
-          13 Oct 2026 and fixed in a build not yet on the first unit: an airing that runs across midnight is
+          13 Oct 2026 and fixed in a build the first unit does not run, as of 29 Oct 2026: an airing that runs across midnight is
           held to its frame records only up to midnight, so what it wrote after midnight is not checked.</p>
         <p>A frame is recorded as the engine hands it on towards the card, and the engine can then
           discard it to absorb the card&rsquo;s clock drift. In the first version of the log the

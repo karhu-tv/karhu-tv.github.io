@@ -248,9 +248,9 @@
   <p class="page-eyebrow">Karhu Player &middot; in development &middot; not released</p>
   <h1 class="page-title">Karhu Player.</h1>
   <p class="page-body">
-    <strong>A media player for people who have to trust the timecode.</strong> It plays a file or a
+    <strong>A media player for people who need to see what is really in a file.</strong> It plays a file or a
     stream and tells you what is in it: the frame you are on and its SMPTE timecode, the loudness of
-    what you hear by EBU&nbsp;R128, the decoded value of any pixel, and what the file says about
+    what you hear by EBU&nbsp;R128, the decoded value of any pixel of a paused picture, and what the file says about
     itself against what it actually does. It is made by the people who make Rytmi, it runs on Linux
     and Windows, and it will be free of charge.
   </p>
@@ -265,19 +265,21 @@
 <section class="hw-section" id="does" aria-labelledby="does-title">
   <div class="sec-head">
     <h2 class="sec-title" id="does-title">What it does</h2>
-    <p>As of 25 Oct 2026, in the build we test.</p>
+    <p>As of 29 Oct 2026, in the build we test.</p>
   </div>
   <ul class="duty">
     <li><strong>Frame-accurate transport.</strong> Step one frame back or forward, seek to a frame, a
-      timecode or a time, and land on exactly that frame, B-frames and long GOPs included. SMPTE
+      timecode or a time, and land on exactly that frame, B-frames and long GOPs included, in MP4,
+      Matroska and HLS. A plain MPEG-TS file has no index to seek by: a seek in one lands on the
+      first keyframe after the frame asked for. SMPTE
       timecode is read from the file, drop-frame included; play, pause, an A&ndash;B loop, and
       J-K-L shuttle, forward only, from a quarter speed to eight times, with sound kept at its own
       pitch from half speed to double.</li>
     <li><strong>Loudness by EBU&nbsp;R128.</strong> Momentary, short-term and integrated loudness and
       true peak of what is heard, each channel weighted from the stream&rsquo;s own layout, and a
       separate measurement of the whole file from start to end.</li>
-    <li><strong>The picture as decoded.</strong> The Y&prime;CbCr and RGB values of the pixel under the
-      cursor, and any frame saved as a PNG. Each frame is drawn with the colour matrix its file
+    <li><strong>The picture as decoded.</strong> Paused, the Y&prime;CbCr and RGB values of the pixel
+      under the cursor; and any frame saved as a PNG. Each frame is drawn with the colour matrix its file
       declares; BT.2020 and P3 standard-dynamic-range pictures are converted to BT.709&rsquo;s gamut,
       and the stream panel says when they were.</li>
     <li><strong>What the file says against what it does.</strong> Codec, size, pixel format, colour
@@ -293,15 +295,16 @@
       display. The main display is left out of that list, so the player cannot cover the screen you
       are working on unless you ask it to.</li>
     <li><strong>Hardware decoding</strong> where the graphics hardware offers it (VA-API on Linux,
-      D3D11VA on Windows), with software decoding where it does not; on Linux with Intel graphics,
-      hardware-decoded frames are drawn without copying them back to the processor and up again.</li>
+      D3D11VA on Windows), with software decoding where it does not. Hardware-decoded frames are
+      drawn without being copied back to the processor: on Linux with Intel graphics, and on Windows
+      since 26 Oct 2026, where each frame is copied once within the graphics processor.</li>
   </ul>
 </section>
 
 <section class="hw-section" id="plays" aria-labelledby="plays-title">
   <div class="sec-head">
     <h2 class="sec-title" id="plays-title">What it plays</h2>
-    <p>As of 25 Oct 2026. Every codec below is compiled into our build and checked to be there;
+    <p>As of 29 Oct 2026. Every codec below is compiled into our build and checked to be there;
       H.264, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
       also played by tests of ours.</p>
   </div>
@@ -314,8 +317,9 @@
           <td>H.264, VP9 and AV1; MPEG-2 (its 4:2:2 profile included), ProRes&nbsp;422,
             DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and VP8</td></tr>
         <tr><th scope="row">Pictures shown</th>
-          <td>Planar 4:2:0 and 4:2:2, at 8 and 10 bits, limited or full range. 4:2:2 since 25 Oct
-            2026, drawn as it is coded, each line with its own colour</td></tr>
+          <td>Planar 4:2:0 and 4:2:2 at 8 and 10 bits, and packed 8-bit 4:2:2 (uncompressed 2vuy),
+            limited or full range. Planar 4:2:2 since 25 Oct 2026, packed since 26 Oct 2026; drawn as
+            it is coded, each line with its own colour</td></tr>
         <tr><th scope="row">Audio</th>
           <td>AAC, MP3, FLAC, Opus, Vorbis and PCM, in a file that also has a picture</td></tr>
       </tbody>
@@ -343,12 +347,14 @@
       <tbody>
         <tr><th scope="row">Sound against its picture, seen and heard
             <span class="cell-note">positive: the sound arrives after its picture</span></th>
-          <td class="ver">+9.9&nbsp;ms Ubuntu<br>+21.5&nbsp;ms Windows</td>
+          <td class="ver">+9.9&nbsp;ms Ubuntu<br>+21.5&nbsp;ms Windows, the build of 24 Oct</td>
           <td>24 Oct 2026, the mini PC below on one monitor and one USB headset: a camera and a
             microphone recording the screen and the earpiece together, and a clip that flashes and
             beeps once a second. The tolerance EBU&nbsp;R37 sets for a broadcast chain allows the
             sound up to 60&nbsp;ms late. How it was measured, and what it found on the way, is in the
-            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>.</td></tr>
+            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>. Since 27 Oct 2026 the
+            Windows build puts its pictures on the screen differently, and it has not been measured
+            on the screen since.</td></tr>
         <tr><th scope="row">Seeks and go-tos that land on the frame asked for
             <span class="cell-note">by time, frame number, timestamp and timecode</span></th>
           <td class="ver">156 of 156</td>
@@ -392,23 +398,32 @@
 
   <div class="known-issues" id="dont-claim">
     <h3 class="ki-title">What we don&rsquo;t claim</h3>
-    <div class="ki-date">As of 25 Oct 2026</div>
+    <div class="ki-date">As of 29 Oct 2026</div>
     <ul class="ki-list">
+      <li><strong>Not for compliance use.</strong> What the player shows, the loudness and the
+        timecode included, is for information. It is not a broadcast monitoring, measurement or
+        compliance instrument.</li>
       <li><strong>Tested on Intel graphics only.</strong> As of 25 Oct 2026 the player is tested on
         Intel graphics. It ran on AMD Radeon Vega graphics under Linux until 7 Oct 2026, and not
         since; it has never run on NVIDIA graphics, and on Linux it has no NVIDIA decoding path.</li>
-      <li><strong>The sound sits 10 to 22&nbsp;ms after its picture</strong> on the set-up we
-        measured, by latency that no device reported to us. We have not corrected for it, and we
-        have measured one display and one headset.</li>
+      <li><strong>On 24 Oct 2026 the sound reached the listener 10&nbsp;ms (Ubuntu) and 22&nbsp;ms
+        (Windows) after its picture</strong> on the set-up we measured, by latency that no device
+        reported to us. The Windows build has changed how it draws since then and has not been
+        measured again. We have not corrected for it, and we have measured one display and one
+        headset.</li>
+      <li><strong>Seeking in MXF</strong> is not covered by our frame-accuracy test.</li>
       <li><strong>Not every picture is shown.</strong> 4:4:4 (ProRes&nbsp;4444, DNxHR&nbsp;444),
-        12-bit, RGB, and packed or semi-planar 4:2:2 pictures (UYVY, NV16, P210) are not drawn: the file plays, with its sound, timecode and loudness,
+        12-bit, RGB, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound, timecode and loudness,
         and the picture area names the format it could not show. HDR (PQ and HLG) is not tone
         mapped, and the stream panel says so. Interlaced video is shown as it is coded, both fields
         in one frame, not deinterlaced.</li>
       <li><strong>The Windows program is not code-signed.</strong> Windows&rsquo; Smart App Control
         judges an unsigned program file by file, and on our mini PC it refused one of our test
         programs and allowed it four minutes later.</li>
-      <li><strong>A graphics driver reset ends the player.</strong> It does not recover from one.</li>
+      <li><strong>Not shown to survive a graphics driver reset.</strong> Since 29 Oct 2026 the build
+        we test draws its picture again after its graphics device is lost and plays on, which we
+        have tried only by destroying the device on purpose. A real driver reset has not been tried,
+        and the hardware decoder is not rebuilt after one.</li>
       <li><strong>No macOS</strong>, and on Linux the native Wayland window is not measured: every
         measurement on Linux has been taken through X11 on Xwayland.</li>
       <li><strong>Computer displays only.</strong> The picture goes to the computer&rsquo;s own

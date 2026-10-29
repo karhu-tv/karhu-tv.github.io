@@ -96,6 +96,7 @@
   <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
   <h3><a href="/archive/picture-against-sound-2026-10-24/">Picture against sound, measured on the screen: what a camera and a microphone found, 24&nbsp;October&nbsp;2026</a></h3>
   <p class="entry-dek">We measured where Karhu Player&rsquo;s sound lands against its picture where a viewer meets them, on the screen and at the earpiece. It found a fault on Windows that none of our counters showed. After the fixes, on 24 October 2026, the sound arrived 9.9&nbsp;ms after its picture under Ubuntu and 21.5&nbsp;ms after under Windows.</p>
+  <p class="entry-span">Addendum 29 Oct 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
@@ -106,11 +107,13 @@
   <p class="entry-date"><time datetime="2026-10-15">15 Oct 2026</time></p>
   <h3><a href="/archive/moved-freeze-2026-10-15/">Moving a frozen frame is not removing it: a fix we took out, 15 October 2026</a></h3>
   <p class="entry-dek">We built a rule to stop a one-frame freeze in our playout engine. Two of our own reviews found that it only moved the freeze, and in cases it was never meant for it put frames of emergency material between programmes. We took it out and measured that nothing else changed.</p>
+  <p class="entry-span">Addendum 29 Oct 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-14">14 Oct 2026</time></p>
   <h3><a href="/archive/decoder-deadlock-2026-10-13/">One line held a lock too long: a decoder deadlock, 13 October 2026</a></h3>
   <p class="entry-dek">A review of our own code found that a file failing to open at a programme change, while a playlist load was waiting to write, would stop a channel's decoder for good. It had been in our first unit's builds for eleven days. We proved it with a deliberately slow open, fixed it with one line, and put the fix on air as a restart of its own.</p>
+  <p class="entry-span">Addendum 29 Oct 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-08">8 Oct 2026</time></p>
@@ -126,12 +129,13 @@
   <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
   <h3><a href="/archive/genlock-2026-09-27/">Genlocking a DeckLink Duo 2 at 1080p50, and pulling the reference: 27 September 2026</a></h3>
   <p class="entry-dek">We froze this test before the sync generator arrived. A 1080i50 reference was seen but not locked, 720p50 locked on both units, and the generator was measured against TAI. While locked, the engine discarded surplus frames nearly four times as often as when free-running. When we pulled the reference, its loss alarm reached the operator's phone, and nothing was watching the SDI output itself.</p>
+  <p class="entry-span">Addendum 29 Oct 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
   <h3><a href="/archive/fortnight-soak-2026-08/">Fourteen days of SDI playout, 61 million frames produced: the August 2026 soak, including the part that failed</a></h3>
   <p class="entry-dek">Between 6 and 20 August 2026 the first unit ran one unbroken 339-hour playout with no late frames on the SDI output, and still failed the criterion we had frozen before it started, because twice the engine's clock thread woke more than half a millisecond late.</p>
-  <p class="entry-span">Addendum 30 Sep 2026</p>
+  <p class="entry-span">Addendum 29 Oct 2026</p>
 </li>
       </ol>
     </section>
