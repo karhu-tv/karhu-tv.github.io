@@ -314,6 +314,10 @@
 
   .two { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; }
   @media (min-width: 55rem) { .two { grid-template-columns: repeat(2, 1fr); } }
+  .exceptions { margin: 0; padding-left: 1.15rem; max-width: var(--measure);
+    display: flex; flex-direction: column; gap: .7rem; }
+  .exceptions li::marker { color: var(--ink-faint); }
+  .reg-why .exceptions { margin-top: .6rem; }
 
   /* ── evidence table ──────────────────────────────────────────── */
   .tbl-scroll { overflow-x: auto; }
@@ -523,48 +527,50 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with four known exceptions. RET-122, in the register below: the head of a looping region
-          airs twice per loop, and displaces what follows; the first unit has carried a fix since
-          3 Oct 2026, not accepted as of 6 Oct, and the second unit has none. And RET-142, found off
-          air on 4 Oct 2026: a schedule whose first item lay more than a minute ahead of the
-          engine&rsquo;s start aired that item at once, early by almost the whole lead. Neither unit&rsquo;s
-          schedules start that far ahead. Under the first unit&rsquo;s fix, since 5 Oct 2026, such an
-          item waits, and airs late by however much of a second the engine&rsquo;s start left before its
-          next whole second &mdash; 110 to 757&nbsp;ms in eight tests without a card on 11 Oct 2026, up
-          to a second in all &mdash; which is still late. A fix for that, made on 11 Oct 2026, is on neither
-          unit as of that day; the second unit has neither fix. And RET-146, found on 8 Oct 2026: on
-          the first unit every item aired a constant 41&ndash;58&nbsp;ms after its instant (the median
-          of each of its eleven runs of 5&ndash;9 Oct 2026 before the fix; some items a further 40&nbsp;ms
-          later), the figure set partly by when each run started &mdash; frames were stamped a frame late,
-          and handed to the output a moment after the tick that should have aired them. The first unit
-          has carried a fix since 00:33&nbsp;UTC on 9 Oct 2026, not accepted as of that day. Across its
-          first four runs on the fix, 77 of the 80 items of a schedule&rsquo;s first pass started on
-          their instants to within a millisecond, and three &mdash; the same item each time &mdash;
-          20&nbsp;ms early. That was a second fault, found once the fix was on air: a looping region never
-          took a fresh time from the schedule, so the part-frames left over where a 29.97 clip was cut
-          added up until one of its airings ended 20&nbsp;ms short. It was fixed on the first unit at
-          20:13&nbsp;UTC the same day, and in that run&rsquo;s first pass all 20 started on their instants. Putting the fix
-          on air also showed that, on a schedule with no times, it cut two frames from each of the
-          first eleven items after a start; that was fixed on the first unit at 11:20&nbsp;UTC. The
-          second unit runs the code from before all of this, with none of these fixes, and was not measured.
-          And RET-128, found without a card on 13 Oct 2026: a fixed-time item that follows a source
-          faster than its channel waits for that source, which plays slow, and airs late by as much
-          as the source has fallen behind &mdash; 2.5 and 3.9&nbsp;s in two tests. On the first unit
-          that holds only where the faster rate is not a whole multiple of the channel&rsquo;s; on
-          the second unit, for every faster source. A fix made on 13 Oct 2026 is on neither unit as
-          of 29 Oct 2026.
+          with four known exceptions, each in the register below:
+        </p>
+        <ul class="exceptions">
+          <li>
+            <strong>A looping region airs its first item twice per loop.</strong> Fixed on the first
+            unit since 3 Oct 2026, not accepted as of 6 Oct; the second unit has no fix.
+          </li>
+          <li>
+            <strong>A schedule whose first item lay more than a minute ahead of the engine&rsquo;s start
+            aired that item at once, early.</strong> Since 5 Oct 2026 the first unit holds such an item,
+            but airs it up to a second late; a fix for that, made on 11 Oct 2026, is on neither unit as of
+            that day, and the second unit has neither fix.
+          </li>
+          <li>
+            <strong>On the first unit every item aired 41&ndash;58&nbsp;ms after its instant.</strong>
+            Fixed there on 9 Oct 2026, with two further faults the fix brought out, not accepted as of
+            that day; the second unit has none of these fixes and was not measured.
+          </li>
+          <li>
+            <strong>A fixed-time item that follows a source faster than its channel airs late</strong>
+            &mdash; 2.5 and 3.9&nbsp;s in two tests. A fix made on 13 Oct 2026 is on neither unit as of
+            29 Oct 2026.
+          </li>
+        </ul>
+        <p>
+          <strong>Which is why, by design, losing house sync would not cost you your time base.</strong>
+          Take the second of those approaches and the reference is your timing authority, so when it
+          goes you are left on an uncorrected crystal. Syke's authority is TAI, and Rytmi's is Syke's,
+          so the card's rate error is a measured quantity rather than an assumption, and we predict its
+          consequences from that figure: to within 1&nbsp;% at the median over the twelve-hour runs of
+          July 2026 (individual runs &minus;8&nbsp;%/+19&nbsp;%), and to 14&nbsp;% over the 339-hour run
+          of August, where the sheds arrived sooner than the model said because the drift number we
+          publish is a run-cumulative mean that lags the crystal (median observed &divide; predicted
+          0.863 over 213 intervals, re-derived 21 Aug 2026).
         </p>
         <p>
-          <strong>Which is why, by design, losing house sync would not cost you your time base</strong> &mdash; a design we first put to the test on 27 Sep 2026, as far as our own instruments reach; the register below has what that showed, what locking cost here, and what it did not cover. Take
-          the second of those approaches and the reference is your timing authority, so when it
-          goes you are left on an uncorrected crystal. Syke's authority is TAI — and Rytmi's is
-          Syke's — so the card's rate error is a measured quantity rather than an assumption;
-          we predict its consequences from a measured figure &mdash; to within 1&nbsp;% at the median over the twelve-hour runs of July 2026 (individual runs &minus;8&nbsp;%/+19&nbsp;%), and to 14&nbsp;% over the 339-hour run of August, where the sheds arrived sooner than the model said because the drift number we publish is a run-cumulative mean that lags the crystal (median observed &divide; predicted 0.863 over 213 intervals, re-derived 21 Aug 2026). Genlock is something the card can take and we do not
-          depend on: the design rule from the start was that the clock must not
-          rely on it, and until 27 Sep 2026 the first unit had never been genlocked &mdash; through the 339-hour soak that
-          ended on 20 August 2026 the card reported no late and, after start-up, no dropped frames of its own,
-          and the engine's own late-frame count is carried in the panel above while a soak is
-          running and explained, when it is not zero, in the table below.
+          Genlock is something the card can take and we do not depend on: the design rule from the
+          start was that the clock must not rely on it, and until 27 Sep 2026 the first unit had never
+          been genlocked. Through the 339-hour soak that ended on 20 August 2026 the card reported no
+          late and, after start-up, no dropped frames of its own; the engine's own late-frame count is
+          carried in the panel above while a soak is running, and explained in the table below when it
+          is not zero. We first put the design to the test on 27 Sep 2026, as far as our own
+          instruments reach; the register below has what that showed, what locking cost here, and what
+          it did not cover.
         </p>
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem">
@@ -602,8 +608,21 @@
           market.
         </p>
         <p class="note">
-          Four independent SDI outputs per card &mdash; first driven from one process on 5 Sep 2026, on the second unit, which has since run all four unattended &mdash; 221 hours unbroken, 18&ndash;27 Sep 2026, and 433 hours, 27 Sep&ndash;15 Oct 2026, until the crash in the register below, every output playing the same mixed-source schedule at one output rate, the engine counting no late frame. On 14 Sep 2026 a 220&nbsp;ms stall during a test of ours cost three of its four outputs their card buffer, and an ordinary clip change twelve minutes later began an hour of frames dropped at the card; they did not recover without a restart (open). A source faster than the channel&rsquo;s output rate airs slow, by the ratio of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The exception, on the first unit since 5 Oct 2026, is a source at a whole multiple of the channel&rsquo;s rate, such as 50p on its 1080i50 channel: it airs at its own speed, one source frame to each field. The second unit has no such exception. The engine does not refuse it, and flags it in its log only for the items it checks at start-up &mdash; by default the first 30, and any due within 30 minutes. Runs on Ubuntu. Binary-only, under NDA — the
-          timing core is the company, so it isn't published.
+          Four independent SDI outputs per card, first driven from one process on 5 Sep 2026 on the
+          second unit, which has since run all four unattended: 221 hours unbroken, 18&ndash;27 Sep 2026,
+          and 433 hours, 27 Sep&ndash;15 Oct 2026, until the crash in the register below &mdash; every
+          output playing the same mixed-source schedule at one output rate, the engine counting no late
+          frame.
+        </p>
+        <p class="note">
+          Two limits, each in the register below: a 220&nbsp;ms stall on 14 Sep 2026 cost three outputs
+          their card buffer, and they did not recover without a restart (open); and a source faster than
+          its channel&rsquo;s output rate airs slow, except on the first unit where its rate is a whole
+          multiple of the channel&rsquo;s.
+        </p>
+        <p class="note">
+          Runs on Ubuntu. Binary-only, under NDA &mdash; the timing core is the company, so it isn&rsquo;t
+          published.
         </p>
       </div>
     </div>
@@ -994,6 +1013,79 @@
             Still to earn: frame entries written from what the card reports it played rather than
             from the hand-off, and a run of 50p material only, under a test written down beforehand,
             in which every discard is withdrawn.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Every item airs on its instant</h3>
+          <div class="reg-why">
+            <p>The design is that every schedule item airs against an absolute TAI instant, not an
+              offset from whenever the engine started. We know of four exceptions, in the order found:</p>
+            <ul class="exceptions">
+              <li>
+                <strong>A looping region airs its first item twice per loop</strong>, and displaces what
+                follows (RET-122; the row above has what the log could show of it). The first unit has carried a fix since 3 Oct 2026,
+                not accepted as of 6 Oct; the second unit has none.
+              </li>
+              <li>
+                <strong>A schedule whose first item lay more than a minute ahead of the engine&rsquo;s start
+                aired that item at once</strong>, early by almost the whole lead (RET-142, found off air on
+                4 Oct 2026). Neither unit&rsquo;s schedules start that far ahead. Under the first unit&rsquo;s
+                fix, since 5 Oct 2026, such an item waits, but airs late by however much of a second the
+                engine&rsquo;s start left before its next whole second: 110 to 757&nbsp;ms in eight tests
+                without a card on 11 Oct 2026, up to a second in all. A fix for that, made on 11 Oct 2026, is
+                on neither unit as of that day; the second unit has neither fix.
+              </li>
+              <li>
+                <strong>On the first unit every item aired 41&ndash;58&nbsp;ms after its instant</strong>
+                (RET-146, found on 8 Oct 2026; the median of each of its eleven runs of 5&ndash;9 Oct 2026,
+                some items a further 40&nbsp;ms later, the figure set partly by when each run started).
+                Frames were stamped a frame late, and handed to the output a moment after the tick that
+                should have aired them. The first unit has carried a fix since 00:33&nbsp;UTC on 9 Oct 2026,
+                not accepted as of that day. On the fix, 77 of the 80 items of a schedule&rsquo;s first pass
+                in its first four runs started on their instants to within a millisecond, and three &mdash;
+                the same item each time &mdash; 20&nbsp;ms early: a second fault, in which a looping region
+                never took a fresh time from the schedule, so the part-frames left over where a 29.97 clip
+                was cut added up until an airing ended 20&nbsp;ms short. That was fixed on the first unit at
+                20:13&nbsp;UTC the same day, and in that run&rsquo;s first pass all 20 started on their
+                instants. The fix also cut two frames from each of the first eleven items after a start on
+                a schedule with no times; that was fixed on the first unit at 11:20&nbsp;UTC. The second unit
+                runs the code from before all of this, with none of these fixes, and was not measured.
+              </li>
+              <li>
+                <strong>A fixed-time item that follows a source faster than its channel airs late</strong>:
+                it waits for that source, which plays slow, and is late by as much as the source has fallen
+                behind &mdash; 2.5 and 3.9&nbsp;s in two tests (RET-128, found without a card on 13 Oct 2026).
+                On the first unit that holds only where the faster rate is not a whole multiple of the
+                channel&rsquo;s; on the second unit, for every faster source. A fix made on 13 Oct 2026 is on
+                neither unit as of 29 Oct 2026.
+              </li>
+            </ul>
+          </div>
+          <p class="reg-earn"><span>Would earn it:</span> every one of these fixes on both units, each
+            accepted on air.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>A faster source plays at its own speed</h3>
+          <p class="reg-why">A source faster than the channel&rsquo;s output rate airs slow, by the ratio
+            of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The
+            exception, on the first unit since 5 Oct 2026, is a source at a whole multiple of the
+            channel&rsquo;s rate, such as 50p on its 1080i50 channel: it airs at its own speed, one source
+            frame to each field. The second unit has no such exception. The engine does not refuse such a
+            source, and flags it in its log only for the items it checks at start-up &mdash; by default the
+            first 30, and any due within 30 minutes.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the fix made on 13 Oct 2026, on both units; it
+            is on neither as of 29 Oct 2026.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Four outputs ride out a stall</h3>
+          <p class="reg-why">On 14 Sep 2026 a 220&nbsp;ms stall during a test of ours cost three of the
+            second unit&rsquo;s four outputs their card buffer, and an ordinary clip change twelve minutes
+            later began an hour of frames dropped at the card. They did not recover without a restart.
+            Why is open.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the cause found, and an output that regains its
+            card buffer without a restart when the stall is repeated.</p>
         </div>
 
         <div class="reg-item">
