@@ -295,9 +295,11 @@
       display. The main display is left out of that list, so the player cannot cover the screen you
       are working on unless you ask it to.</li>
     <li><strong>Hardware decoding</strong> where the graphics hardware offers it (VA-API on Linux,
-      D3D11VA on Windows), with software decoding where it does not. Hardware-decoded frames are
+      D3D11VA on Windows), with software decoding where it does not. Most hardware-decoded frames are
       drawn without being copied back to the processor: on Linux with Intel graphics, and on Windows
-      since 26 Oct 2026, where each frame is copied once within the graphics processor.</li>
+      since 26 Oct 2026, where each frame is copied once within the graphics processor. Some are still
+      copied back: on Linux HEVC 4:2:2 and a layout the graphics driver does not offer, and on Windows
+      a frame of an odd size.</li>
   </ul>
 </section>
 
@@ -352,8 +354,8 @@
             microphone recording the screen and the earpiece together, and a clip that flashes and
             beeps once a second. The tolerance EBU&nbsp;R37 sets for a broadcast chain allows the
             sound up to 60&nbsp;ms late. How it was measured, and what it found on the way, is in the
-            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>. Since 27 Oct 2026 the
-            Windows build puts its pictures on the screen differently, and it has not been measured
+            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>. Since 26 and 27 Oct 2026 the
+            Windows build has put its pictures on the screen differently, and it has not been measured
             on the screen since.</td></tr>
         <tr><th scope="row">Seeks and go-tos that land on the frame asked for
             <span class="cell-note">by time, frame number, timestamp and timecode</span></th>
@@ -422,7 +424,7 @@
         programs and allowed it four minutes later.</li>
       <li><strong>Not shown to survive a graphics driver reset.</strong> Since 29 Oct 2026 the build
         we test draws its picture again after its graphics device is lost and plays on, which we
-        have tried only by destroying the device on purpose. A real driver reset has not been tried,
+        have tried only on Linux, by destroying the device on purpose. A real driver reset has not been tried,
         and the hardware decoder is not rebuilt after one.</li>
       <li><strong>No macOS</strong>, and on Linux the native Wayland window is not measured: every
         measurement on Linux has been taken through X11 on Xwayland.</li>

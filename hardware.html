@@ -250,7 +250,8 @@
   <p class="page-body">
     Rytmi is tested on two machines built from off-the-shelf PC parts, and each builds the engine
     it plays. Each has a desktop Intel processor, a retail motherboard, standard non-ECC memory, NVMe and SATA solid-state
-    drives, and a Blackmagic DeckLink card. They run Ubuntu 24.04 LTS, with Ubuntu&rsquo;s own
+    drives, and a Blackmagic DeckLink card; figures we mark as measured without a card come from our
+    development laptops, which are not listed here. The two machines run Ubuntu 24.04 LTS, with Ubuntu&rsquo;s own
     kernel and FFmpeg packages. <strong>There is no appliance, and no hardware of our own design.</strong>
   </p>
   <p class="page-body">
@@ -350,7 +351,7 @@
 <section class="hw-section" id="duty" aria-labelledby="duty-title">
   <div class="sec-head">
     <h2 class="sec-title" id="duty-title">What each unit does</h2>
-    <p>As of 29 Sep 2026.</p>
+    <p>As of 29 Oct 2026, unless a line carries another date.</p>
   </div>
   <ul class="duty">
     <li><strong>The first unit</strong> plays two channels: 1920&times;1080 progressive at 50 frames a
@@ -379,9 +380,10 @@
       <li><strong>The first unit&rsquo;s fourth SDI output did not work</strong> from when its card
         was fitted, in May 2026, until 29 Oct 2026. The card&rsquo;s driver still listed all four
         outputs, and none of our software on the machine detected the fault. Until the fix the
-        first unit used three of the four outputs.</li>
-      <li><strong>Fixed by a replacement card on 29 Oct 2026.</strong> Before the unit went back on
-        air, all four of the new card&rsquo;s outputs played a test picture for ten minutes at 50
+        first unit could use only three of the four outputs.</li>
+      <li><strong>Fixed by a replacement card on 29 Oct 2026.</strong> The swap began with a power cut
+        rather than a clean stop, so the unit first started its engine on the new card unchecked, with
+        no cables attached, and we stopped it. Before the unit went back on air, all four of the new card&rsquo;s outputs played a test picture for ten minutes at 50
         frames a second, and a monitor showed each one&rsquo;s picture on its connector. The
         machine, driver and firmware are the same as before, so the fault was in the old card,
         which goes back under warranty.</li>
@@ -489,7 +491,7 @@
             1080p50 channel needs uncompressed, with no error and the engine&rsquo;s counters
             unmoved. In the first recording sessions, on 7 Oct 2026, one write was held up for
             6.8&nbsp;s after the drive had sat idle. On 25 Oct 2026 we reproduced it: after 8 minutes
-            idle the drive took about 6.5&nbsp;s to wake, and the first write waited for it; woken
+            idle the drive took about 6&nbsp;s to wake, and the first write waited 6.5&nbsp;s for it; woken
             first, no write was held up. Our recording tools wake it when a recording is set up in
             advance; one started by hand on an idle drive can still wait those seconds.</td></tr>
       </tbody>

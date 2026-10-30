@@ -527,7 +527,7 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with four known exceptions, each in the register below:
+          with six known exceptions, each in the register below:
         </p>
         <ul class="exceptions">
           <li>
@@ -549,6 +549,18 @@
             <strong>A fixed-time item that follows a source faster than its channel airs late</strong>
             &mdash; 2.5 and 3.9&nbsp;s in two tests. A fix made on 13 Oct 2026 is on neither unit as of
             29 Oct 2026.
+          </li>
+          <li>
+            <strong>On the first unit an item due less than a frame after the one before it ends can start
+            at once, up to a frame early</strong>, and over several items that end a little short this can put a
+            frame or two of emergency material between programmes. A change made on 15 Oct 2026 is on
+            neither unit as of 29 Oct 2026.
+          </li>
+          <li>
+            <strong>A step in the system clock after the engine starts moves what airs.</strong> The first
+            unit&rsquo;s build, since 11 Oct 2026, carries the step to the next fixed-time item; the second
+            unit&rsquo;s airs fixed items late for minutes after a forward step and freezes after a
+            backward one.
           </li>
         </ul>
         <p>
@@ -612,7 +624,8 @@
           second unit, which has since run all four unattended: 221 hours unbroken, 18&ndash;27 Sep 2026,
           and 433 hours, 27 Sep&ndash;15 Oct 2026, until the crash in the register below &mdash; every
           output playing the same mixed-source schedule at one output rate, the engine counting no late
-          frame.
+          frame, though its alarm for a decoder falling behind stood on two of the four outputs for most
+          of those 433 hours.
         </p>
         <p class="note">
           Two limits, each in the register below: a 220&nbsp;ms stall on 14 Sep 2026 cost three outputs
@@ -891,7 +904,7 @@
           <p class="reg-why">We measured the engine-side component over 200 trials on 30 Jul 2026. It is a
             <em>lower bound</em>: it stops at the point the frame enters the handoff queue, and
             the card pipeline beyond that point adds at least 60&nbsp;ms this number does not
-            include &mdash; the card buffer measured 8 frames, 160&nbsp;ms, unchanged across 1,824 samples over 30&nbsp;h to 1 Aug 2026. Scheduled-event accuracy on the wire is likewise unmeasured; engine-side, the first frame of a scheduled item left our converter 22&ndash;36&nbsp;ms after its due instant at the junctions measured on 30 Jul 2026, on code since corrected (RET-146, near the top of this page). Since 9 Oct 2026 the first unit&rsquo;s own log has put items on their instants to within a millisecond, which is still engine-side. Quoting it as glass-to-glass would understate our own latency by an
+            include &mdash; the card buffer measured 8 frames, 160&nbsp;ms, unchanged across 1,824 samples over 30&nbsp;h to 1 Aug 2026. Scheduled-event accuracy on the wire is likewise unmeasured; engine-side, the first frame of a scheduled item left our converter 22&ndash;36&nbsp;ms after its due instant at the junctions measured on 30 Jul 2026, on code since corrected (RET-146, near the top of this page). On 9 Oct 2026, after those fixes, the first unit&rsquo;s own log put all 20 items of a schedule&rsquo;s first pass on their instants, which is still engine-side. Quoting it as glass-to-glass would understate our own latency by an
             unknown margin.</p>
           <p class="reg-earn"><span>Would earn it:</span> a capture rig on the SDI output measuring
             the round trip end to end.</p>
@@ -945,7 +958,7 @@
             Nothing paged us; we found it a day and a half later, reviewing our own instruments. It
             crashed inside Intel&rsquo;s video driver, which does not keep the fetch of a decoded frame
             from the graphics memory apart from the teardown of the decoder that made it &mdash; and our
-            engine let the two overlap at the end of a clip. A probe of ours, outside the engine, crashed
+            engine let the two overlap at the end of a clip. A probe of ours, outside the engine and run without a card on a development laptop, crashed
             the same way in ten runs out of ten, and not once in 35,000 tries with the two kept apart.
             The same day the same fetch failed once without a crash, and one interlaced frame aired built
             from one source picture instead of two. Since 16:18&nbsp;UTC on 9 Oct 2026 the first unit&rsquo;s engine
@@ -1019,7 +1032,7 @@
           <h3>Every item airs on its instant</h3>
           <div class="reg-why">
             <p>The design is that every schedule item airs against an absolute TAI instant, not an
-              offset from whenever the engine started. We know of four exceptions, in the order found:</p>
+              offset from whenever the engine started. We know of six exceptions, in the order found:</p>
             <ul class="exceptions">
               <li>
                 <strong>A looping region airs its first item twice per loop</strong>, and displaces what
@@ -1059,6 +1072,26 @@
                 channel&rsquo;s; on the second unit, for every faster source. A fix made on 13 Oct 2026 is on
                 neither unit as of 29 Oct 2026.
               </li>
+              <li>
+                <strong>An item due less than a frame after the one before it ends starts at once</strong>, on the
+                first unit since 3 Oct 2026: a gap shorter than a frame is not a gap, so an item between half
+                a frame and a frame past its programme change starts at the change, up to a frame early.
+                After several items each ending a little short, that can add up to a frame or two of
+                emergency material between programmes (the <a href="/archive/moved-freeze-2026-10-15/">archive
+                entry of 15 Oct 2026</a> has how we found it). A change made on 15 Oct 2026, in which such an
+                item waits for its own time, is on neither unit as of 29 Oct 2026.
+              </li>
+              <li>
+                <strong>A step in the system clock after the engine has started</strong>, measured without a
+                card on 10 Oct 2026. On the build the second unit runs, every time the engine publishes stays
+                on the offset it took at its start: after a 2&nbsp;s forward step it aired fixed-time items late
+                for about three minutes, by up to the step, and after a backward one its output froze for the
+                step&rsquo;s length. The first unit&rsquo;s build, since 11 Oct 2026, takes a step on its next
+                frame and records it in the log; the items after it air early or late by the step until the
+                next fixed-time item, which airs on its time. On that build a backward step longer than the
+                engine has been running still freezes its output, and an item can air again after one;
+                changes made on 11 and 12 Oct 2026 for those are on neither unit as of 29 Oct 2026.
+              </li>
             </ul>
           </div>
           <p class="reg-earn"><span>Would earn it:</span> every one of these fixes on both units, each
@@ -1070,9 +1103,9 @@
           <p class="reg-why">A source faster than the channel&rsquo;s output rate airs slow, by the ratio
             of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The
             exception, on the first unit since 5 Oct 2026, is a source at a whole multiple of the
-            channel&rsquo;s rate, such as 50p on its 1080i50 channel: it airs at its own speed, one source
-            frame to each field. The second unit has no such exception. The engine does not refuse such a
-            source, and flags it in its log only for the items it checks at start-up &mdash; by default the
+            channel&rsquo;s rate, such as 50p on its 1080i50 channel, which airs at its own speed, one source frame
+            to each field. The second unit has no such exception. The engine does not refuse a faster source,
+            and flags one in its log only for the items it checks at start-up &mdash; by default the
             first 30, and any due within 30 minutes.</p>
           <p class="reg-earn"><span>Would earn it:</span> the fix made on 13 Oct 2026, on both units; it
             is on neither as of 29 Oct 2026.</p>
@@ -1241,9 +1274,9 @@
       </div>
       <div class="tool">
         <div class="tool-top"><span class="tool-name">Karhu&nbsp;Player</span><span class="tag">in development &middot; not released</span></div>
-        <p><strong>A media player for people who have to trust the timecode.</strong> Built for
-          broadcast use rather than adapted to it, with EBU&nbsp;R128 loudness metering in the
-          engine rather than bolted on. <strong>Its frame-rate arithmetic and handoff ring are Rytmi's</strong> — copied
+        <p><strong>A media player for people who need to see what is really in a file.</strong> Made with
+          broadcast material in mind, with EBU&nbsp;R128 loudness metering in the engine rather than
+          bolted on; what it shows is for information, and it is not for compliance use. <strong>Its frame-rate arithmetic and handoff ring are Rytmi's</strong> — copied
           verbatim from a dated engine snapshot, each with a provenance record naming its origin;
           its TAI sourcing and precision sleep are new code built to the same design, and the record says which is which
           in the engine.</p>
