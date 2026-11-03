@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>A video player on GNOME drops a frame every twelve seconds, and it is not the player — Karhu TV</title>
+<meta name="description" content="How we traced Karhu Player&#x27;s dropped frames on GNOME to the desktop&#x27;s JavaScript garbage collector with page-flip events, scheduler records and stack samples, what a faster machine showed, and what the player does about a miss it cannot prevent.">
+<link rel="canonical" href="https://karhu.tv/archive/compositor-garbage-collection-2026-11-03/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/compositor-garbage-collection-2026-11-03/">
+<meta property="og:title" content="A video player on GNOME drops a frame every twelve seconds, and it is not the player">
+<meta property="og:description" content="How we traced Karhu Player&#x27;s dropped frames on GNOME to the desktop&#x27;s JavaScript garbage collector with page-flip events, scheduler records and stack samples, what a faster machine showed, and what the player does about a miss it cannot prevent.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-11-03">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A video player on GNOME drops a frame every twelve seconds, and it is not the player">
+<meta name="twitter:description" content="How we traced Karhu Player&#x27;s dropped frames on GNOME to the desktop&#x27;s JavaScript garbage collector with page-flip events, scheduler records and stack samples, what a faster machine showed, and what the player does about a miss it cannot prevent.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "A video player on GNOME drops a frame every twelve seconds, and it is not the player: the desktop’s garbage co",
+ "description": "How we traced Karhu Player's dropped frames on GNOME to the desktop's JavaScript garbage collector with page-flip events, scheduler records and stack samples, what a faster machine showed, and what the player does about a miss it cannot prevent.",
+ "datePublished": "2026-11-03",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/compositor-garbage-collection-2026-11-03/",
+ "mainEntityOfPage": "https://karhu.tv/archive/compositor-garbage-collection-2026-11-03/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-11-02/2026-11-03"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-11-03">3 Nov 2026</time></p>
+        <h1 id="entry-title">A video player on GNOME drops a frame every twelve seconds, and it is not the player: the desktop&rsquo;s garbage collector traced to a missed vblank, 3&nbsp;November&nbsp;2026</h1>
+        <p class="dek">Karhu Player&rsquo;s log said a dropped frame every ten to fifteen seconds under GNOME. We traced the screen&rsquo;s page flips, the scheduler and the compositor&rsquo;s own call stacks on one clock: in twelve of thirteen missed refreshes the desktop&rsquo;s compositor was running JavaScript across its own deadline, mostly a 14 to 24&nbsp;ms garbage collection from a timer in gjs. A faster machine paid the same. What the player does about it, and does not, is the design question this answers.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section>
+<h2>The thing we were trying to explain</h2>
+<p>Karhu Player plays a 60&nbsp;frame-a-second clip on a 60&nbsp;Hz screen under Ubuntu&nbsp;24.04&rsquo;s GNOME desktop, and about every twelve seconds its log says it dropped a frame. A slow-motion film of the screen shows what a viewer would see: one picture held for a second refresh, then one skipped so the clip catches up. The rate did not change with the player&rsquo;s overlay on or off, at 1080p or UHD, with the clip at the screen&rsquo;s exact rate or faster. So it was not our drawing. On 2&nbsp;November&nbsp;2026 a reading of which process had the CPU at which fraction of the wall-clock second put every drop at one phase of the second and pointed at the desktop&rsquo;s own once-a-second work, and we wrote that down as an inference with a hope attached: about a millisecond of desktop work seemed to cost a refresh on our small test machine, so a faster one need not miss. On 3&nbsp;November we traced it instead of inferring it.</p>
+</section>
+<section>
+<h2>How we traced it</h2>
+<p>Three records on one clock, taken while the player ran for 95&nbsp;seconds full screen. The graphics driver&rsquo;s own event for every completed page flip, which carries the hardware time the picture changed: a gap of two refresh periods between flips is a vblank the desktop missed, whatever anyone&rsquo;s log says. Every scheduler switch and wake-up on the machine, so that for each miss we could read what the desktop&rsquo;s compositor thread was doing in the 30&nbsp;ms before it and what else was on its CPU. And the compositor&rsquo;s call stacks sampled two thousand times a second, with the debug symbols for its JavaScript engine fetched afterwards so the samples had names. The player&rsquo;s own Wayland trace and drop lines ran beside them, as the thing to be explained, not the instrument.</p>
+<p>In the 88&nbsp;seconds read, 5,266 flips arrived 16.675&nbsp;ms apart, and 13 gaps were two periods wide (one was three). Twelve of the thirteen fell within 60&nbsp;ms of one of the player&rsquo;s logged drops. The player logged 16; the other four were its own catch-ups at a normal 16.7&nbsp;ms paint, with no missed vblank behind them.</p>
+</section>
+<section>
+<h2>What the desktop was doing</h2>
+<p>The compositor&rsquo;s cadence, read from the scheduler record: its main thread wakes 3.6 to 5.2&nbsp;ms before each vblank, runs for about 0.4&nbsp;ms to decide the frame, hands it to the thread that commits it to the display, and the flip lands on the vblank. At a miss, in 12 of the 13, that main thread was inside one continuous run that spanned the moment it should have dispatched the frame: a median of 16&nbsp;ms of work, 13 to 28, where it normally does under 4 in the same window. The frame went out when the run ended, one vblank late. It was not waiting for a CPU: its longest wait was 1.2&nbsp;ms. Nothing else was crowding its core, and our player had less time on that core at the misses than at any other moment.</p>
+<p>The stacks say what the run was. Under seven of the thirteen misses the compositor was marking live objects for its JavaScript garbage collector, in collections of 14 to 24&nbsp;ms, every one beginning within a hundredth of a second of the same fraction of the wall-clock second, and every collection of the run produced a miss. Five misses were JavaScript script and just-in-time compilation runs of 9 to 20&nbsp;ms. One was a thread woken 5&nbsp;ms late with nothing running, and we have not read why. Across the whole run, the compositor&rsquo;s JavaScript engine ran almost only in one tenth of each second, which is where the drops had been found the day before.</p>
+<p>A second trace with deeper stack unwinding named the caller. Seventy-seven of eighty-two collection samples unwind to <code>trigger_gc_if_needed</code> in gjs, GNOME Shell&rsquo;s JavaScript binding, calling a full collection of the engine, from a timer gjs arms itself. The phase of that timer within the second moved when the machine was rebooted, as GLib&rsquo;s second-granularity timers do, and the misses moved with it.</p>
+</section>
+<section>
+<h2>The hope, tested</h2>
+<p>The small machine is an Intel N100 desktop. The same trace on a Core Ultra&nbsp;7 laptop with the same GNOME, gjs and JavaScript engine builds: 11 missed vblanks in 88&nbsp;seconds, every one at a logged drop, seven of them the same collections, 15 to 25&nbsp;ms long, under the same caller. The collections are no shorter on the faster processor by enough to matter. One collection on the laptop took 4&nbsp;ms and cost nothing, which is the rule&rsquo;s other side: a collection longer than the compositor&rsquo;s four or five millisecond lead costs a vblank, and the lead does not grow with the processor. The hope we wrote down on 2&nbsp;November was wrong. The work was twenty milliseconds, not one, and the faster machine pays the same.</p>
+<p>We also ran the trace under two other video players on the same desktop. The same collections landed under both. This is the desktop&rsquo;s cost, paid by whatever is on the screen; what each player does about it, and how the players compare, is a separate question we will publish separately after its own review.</p>
+</section>
+<section>
+<h2>What this means for the player&rsquo;s design</h2>
+<p>Karhu Player waits for each refresh of the screen before it shows the next picture, and it keeps a short queue of decoded pictures ahead of the one on screen. When the desktop shows a picture for a second refresh, the player is now one refresh behind the clock. Its rule for that is simple and we have kept it: where the lag will drain on its own, because the clip is slightly slower than the screen, hold the picture and let it; where it will not, drop one picture to catch up, and write that drop in the log with the paint time that caused it. The log line for each of these drops says the previous picture took 25 to 34&nbsp;ms to paint, two refreshes, which is what the trace confirmed from the other side.</p>
+<p>We do not hide the miss. The alternative presentation mode, in which the player draws continuously and the display takes whatever is newest, makes the pairs vanish from a counter while doubling the drawing for no more pictures on the glass, and we measured that before we chose. A deeper queue would, by arithmetic, absorb one missed vblank at the price of a frame of latency on every picture. Neither buys a viewer anything the desktop has not already taken. What a viewer sees on this desktop is one picture held and one skipped every ten to fifteen seconds, from the desktop&rsquo;s garbage collector, and the honest thing a player can do is show the clip at its own clock, drop exactly one picture when it must, and say so.</p>
+</section>
+<section>
+<h2>What remains open</h2>
+<ul>
+<li>Why gjs collects when it does. The timer and the caller are named; the rule that arms the timer is in gjs&rsquo;s source and we have not read it.</li>
+<li>One miss in thirteen was a late wake with nothing running on the core. Unread.</li>
+<li>Whether a shell with less to collect misses less. We measured two machines running the same shell; we have not varied the shell.</li>
+</ul>
+</section>
+<section>
+<h2>What we got wrong on the way</h2>
+<ul>
+<li>The 2&nbsp;November reading said about a millisecond of desktop work. It was twenty. A CPU sampler averages over the second; the trace reads the run.</li>
+<li>The trace reader&rsquo;s first version added up the compositor&rsquo;s time from the slices that ended inside its window, and so left out the one long slice that ran across the vblank in five of the thirteen misses. The timeline of slices printed beside the sums showed them. It counts by overlap now.</li>
+<li>Its first version also judged what a stack sample was doing from every frame in the stack. With deep unwinding, every frame of the shell&rsquo;s ends in the JavaScript function that runs the shell, so an idle machine read as 86&nbsp;% script. The leaf frames decide now.</li>
+<li>The first symbolised stack text held 3,672 of 40,540 samples. The tool that wrote it had stopped where an optional step failed and said so only on its error stream. We noticed because eleven samples a second did not match a thread the scheduler had at eleven percent of a core.</li>
+</ul>
+<p>The recorder and the reader are kept with the player&rsquo;s source, each with a self-test on a made-up trace and a sweep that breaks each of its guards in turn. The records this entry reads are dated 3&nbsp;November&nbsp;2026 and describe Karhu Player as built on 2&nbsp;November under GNOME&nbsp;46 with gjs&nbsp;1.80.2 and SpiderMonkey&nbsp;115.</p>
+</section>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>

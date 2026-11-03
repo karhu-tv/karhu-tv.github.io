@@ -93,6 +93,11 @@
       </div>
       <ol class="entries">
 <li>
+  <p class="entry-date"><time datetime="2026-11-03">3 Nov 2026</time></p>
+  <h3><a href="/archive/compositor-garbage-collection-2026-11-03/">A video player on GNOME drops a frame every twelve seconds, and it is not the player: the desktop&rsquo;s garbage collector traced to a missed vblank, 3&nbsp;November&nbsp;2026</a></h3>
+  <p class="entry-dek">Karhu Player&rsquo;s log said a dropped frame every ten to fifteen seconds under GNOME. We traced the screen&rsquo;s page flips, the scheduler and the compositor&rsquo;s own call stacks on one clock: in twelve of thirteen missed refreshes the desktop&rsquo;s compositor was running JavaScript across its own deadline, mostly a 14 to 24&nbsp;ms garbage collection from a timer in gjs. A faster machine paid the same. What the player does about it, and does not, is the design question this answers.</p>
+</li>
+<li>
   <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
   <h3><a href="/archive/picture-against-sound-2026-10-24/">Picture against sound, measured on the screen: what a camera and a microphone found, 24&nbsp;October&nbsp;2026</a></h3>
   <p class="entry-dek">We measured where Karhu Player&rsquo;s sound lands against its picture where a viewer meets them, on the screen and at the earpiece. It found a fault on Windows that none of our counters showed. After the fixes, on 24 October 2026, the sound arrived 9.9&nbsp;ms after its picture under Ubuntu and 21.5&nbsp;ms after under Windows.</p>

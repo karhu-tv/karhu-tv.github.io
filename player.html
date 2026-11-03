@@ -413,6 +413,13 @@
         reported to us. The Windows build has changed how it draws since then and has not been
         measured again. We have not corrected for it, and we have measured one display and one
         headset.</li>
+      <li><strong>Under GNOME the player drops one picture every ten to fifteen seconds, and it is
+        the desktop&rsquo;s.</strong> On 3 Nov 2026 we traced it, on two machines, to GNOME
+        Shell&rsquo;s JavaScript garbage collector running across the compositor&rsquo;s own
+        deadline: the desktop shows one picture for a second refresh, and the player skips one to
+        catch up and logs it. The trace, and what the player does and does not do about a miss it
+        cannot prevent, is in the
+        <a href="/archive/compositor-garbage-collection-2026-11-03/">archive</a>.</li>
       <li><strong>Seeking in MXF</strong> is not covered by our frame-accuracy test.</li>
       <li><strong>Not every picture is shown.</strong> 4:4:4 (ProRes&nbsp;4444, DNxHR&nbsp;444),
         12-bit, RGB, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound, timecode and loudness,
