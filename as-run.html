@@ -239,8 +239,8 @@
     cannot show that nobody rewrote the whole log.</strong> Both are set out
     <a href="#not-proved">below</a>. Everything on this page is as of 10 Oct 2026 unless it
     carries another date; how the log works was read from our own code on 6 Oct 2026, and its
-    third version on 10 Oct 2026, and what the verifier does with each case below was tried on it
-    on 3 Nov 2026.
+    third version on 10 Oct 2026 and its fourth (one more reason an item is recorded as skipped) on 5 Nov 2026, and what the
+    verifier does with each case below was tried on it on 5 Nov 2026.
   </p>
   <p class="page-body">
     <strong>Our two units&rsquo; logs hold three versions.</strong> From 3 Oct 2026 the first
@@ -279,10 +279,10 @@
       airing that a crash or a power cut stops gets no end record: checking passes it, and lists it
       as open, with no frame count and no loudness. An
       item that airs twice is two airings, numbered in turn, and a scheduled item that never aired
-      gets a record saying why &mdash; with two exceptions we found on 12 Oct 2026, fixed in a build the
-      first unit does not run, as of 29 Oct 2026: an airing whose only frame the engine drops where one item hands over to
-      the next leaves no record, and that day&rsquo;s check fails; and items after one of unknown length,
-      in a playlist loaded while the channel plays, leave no record, and the check passes. These records carry the engine clock tick&rsquo;s time, as the frame
+      gets a record saying why &mdash; with two exceptions we found on 12 Oct 2026 and fixed on the first unit on 5 Nov 2026: until
+      then an airing whose only frame the engine dropped where one item hands over to the next left no record, and that
+      day&rsquo;s check failed; and items after one of unknown length, in a playlist loaded while the channel plays, left no
+      record, and the check passed. Since 5 Nov 2026 the first is recorded as never aired and the second are measured and aired. These records carry the engine clock tick&rsquo;s time, as the frame
       records do.</li>
     <li><strong>Each record commits to the one before it.</strong> A record&rsquo;s SHA-256 hash
       covers the hash of the record before it and everything else in the record, so changing,
@@ -406,8 +406,9 @@
           records to the airing (<a href="#proved">above</a>), so a writer whose frame records
           disagree with their airing &mdash; another source file, a time out of order, a hole
           &mdash; is caught; a writer that wrote a consistent false account is not. One limit, found on
-          13 Oct 2026 and fixed in a build the first unit does not run, as of 29 Oct 2026: an airing that runs across midnight is
-          held to its frame records only up to midnight, so what it wrote after midnight is not checked.</p>
+          13 Oct 2026 and lifted on the first unit on 5 Nov 2026: until then an airing that ran across midnight was held to its
+          frame records only up to midnight, so what it wrote after midnight was not checked; since 5 Nov 2026 it is held
+          across midnight as one airing, and counted once.</p>
         <p>A frame is recorded as the engine hands it on towards the card, and the engine can then
           discard it to absorb the card&rsquo;s clock drift. In the first version of the log the
           record stays, so the log says that frame played when it never reached the card: up to one
@@ -515,7 +516,7 @@
     <p><code>opx-verify</code> does the checking described above, and we use it on our own
       archive. It is not released: <a href="/tools.html#opx-verify">the tools page</a> lists it as
       in progress, and it is not offered for download. This is the version built on 13 Oct 2026,
-      and since 3 Nov 2026 the one that checks the first unit&rsquo;s log every night. It reads all three
+      and since 5 Nov 2026 the one that checks the first unit&rsquo;s log every night. It reads all four
       versions of the log.</p>
   </div>
   <ul class="facts">
