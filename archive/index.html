@@ -93,6 +93,11 @@
       </div>
       <ol class="entries">
 <li>
+  <p class="entry-date"><time datetime="2026-11-09">9 Nov 2026</time></p>
+  <h3><a href="/archive/restart-resume-2026-11-09/">Back where the schedule is: a restart that cuts in at the next keyframe, and the case our test missed</a></h3>
+  <p class="entry-dek">When our playout engine stops in the middle of a programme, by a crash or by our own hand, it comes back where the schedule says it should be and cuts in at the file&rsquo;s next keyframe. On 9 November 2026 we tested it on six kinds of source without the SDI card. Writing this entry, we found that twelve of the 36 cases the test had passed hid a fault: a restart landing just after a short item began skipped it, aired black in its place, and left no record of it.</p>
+</li>
+<li>
   <p class="entry-date"><time datetime="2026-11-03">3 Nov 2026</time></p>
   <h3><a href="/archive/compositor-garbage-collection-2026-11-03/">A video player on GNOME drops a frame every twelve seconds, and it is not the player: the desktop&rsquo;s garbage collector traced to a missed vblank, 3&nbsp;November&nbsp;2026</a></h3>
   <p class="entry-dek">Karhu Player&rsquo;s log said a dropped frame every ten to fifteen seconds under GNOME. We traced the screen&rsquo;s page flips, the scheduler and the compositor&rsquo;s own call stacks on one clock: in twelve of thirteen missed refreshes the desktop&rsquo;s compositor was running JavaScript across its own deadline, mostly a 14 to 24&nbsp;ms garbage collection from a timer in gjs. A faster machine paid the same. What the player does about it, and does not, is the design question this answers.</p>

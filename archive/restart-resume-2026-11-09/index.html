@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Cutting back in after a restart, and what our test missed — Karhu TV</title>
+<meta name="description" content="How our playout engine cuts back in at a file&#x27;s next keyframe after a stop or a crash, how we tested it without the SDI card, and the fault the test missed.">
+<link rel="canonical" href="https://karhu.tv/archive/restart-resume-2026-11-09/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/restart-resume-2026-11-09/">
+<meta property="og:title" content="Cutting back in after a restart, and what our test missed">
+<meta property="og:description" content="How our playout engine cuts back in at a file&#x27;s next keyframe after a stop or a crash, how we tested it without the SDI card, and the fault the test missed.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-11-09">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cutting back in after a restart, and what our test missed">
+<meta name="twitter:description" content="How our playout engine cuts back in at a file&#x27;s next keyframe after a stop or a crash, how we tested it without the SDI card, and the fault the test missed.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Back where the schedule is: a restart that cuts in at the next keyframe, and the case our test missed",
+ "description": "How our playout engine cuts back in at a file's next keyframe after a stop or a crash, how we tested it without the SDI card, and the fault the test missed.",
+ "datePublished": "2026-11-09",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/restart-resume-2026-11-09/",
+ "mainEntityOfPage": "https://karhu.tv/archive/restart-resume-2026-11-09/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-10-14/2026-11-09"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-11-09">9 Nov 2026</time></p>
+        <h1 id="entry-title">Back where the schedule is: a restart that cuts in at the next keyframe, and the case our test missed</h1>
+        <p class="dek">When our playout engine stops in the middle of a programme, by a crash or by our own hand, it comes back where the schedule says it should be and cuts in at the file&rsquo;s next keyframe. On 9 November 2026 we tested it on six kinds of source without the SDI card. Writing this entry, we found that twelve of the 36 cases the test had passed hid a fault: a restart landing just after a short item began skipped it, aired black in its place, and left no record of it.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section id="before">
+<h2>What a restart used to do</h2>
+<p>Before 14 October 2026 the engine kept each channel&rsquo;s running schedule in memory and nowhere else. A restart, whether a crash, a power cut or an engineer&rsquo;s deliberate stop, opened the schedule file again and played its first item, whatever the time. A restart at ten in the morning on a day that began at six aired the six o&rsquo;clock item again, every item after it ran late until the next item fixed to a time, and every playlist loaded into the channel during the day was gone.</p>
+<p>What we wanted instead, in our own words at the time: write the playlist every two seconds, so a restart loads the latest edited version; find where the schedule says we should be; find the next keyframe at least 0.3 seconds from now, to give the decoder its cue time; and cut in there. We built it on 14 October 2026.</p>
+</section>
+<section id="how">
+<h2>How it works</h2>
+<p><strong>The copy.</strong> Every two seconds each channel&rsquo;s live timeline, with every playlist loaded into it and every length the engine has measured, is written to disk if it changed. The write goes to a temporary file, is synced, renamed into place and the directory synced, so a power cut leaves the last complete copy and never half of one. A clean stop writes it once more on the way down, so it loses nothing; a crash can lose up to the last two seconds of edits.</p>
+<p><strong>Which copy a start takes.</strong> Only one that grew from the same schedule file, by its checksum, for the same channel. Anything else starts from the file, and the old copy is kept to one side under a new name. A schedule an operator has deliberately replaced is never overridden by yesterday&rsquo;s edits.</p>
+<p><strong>Where it cuts in.</strong> From the master clock&rsquo;s first tick, the engine looks 0.3 seconds ahead, finds the item the timeline has on air then, and finds that file&rsquo;s first keyframe at least that far in, looking at most 30 seconds ahead. A decoder can only start cleanly at a keyframe, and the 0.3 seconds is the time to open the file and decode that first picture before it is due. If there is no keyframe in the window, or the item ends first, the channel goes to the next item, at its own time. Until the cut-in the channel is black.</p>
+<p><strong>On the channel&rsquo;s frame grid.</strong> The keyframe becomes the airing&rsquo;s first frame on the tick its scheduled time falls to, so every frame after it counts from a tick. Our first version placed it at the keyframe&rsquo;s own time instead, and a review of our own work found what that did: a 50p file whose keyframe fell on an odd frame, played on a 25p channel, aired every frame half a frame late and the item after it a tick late. That was fixed before the feature went anywhere.</p>
+</section>
+<section id="test">
+<h2>How we tested it</h2>
+<p>Until 9 November 2026 its proofs ran on one source, an H.264 file with a keyframe every two seconds, and every restart was a clean stop. So on 9 November 2026 we built a matrix. Each case is a day schedule: the source under test for 30 seconds, six seconds of bars after it, and an item fixed to a time 44 seconds in. The engine is stopped at one of three places in the first item, 2 seconds in, 13.7 seconds in, or 29.2 seconds in (inside its last second, so the next keyframe after the restart falls past its end), either cleanly or by a kill, which skips the last write and leaves the copy up to two seconds old. A second engine starts on the same schedule file at once.</p>
+<p>Each case is judged from the engine&rsquo;s own records against a reading written before it ran: one resumed line per channel; the cut-in at one of the source&rsquo;s own keyframes, read from the file with ffprobe, at least 0.3 seconds after the second engine started; that airing&rsquo;s start in the compliance log at the cut-in&rsquo;s time to half a frame; every item after it on its time, the fixed one on its exact tick; the first item never aired again from its start; and the day&rsquo;s compliance log verifying across the restart. It runs without the SDI card, on our development laptop, with the release build of the engine. The sources are made for the test from a generated picture; none is anyone&rsquo;s programme.</p>
+<table class="facts">
+  <caption>Time from the second engine&rsquo;s process start to the cut-in, 9 Nov 2026: each source&rsquo;s four cases stopped 2 or 13.7 seconds into the first item, every channel</caption>
+  <thead><tr><th scope="col">Source</th><th scope="col">Cut-in after</th><th scope="col">Channels</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">H.264, a keyframe every second, 50p</th><td class="v">1.18&ndash;1.91 s</td><td class="src">1080p50 and 1080i50 (top field first), together</td></tr>
+    <tr><th scope="row">H.264, a keyframe every ten seconds, 50p</th><td class="v">6.13&ndash;7.93 s</td><td class="src">1080p50 and 1080i50</td></tr>
+    <tr><th scope="row">H.264, open GOP with B-pyramids, 25p</th><td class="v">1.18&ndash;1.89 s</td><td class="src">1080p50 and 1080i50</td></tr>
+    <tr><th scope="row">MPEG-2 4:2:2, open GOP of 12, interlaced</th><td class="v">0.64&ndash;1.46 s</td><td class="src">1080p50 and 1080i50</td></tr>
+    <tr><th scope="row">ProRes, every frame a keyframe, 25p</th><td class="v">0.48&ndash;1.27 s</td><td class="src">1080p50 and 1080i50</td></tr>
+    <tr><th scope="row">H.264, 29.97p</th><td class="v">1.16&ndash;1.94 s</td><td class="src">1080p29.97</td></tr>
+  </tbody>
+</table>
+<p>As the test first judged them, all 36 cases passed. When the engine was stopped in the first item&rsquo;s last second, every channel came back at a later item at its own time. The ten-second GOP is the slow row because the cut-in waits for the next keyframe, up to ten seconds of black; that is the trade the design makes, and the alternative, starting at the keyframe before and decoding forward to the right frame, costs more decoding at the moment the engine is starting.</p>
+<p>Not every case passed first time, and the reasons are worth saying. Nineteen passed on the first run. Three came back as cannot-determine, because the laptop was busy with other builds and the master clock woke late; our test tooling refuses to call a failure on a loaded machine either way. The other fourteen failed because of two mistakes in the test, not in the engine. It judged an item&rsquo;s end in the channel&rsquo;s frames, when a 25p source on a 50p channel ends a source frame, two ticks, before the item&rsquo;s scheduled end. And it compared the cut-in with the keyframe&rsquo;s exact time, when the cut-in airs on the tick that time falls to. With both fixed, the 17 were run again on a quiet machine and passed.</p>
+</section>
+<section id="missed">
+<h2>What the test missed</h2>
+<p>Writing this entry, we read the twelve cases stopped in the first item&rsquo;s last second again. Each said the channel came back at the item fixed to 44 seconds, not at the six seconds of bars that follow the first item. The bars clip has one keyframe, its first frame. The second engine&rsquo;s first tick came just after the bars began (in the case we read closely, within 13 milliseconds of it), so the bars could not be joined, and the engine went to the next item that had not begun: the fixed one, about fourteen seconds later. The bars aired as black.</p>
+<p>Two things were wrong, and the test saw neither. The engine skips an item that began just before its restart if the item&rsquo;s file has no keyframe left in it: a long programme loses at most its last GOP, but a short item encoded as one GOP, an ident, a promo or a slate, loses its whole length. And nothing in the compliance log names the skipped item: not aired, not skipped. The log verified as valid, with no skips in it. Our own rule is that an item that never airs is recorded as passed over, and this path broke it. The test missed it because it gave the second engine a few seconds' allowance to start, and judged no item due inside it.</p>
+<p>We corrected the test first. It now requires every scheduled item to be accounted for, aired or recorded skipped, and run again, all twelve name exactly this: ten fail, and our tooling calls the other two cannot-determine, the laptop having woken the master clock late during them. The engine is unchanged: whether it should start at the keyframe before and decode forward, or air an item begun a moment before the restart from its start, is a choice we are making with care, because both change what a restart puts on air. Recording the skipped item is not in doubt.</p>
+</section>
+<aside class="open"><h2>What remains open</h2><ul>
+<li><strong>The fault above.</strong> A restart just after a short item began skips it, airs black in its place and records nothing of it. Settled by an engine that records the skipped item, and by the choice of what airs, with the test above passing on both.</li>
+<li><strong>It has not run on air.</strong> The engine on our first unit has carried it since 6 November 2026, but that unit&rsquo;s schedules never exercise it: one channel&rsquo;s schedule is rebuilt with fresh times at every start, so it never matches its copy, and the other runs a playlist in immediate mode. Settled by a strict schedule on a test channel and deliberate restarts there.</li>
+<li><strong>The wire.</strong> These tests read the engine&rsquo;s records, not the picture. What actually aired between the restart and the cut-in, and whether the first frame after it is clean, is unmeasured. It matters most for an open GOP, where the frames after a keyframe can refer to the GOP before it. Settled by capturing the output across those restarts, with a frame number in the picture.</li>
+<li><strong>The compliance log cannot say "resumed".</strong> A cut-in and an ordinary start of an item are recorded the same way. Settled by a record that says so, which is a change to the log&rsquo;s frozen format.</li>
+<li><strong>Cases not in this matrix:</strong> an item fixed to a time inside the window after the restart; a restart inside a looping part of the schedule after its first pass; a playlist loaded just before the kill; a copy cut short by a kill inside its own write; two kills in a row.</li>
+<li><strong>Black, not emergency material, before the cut-in.</strong> Up to a keyframe interval of it. Our safety net would need its own file opened and decoded in the same 0.3 seconds.</li>
+<li><strong>One engine to a state directory.</strong> Nothing locks it, so a second engine run as the same user overwrites the first&rsquo;s copy. The worst case is a restart that starts from its file and loses the day&rsquo;s loaded playlists.</li>
+</ul></aside>
+<p class="record">Written on 9 November 2026 from the record: the design and its testing log (docs/restart-resume-design-2026-10-14.md), the test (restart_resume_cardless.py) and its two run logs.</p>
+
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>
