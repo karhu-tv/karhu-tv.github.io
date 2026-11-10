@@ -305,10 +305,10 @@
   <p class="page-eyebrow">opx-* suite</p>
   <h1 class="page-title">Free broadcast<br>engineering tools.</h1>
   <p class="page-body">
-    Binary-only releases for Linux. No account required.
+    Binary-only releases for Linux and Windows. No account required.
     No licence key. No telemetry, no update check — the tools phone nowhere. (A URL given as the file argument is opened by FFmpeg, as in any FFmpeg tool.) Built on the same codebase as our commercial products.
     The two released tools list their known issues below, dated, and say why we withdrew their
-    Windows builds on 29 Sep 2026.
+    Windows builds on 29 Sep 2026 and what each download carries since 10 Nov 2026.
   </p>
 </div>
 
@@ -369,7 +369,7 @@
 
     <div>
       <div class="download-block">
-        <h3 class="download-title">Download opx-probe v0.2.0</h3>
+        <h3 class="download-title">Download opx-probe v0.2.1</h3>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz"
              class="download-btn">
@@ -377,20 +377,37 @@
               <span class="platform-icon" aria-hidden="true">🐧</span>
               <div>
                 <div>Linux x86_64</div>
-                <div class="download-btn-meta">tar.gz · Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
+                <div class="download-btn-meta">tar.gz · glibc 2.35 or later · FFmpeg included</div>
+              </div>
+            </div>
+            <span class="download-arrow" aria-hidden="true">↓</span>
+          </a>
+          <a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-windows-x86_64.zip"
+             class="download-btn">
+            <div class="download-btn-left">
+              <span class="platform-icon" aria-hidden="true">⊞</span>
+              <div>
+                <div>Windows x86_64</div>
+                <div class="download-btn-meta">zip · FFmpeg included</div>
               </div>
             </div>
             <span class="download-arrow" aria-hidden="true">↓</span>
           </a>
         </div>
         <div class="download-note">
-          <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
-          Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
-          (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
-          <strong>Windows:</strong> the Windows zip bundled FFmpeg 6.1.1 DLLs (gyan.dev full_build-shared),
-          licensed GPL version 3 or later. It did not include that licence’s text or an offer of the
-          FFmpeg source, which the licence requires. The Linux builds do not bundle FFmpeg.
-          Windows downloads withdrawn 29 Sep 2026 for this reason.<br><br>
+          <strong>Both downloads</strong> carry FFmpeg 6.1.6, which we build ourselves, licensed LGPL
+          version 2.1 or later, and its source is on the release page. Each also carries the tool’s licence
+          (<code>LICENCE.txt</code>: free for any purpose, commercial included, no warranty) and the
+          licences of the parts made by others. Since 10 Nov 2026, v0.2.1.<br><br>
+          <strong>Linux:</strong> needs 64-bit Linux with glibc 2.35 or later, as Ubuntu 22.04 and later
+          have; tested on Ubuntu 24.04. No <code>apt install</code> needed: FFmpeg is in the archive’s
+          <code>lib</code> folder. <strong>Windows:</strong> tested on Windows 11; keep the four DLLs
+          beside <code>opx-probe.exe</code>.<br><br>
+          <strong>Before v0.2.1:</strong> the Windows zip bundled FFmpeg 6.1.1 DLLs (gyan.dev
+          full_build-shared), licensed GPL version 3 or later, without that licence’s text or an offer of
+          the FFmpeg source, which the licence requires; it was withdrawn on 29 Sep 2026 for this reason.
+          The Linux archive linked the computer’s own FFmpeg, which Ubuntu builds under the GPL, and
+          neither download carried a licence for the tool or for the Rust libraries in it.<br><br>
           Source code is not published. One exception, stated so nobody has to find it: from
           16 Apr to 28 Jul 2026 the opx-probe repository carried one source file of the
           command-line front-end, committed by mistake under <code>.github/workflows/</code>.
@@ -434,9 +451,10 @@
       <li><strong>Publisher name.</strong> <code>--help</code> names a limited company that is not the
         publisher, and the archive’s README.txt runs the trading name together as one word. The publisher
         is Bear Media Services LTD, trading as Karhu TV. The <code>--help</code> text is fixed in source;
-        the published archive is unchanged.</li>
+        the published archive is unchanged. Fixed in v0.2.1, 10 Nov 2026.</li>
       <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
-        “Ubuntu 24.04+”. Of Ubuntu releases, only 24.04 LTS is supported, as this page states.</li>
+        “Ubuntu 24.04+”. Of Ubuntu releases, only 24.04 LTS is supported, as this page states.
+        Since v0.2.1, 10 Nov 2026, the archive carries its own FFmpeg, and its README states what it needs.</li>
     </ul>
   </div>
 </div>
@@ -512,7 +530,7 @@
 
     <div>
       <div class="download-block">
-        <h3 class="download-title">Download opx-drift v0.2.2</h3>
+        <h3 class="download-title">Download opx-drift v0.2.3</h3>
         <div class="download-platform">
           <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz"
              class="download-btn">
@@ -520,20 +538,38 @@
               <span class="platform-icon" aria-hidden="true">&#128039;</span>
               <div>
                 <div>Linux x86_64</div>
-                <div class="download-btn-meta">tar.gz &middot; Ubuntu 24.04 LTS (FFmpeg 6.x)</div>
+                <div class="download-btn-meta">tar.gz &middot; glibc 2.35 or later &middot; FFmpeg included</div>
+              </div>
+            </div>
+            <span class="download-arrow" aria-hidden="true">&darr;</span>
+          </a>
+          <a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-windows-x86_64.zip"
+             class="download-btn">
+            <div class="download-btn-left">
+              <span class="platform-icon" aria-hidden="true">&#8862;</span>
+              <div>
+                <div>Windows x86_64</div>
+                <div class="download-btn-meta">zip &middot; FFmpeg included</div>
               </div>
             </div>
             <span class="download-arrow" aria-hidden="true">&darr;</span>
           </a>
         </div>
         <div class="download-note">
-          <strong>Linux:</strong> requires FFmpeg 6.x shared libraries (<code>libavformat.so.60</code>).
-          Ubuntu 24.04 LTS only: <code>sudo apt install ffmpeg</code>. 22.04 ships FFmpeg 4.4 and 26.04 ships FFmpeg 8
-          (<code>libavformat.so.62</code>) — neither is supported; other distributions need FFmpeg 6.x from their own sources.<br><br>
-          <strong>Windows:</strong> the Windows zips (0.2.1 and 0.2.2) bundled FFmpeg 6.1.1 DLLs
-          (gyan.dev full_build-shared), licensed GPL version 3 or later. They did not include that
-          licence&rsquo;s text or an offer of the FFmpeg source, which the licence requires. The Linux
-          builds do not bundle FFmpeg. Windows downloads withdrawn 29 Sep 2026 for this reason.<br><br>
+          <strong>Both downloads</strong> carry FFmpeg 6.1.6, which we build ourselves, licensed LGPL
+          version 2.1 or later, and its source is on the release page. Each also carries the tool&rsquo;s
+          licence (<code>LICENCE.txt</code>: free for any purpose, commercial included, no warranty) and the
+          licences of the parts made by others. Since 10 Nov 2026, v0.2.3.<br><br>
+          <strong>Linux:</strong> needs 64-bit Linux with glibc 2.35 or later, as Ubuntu 22.04 and later
+          have; tested on Ubuntu 24.04. No <code>apt install</code> needed: FFmpeg is in the archive&rsquo;s
+          <code>lib</code> folder. <strong>Windows:</strong> tested on Windows 11; keep the four DLLs
+          beside <code>opx-drift.exe</code>.<br><br>
+          <strong>Before v0.2.3:</strong> the Windows zips (0.2.1 and 0.2.2) bundled FFmpeg 6.1.1 DLLs
+          (gyan.dev full_build-shared), licensed GPL version 3 or later, without that licence&rsquo;s text
+          or an offer of the FFmpeg source, which the licence requires; they were withdrawn on 29 Sep 2026
+          for this reason. The Linux archives linked the computer&rsquo;s own FFmpeg, which Ubuntu builds
+          under the GPL, and no download carried a licence for the tool or for the Rust libraries in
+          it.<br><br>
           <strong>Read the note under a sync report before quoting a number.</strong>
           A common-mode slope is a coherent retime, not a sync fault.<br><br>
           Source code is not published.
@@ -579,10 +615,11 @@
       <li><strong>Publisher name.</strong> <code>--help</code> names a limited company that is not the
         publisher, and the archive&rsquo;s README.txt runs the trading name together as one word. The
         publisher is Bear Media Services LTD, trading as Karhu TV. Both are fixed in source; the published
-        archives are unchanged.</li>
+        archives are unchanged. Fixed in v0.2.3, 10 Nov 2026.</li>
       <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
         <code>sudo apt install ffmpeg (Ubuntu/Debian)</code>. No current Debian release ships FFmpeg 6;
-        of Ubuntu releases, only 24.04 LTS is supported.</li>
+        of Ubuntu releases, only 24.04 LTS is supported. Since v0.2.3, 10 Nov 2026, the archive carries its
+        own FFmpeg, and its README states what it needs.</li>
     </ul>
   </div>
 </div>
