@@ -417,40 +417,51 @@
           leap seconds — and measures the card's drift continuously rather than assuming it away.
           Rytmi's timing authority is Syke's, and Syke's is TAI. Every schedule item airs against
           an absolute instant, not an offset from whenever the process happened to start &mdash;
-          with six known exceptions, each in the register below:
+          with seven known exceptions, each in the register below:
         </p>
         <ul class="exceptions">
           <li>
             <strong>A looping region airs its first item twice per loop.</strong> Fixed on the first
-            unit since 3 Oct 2026, not accepted as of 6 Oct; the second unit has no fix.
+            unit since 3 Oct 2026, where its test passed, read 6 Nov 2026; the second unit has no fix.
           </li>
           <li>
             <strong>A schedule whose first item lay more than a minute ahead of the engine&rsquo;s start
             aired that item at once, early.</strong> Since 5 Oct 2026 the first unit holds such an item,
-            but airs it up to a second late; a fix for that, made on 11 Oct 2026, is on neither unit as of
-            that day, and the second unit has neither fix.
+            and since 5 Nov 2026 it no longer airs it up to a second late; neither unit&rsquo;s schedules
+            start that far ahead, so neither fix has been seen on air. The second unit has neither.
           </li>
           <li>
             <strong>On the first unit every item aired 41&ndash;58&nbsp;ms after its instant.</strong>
-            Fixed there on 9 Oct 2026, with two further faults the fix brought out, not accepted as of
-            that day; the second unit has none of these fixes and was not measured.
+            Fixed there on 9 Oct 2026, with two further faults the fix brought out, and its test passed:
+            in the run of 5&ndash;6 Nov 2026 every one of the 372 starts read was on its instant. The second
+            unit has none of these fixes and was not measured.
           </li>
           <li>
             <strong>A fixed-time item that follows a source faster than its channel airs late</strong>
-            &mdash; 2.5 and 3.9&nbsp;s in two tests. A fix made on 13 Oct 2026 is on neither unit as of
-            29 Oct 2026.
+            &mdash; 2.5 and 3.9&nbsp;s in two tests without a card. On the first unit since 6 Nov 2026 a faster
+            source keeps its scheduled length, and the same two tests then aired the fixed-time item on time;
+            that has not been measured on air. The second unit has no fix.
           </li>
           <li>
-            <strong>On the first unit an item due less than a frame after the one before it ends can start
-            at once, up to a frame early</strong>, and over several items that end a little short this can put a
-            frame or two of emergency material between programmes. A change made on 15 Oct 2026 is on
-            neither unit as of 29 Oct 2026.
+            <strong>On the first unit, from 3 Oct to 6 Nov 2026, an item due less than a frame after the one
+            before it ends could start at once, up to a frame early</strong>, and over several items that end a
+            little short this could put a frame or two of emergency material between programmes. Since 6 Nov
+            2026 such an item airs on its own frame there, the frame before it held once. The second
+            unit&rsquo;s build never had that rule.
           </li>
           <li>
             <strong>A step in the system clock after the engine starts moves what airs.</strong> The first
             unit&rsquo;s build, since 11 Oct 2026, carries the step to the next fixed-time item; the second
             unit&rsquo;s airs fixed items late for minutes after a forward step and freezes after a
-            backward one.
+            backward one. Since 5 Nov 2026 the first unit&rsquo;s build no longer freezes after a backward
+            step longer than it has been running, nor airs an item again after one; tested without a card,
+            as no step has happened on air.
+          </li>
+          <li>
+            <strong>After a restart the second unit plays its schedule again from the first item</strong>,
+            whatever the time, and every item after it is late until the next fixed-time item. Since 6 Nov
+            2026 the first unit&rsquo;s engine cuts back in where the schedule is; that unit&rsquo;s own
+            schedules have not exercised it on air.
           </li>
         </ul>
         <p>
@@ -519,9 +530,10 @@
         </p>
         <p class="note">
           Two limits, each in the register below: a 220&nbsp;ms stall on 14 Sep 2026 cost three outputs
-          their card buffer, and they did not recover without a restart (open); and a source faster than
-          its channel&rsquo;s output rate airs slow, except on the first unit where its rate is a whole
-          multiple of the channel&rsquo;s.
+          their card buffer, and stalls on 30 Oct 2026 on the second unit and on 2 Nov 2026 on the first did
+          the same, dropping frames at the output until the buffer refilled or we restarted the engine (open);
+          and a source faster than its channel&rsquo;s output rate airs slow on the second unit, while on the
+          first unit, since 6 Nov 2026, it airs at its own speed with fewer of its frames.
         </p>
         <p class="note">
           Runs on Ubuntu. Binary-only, under NDA &mdash; the timing core is the company, so it isn&rsquo;t
@@ -682,7 +694,14 @@
               counter itself uses &mdash; so the two counters agree without being wired
               together. Cause open. Host load was recorded
               alongside throughout, and from 12 Aug so was every interrupt the clock core
-              took</td>
+              took. On the second unit, which this row does not otherwise cover, the master clock
+              stalled 156&nbsp;ms on 31 Oct 2026: ten of that second&rsquo;s fifty ticks late, counted on each
+              of its four outputs, and one to three frames dropped at the card on each. We infer the cause
+              from the machine&rsquo;s own memory figures: a trace of ours, left running with no memory limit,
+              had grown to 11.9&nbsp;GB and pushed part of the engine&rsquo;s memory into swap. It
+              stalled 46&nbsp;ms on 2 Nov 2026, while two runs of our own monitoring tools were making the
+              machine reclaim memory; the card&rsquo;s buffer absorbed it, though one output repeated a frame,
+              and how the reclaim reached the clock is not determined</td>
           </tr>
           <tr>
             <td>Effect of moving one <span class="inline-code">fsync</span> off the clock thread</td>
@@ -697,7 +716,7 @@
           <tr>
             <td>Card crystal error vs TAI</td>
             <td class="v">−3.7 ppm</td>
-            <td class="src">on the card the first unit carried until 29 Oct 2026: median over 26 Jul–1 Aug 2026; over 9–14 Sep 2026, free-running, the medians were −2.9&nbsp;ppm on its card and −7.2&nbsp;ppm on the second unit&rsquo;s. Dated because it is not a constant: the crystal is temperature-sensitive, and this is measured against CLOCK_TAI, which NTP disciplines — so a clock correction is arithmetically indistinguishable from crystal drift in it. Two further caveats, found on 21 Aug 2026 when the fortnight's logs were re-read: the instrument is a <em>run-cumulative mean</em> rather than an instantaneous rate, so it lags, and after 339 hours it understated the true value by about 16&nbsp;%; and the true instantaneous drift moved between −2.2 and −4.2&nbsp;ppm across that run, tracking case temperature at roughly −0.34&nbsp;ppm/&deg;C. That card was replaced on 29 Oct 2026; the new card&rsquo;s figure has not been measured as of that day</td>
+            <td class="src">on the card the first unit carried until 29 Oct 2026: median over 26 Jul–1 Aug 2026; over 9–14 Sep 2026, free-running, the medians were −2.9&nbsp;ppm on its card and −7.2&nbsp;ppm on the second unit&rsquo;s. Dated because it is not a constant: the crystal is temperature-sensitive, and this is measured against CLOCK_TAI, which NTP disciplines — so a clock correction is arithmetically indistinguishable from crystal drift in it. Two further caveats, found on 21 Aug 2026 when the fortnight's logs were re-read: the instrument is a <em>run-cumulative mean</em> rather than an instantaneous rate, so it lags, and after 339 hours it understated the true value by about 16&nbsp;%; and the true instantaneous drift moved between −2.2 and −4.2&nbsp;ppm across that run, tracking case temperature at roughly −0.34&nbsp;ppm/&deg;C. That card was replaced on 29 Oct 2026; the new card read about &minus;4.1&nbsp;ppm over its first eight hours, on 30 Oct 2026, a run-cumulative mean taken on a young run</td>
           </tr>
           <tr>
             <td>Time-to-slip prediction from that drift</td>
@@ -772,11 +791,12 @@
       <div class="reg-band">
         <p class="band-lab">Licensing</p>
         <div class="reg-item">
-          <h3>HEVC / H.265 support</h3>
-          <p class="reg-why">Out of scope on patent-licensing grounds since April 2026. Not
-            claimed, not tested, not marketed.</p>
-          <p class="reg-earn"><span>Would earn it:</span> an MPEG-LA licence and a hardware test
-            pass. Neither is planned.</p>
+          <h3>HEVC / H.265 in Rytmi</h3>
+          <p class="reg-why">Out of scope in Rytmi on patent-licensing grounds since April 2026: not
+            claimed, tested or marketed for playout. Karhu Player decodes HEVC on the computer&rsquo;s
+            graphics hardware only, never in software (<a href="/player.html">its page</a>).</p>
+          <p class="reg-earn"><span>Would earn it:</span> licences from the HEVC patent pools and a
+            hardware test pass. Neither is planned.</p>
         </div>
       </div>
 
@@ -802,7 +822,9 @@
             1 Aug 2026 — by design, and at a
             rate we predicted from the measured drift to within 1&nbsp;% at the median over July 2026's twelve-hour runs (individual runs &minus;8&nbsp;%/+19&nbsp;%) &mdash; and 14&nbsp;% over the 339-hour August run, median observed &divide; predicted 0.863 across 213 shed intervals, re-derived 21 Aug 2026. The card itself reported zero
             late and zero dropped frames after start-up, across the whole 339-hour run. Locked to a house reference, discards follow the reference's drift rather than the crystal's, and on our bench on 27 Sep 2026 they came more often; the holdover row below has the figures. Whether a discarded frame is visible on
-            the wire is <strong>engine-side accounting, not a wire measurement.</strong></p>
+            the wire is <strong>engine-side accounting, not a wire measurement.</strong> Separately,
+            frames have been dropped at the card when a stall cost an output its buffer; the stall row
+            below has those.</p>
           <p class="reg-earn"><span>Would earn it:</span> the same capture rig. Until then we
             report what our counters see and say which side of the card they sit on.</p>
         </div>
@@ -836,6 +858,28 @@
         </div>
 
         <div class="reg-item">
+          <h3>Sound in step with its picture</h3>
+          <p class="reg-why">Three faults of ours have put a clip&rsquo;s sound out of step with its picture,
+            and none has been measured on the wire. At the decoder&rsquo;s output, read without a card on
+            4 Oct 2026, a clip&rsquo;s sound ran one frame behind its picture (20&nbsp;ms at 50p, 40&nbsp;ms at
+            25p) and its first frame was silent; the first unit has carried a fix since 9 Oct 2026. A frame
+            the engine discards to absorb the card&rsquo;s drift, on 25p or 29.97 material on a 50p channel,
+            moved the sound against the picture by 20&nbsp;ms either way, at random; the first unit has carried
+            a fix since 5 Oct 2026, and read on 10 Oct 2026 the 40&nbsp;ms steps that marked it in the card&rsquo;s
+            own count of the sound it holds were gone from its discards. That count cannot settle the rest:
+            it also swings by about 100&nbsp;ms from hour to hour, before the fix and after, which may be how the
+            card counts its sound or may be the sound itself. And a clip begun part-way through a
+            group of pictures &mdash; a playlist joined in progress, a trimmed start, the cut-in after a
+            restart &mdash; aired its sound two frames behind its picture, read without a card on 9 Nov 2026;
+            the first unit has carried a fix since that day, and none of its schedules had such a start on
+            air when we looked. The second unit has none of these fixes. Every figure here is the
+            engine&rsquo;s or the card&rsquo;s own.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the output&rsquo;s sound measured against its
+            picture on the SDI output, at a clip&rsquo;s start, across a discard and at a start part-way
+            through a group of pictures.</p>
+        </div>
+
+        <div class="reg-item">
           <h3>An engine that does not crash</h3>
           <p class="reg-why">At 08:58&nbsp;UTC on 7 Oct 2026 the first unit&rsquo;s engine crashed, and both
             of its channels were off air for at least 13&nbsp;seconds until the service manager restarted it.
@@ -851,13 +895,20 @@
             through seven deliberate restarts with neither a crash nor a failed fetch &mdash; the week we said we
             would accept the fix on. Against the two events in the 64 hours before it, a quiet week comes by chance
             about one time in 200: evidence that the fix holds, not proof that the engine never stops.
+            On 12 Oct 2026 we found one way past that guard, reproduced without a card: a stream whose coding
+            parameters change part-way makes FFmpeg tear the decoder down inside a call the guard did not
+            cover. The first unit&rsquo;s engine covers it since 5 Nov 2026.
             The second unit has no such fix, and on 15 Oct 2026 at 15:43&nbsp;UTC, after 18 days on air, its
             engine crashed at the same place in Intel&rsquo;s driver, on a progressive channel this time, a sixth of a
             second before a programme change. With no core dump kept, that it was the same overlap is inferred from the
             thread it crashed in. All four of its channels were off air for at least 16&nbsp;seconds until the service
             manager restarted it, and it paged us only that its alarms had cleared; since 18:27&nbsp;UTC that day a crash
-            on the second unit pages us too.</p>
-          <p class="reg-earn"><span>Would earn it:</span> the same fix on the second unit, and the 90 days of
+            on the second unit pages us too.
+            Separately, the first unit&rsquo;s engine crashed four times at a planned stop, after its output had
+            ended, inside the SDI card&rsquo;s library (1 Aug&ndash;3 Nov 2026); its as-run log came through each.
+            Since 6 Nov 2026 that engine waits for its card threads before it exits, and each of its four
+            planned stops from then to 10 Nov 2026 was clean. The second unit has no such change.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the same fixes on the second unit, and the 90 days of
             uptime the row below asks for.</p>
         </div>
 
@@ -869,13 +920,31 @@
             as-run log&rsquo;s record of that airing. Against FFmpeg&rsquo;s own measurement of the same
             stretch of the same file, without a card, on 3 Oct 2026, every airing we could compare
             agreed within the tolerances of EBU Tech 3341. It is measured inside the engine, not at
-            the connector; no operator&rsquo;s screen shows it; and the second unit has none of it.
+            the connector; since 6 Nov 2026 the first unit&rsquo;s engineering page lists each airing&rsquo;s
+            loudness and true peak once the airing has ended, but nothing shows it while the item airs, and
+            the operator&rsquo;s page does not show it; and the second unit has none of it.
             Until then this row said we had &ldquo;a full BS.1770 loudness meter in the
             codebase&rdquo;. It was not full: its &ldquo;true peak&rdquo; was a sample peak, and it
             gave the 5.1 surround channels the wrong weight. Both were fixed on 3 Oct 2026, and no
             figure we published came from it.</p>
           <p class="reg-earn"><span>Would earn it:</span> the figure on an operator&rsquo;s screen
             while the item airs, and the same figure read by a meter on the SDI output.</p>
+        </div>
+
+        <div class="reg-item">
+          <h3>Subtitles carried through to the output</h3>
+          <p class="reg-why">Since 10 Nov 2026 the first unit&rsquo;s second channel carries the OP-47
+            subtitles a file holds into its SDI output&rsquo;s ancillary data, one packet a frame, beside the
+            timecode, and its as-run log records each airing that carried them. The only file in that
+            channel&rsquo;s schedule that holds subtitles is a test pattern of our own, a teletext page of nine
+            subtitles over ten seconds, which airs each time the engine starts. That day the unit read the
+            page back off its own output, through a cable into one of its own inputs: all nine subtitles and
+            the clear, in order, over 250 frames, a packet on each. That is the card reading itself, not a
+            decoder downstream, and not a real programme&rsquo;s subtitles; whether each subtitle sits on its
+            own picture was read from the first packet on, so a constant offset would not show. The first
+            channel and the second unit carry none.</p>
+          <p class="reg-earn"><span>Would earn it:</span> a real programme&rsquo;s subtitles, read by a
+            decoder on the output, each on its own picture.</p>
         </div>
       </div>
 
@@ -886,7 +955,9 @@
             <h3>Item-level granularity in the as-run log</h3>
             <p class="reg-why">The as-run is a tamper-evident hash chain and we stand behind it:
               120,483,920 records checked as of 21 August 2026, no false positives, six forgery vectors closed, known breaks from before the 339-hour run of August 2026 &mdash; one between two day files (20&rarr;21 June 2026), and others inside day files, among them 20 and 21 June and 17 July 2026. It
-              records <strong>one entry per source frame</strong>, and that entry is not exact about
+              records <strong>one entry per channel frame</strong> &mdash; one per source frame where a source
+              runs at its channel&rsquo;s rate, and fewer entries than the source has frames where the first unit
+              airs a faster source (the as-run page has the detail) &mdash; and that entry is not exact about
               what played or when: a fault in our log, found in July 2026 and open as of 6 Oct 2026.
               Each entry is written as the engine hands its frame on towards the card, and stamped
               with the time of the engine clock tick the frame was made for rather than when the
@@ -916,54 +987,62 @@
           <h3>Every item airs on its instant</h3>
           <div class="reg-why">
             <p>The design is that every schedule item airs against an absolute TAI instant, not an
-              offset from whenever the engine started. We know of six exceptions, in the order found:</p>
+              offset from whenever the engine started. We know of seven exceptions, in the order found:</p>
             <ul class="exceptions">
               <li>
                 <strong>A looping region airs its first item twice per loop</strong>, and displaces what
                 follows (RET-122; the row above has what the log could show of it). The first unit has carried a fix since 3 Oct 2026,
-                not accepted as of 6 Oct; the second unit has none.
+                and its test passed there, read 6 Nov 2026: the loop goes round with no second play of its head,
+                by the engine&rsquo;s own count. The second unit has none.
               </li>
               <li>
                 <strong>A schedule whose first item lay more than a minute ahead of the engine&rsquo;s start
                 aired that item at once</strong>, early by almost the whole lead (RET-142, found off air on
                 4 Oct 2026). Neither unit&rsquo;s schedules start that far ahead. Under the first unit&rsquo;s
-                fix, since 5 Oct 2026, such an item waits, but airs late by however much of a second the
-                engine&rsquo;s start left before its next whole second: 110 to 757&nbsp;ms in eight tests
-                without a card on 11 Oct 2026, up to a second in all. A fix for that, made on 11 Oct 2026, is
-                on neither unit as of that day; the second unit has neither fix.
+                fix, since 5 Oct 2026, such an item waits, but until 5 Nov 2026 it aired late by however much of
+                a second the engine&rsquo;s start left before its next whole second: 110 to 757&nbsp;ms in eight tests
+                without a card on 11 Oct 2026, up to a second in all. The fix for that, made on 11 Oct 2026, has
+                been on the first unit since 5 Nov 2026; in three tests without a card it aired such an item on its
+                time, and no schedule there starts far enough ahead to show it on air. The second unit has
+                neither fix.
               </li>
               <li>
                 <strong>On the first unit every item aired 41&ndash;58&nbsp;ms after its instant</strong>
                 (RET-146, found on 8 Oct 2026; the median of each of its eleven runs of 5&ndash;9 Oct 2026,
                 some items a further 40&nbsp;ms later, the figure set partly by when each run started).
                 Frames were stamped a frame late, and handed to the output a moment after the tick that
-                should have aired them. The first unit has carried a fix since 00:33&nbsp;UTC on 9 Oct 2026,
-                not accepted as of that day. On the fix, 77 of the 80 items of a schedule&rsquo;s first pass
+                should have aired them. The first unit has carried a fix since 00:33&nbsp;UTC on 9 Oct 2026.
+                On the fix, 77 of the 80 items of a schedule&rsquo;s first pass
                 in its first four runs started on their instants to within a millisecond, and three &mdash;
                 the same item each time &mdash; 20&nbsp;ms early: a second fault, in which a looping region
                 never took a fresh time from the schedule, so the part-frames left over where a 29.97 clip
                 was cut added up until an airing ended 20&nbsp;ms short. That was fixed on the first unit at
                 20:13&nbsp;UTC the same day, and in that run&rsquo;s first pass all 20 started on their
                 instants. The fix also cut two frames from each of the first eleven items after a start on
-                a schedule with no times; that was fixed on the first unit at 11:20&nbsp;UTC. The second unit
+                a schedule with no times; that was fixed on the first unit at 11:20&nbsp;UTC. Its test passed
+                there, read 6 Nov 2026: in the run of 5&ndash;6 Nov all 372 starts read, 18 of them fixed-time
+                items, were on their instants. The second unit
                 runs the code from before all of this, with none of these fixes, and was not measured.
               </li>
               <li>
                 <strong>A fixed-time item that follows a source faster than its channel airs late</strong>:
                 it waits for that source, which plays slow, and is late by as much as the source has fallen
                 behind &mdash; 2.5 and 3.9&nbsp;s in two tests (RET-128, found without a card on 13 Oct 2026).
-                On the first unit that holds only where the faster rate is not a whole multiple of the
-                channel&rsquo;s; on the second unit, for every faster source. A fix made on 13 Oct 2026 is on
-                neither unit as of 29 Oct 2026.
+                On the second unit that holds for every faster source. On the first unit since 6 Nov 2026 a
+                faster source airs for its scheduled length, and the same two tests, again without a card, then
+                aired the fixed-time item on time; a source whose stated frame rate disagrees with its average
+                still airs slow there, and a fixed-time item after a faster source has not been measured on
+                air.
               </li>
               <li>
-                <strong>An item due less than a frame after the one before it ends starts at once</strong>, on the
-                first unit since 3 Oct 2026: a gap shorter than a frame is not a gap, so an item between half
-                a frame and a frame past its programme change starts at the change, up to a frame early.
-                After several items each ending a little short, that can add up to a frame or two of
+                <strong>An item due less than a frame after the one before it ends started at once</strong>, on the
+                first unit from 3 Oct to 6 Nov 2026: a gap shorter than a frame was not a gap, so an item between
+                half a frame and a frame past its programme change started at the change, up to a frame early.
+                After several items each ending a little short, that could add up to a frame or two of
                 emergency material between programmes (the <a href="/archive/moved-freeze-2026-10-15/">archive
-                entry of 15 Oct 2026</a> has how we found it). A change made on 15 Oct 2026, in which such an
-                item waits for its own time, is on neither unit as of 29 Oct 2026.
+                entry of 15 Oct 2026</a> has how we found it). Since 6 Nov 2026 such an item airs on its own
+                frame there, the frame before it held once. The second unit&rsquo;s build never had that
+                rule.
               </li>
               <li>
                 <strong>A step in the system clock after the engine has started</strong>, measured without a
@@ -972,9 +1051,19 @@
                 for about three minutes, by up to the step, and after a backward one its output froze for the
                 step&rsquo;s length. The first unit&rsquo;s build, since 11 Oct 2026, takes a step on its next
                 frame and records it in the log; the items after it air early or late by the step until the
-                next fixed-time item, which airs on its time. On that build a backward step longer than the
-                engine has been running still freezes its output, and an item can air again after one;
-                changes made on 11 and 12 Oct 2026 for those are on neither unit as of 29 Oct 2026.
+                next fixed-time item, which airs on its time. Until 5 Nov 2026 a backward step longer than the
+                engine had been running still froze that build&rsquo;s output, and an item could air again after
+                one; since 5 Nov 2026 the first unit&rsquo;s build does neither, tested without a card, as no step
+                has happened on air.
+              </li>
+              <li>
+                <strong>After a restart the second unit plays its schedule again from the first item</strong>,
+                whatever the time &mdash; a crash, a power cut or a deliberate stop alike &mdash; and every item
+                after it is late until the next fixed-time item. Since 6 Nov 2026 the first unit&rsquo;s engine
+                cuts back in where the schedule is, and since 9 Nov 2026 it joins an item begun just before the
+                restart and records the items it passed over, or says why it cannot (the <a href="/archive/restart-resume-2026-11-09/">archive
+                entry of 9 Nov 2026</a> has how it works, and the fault its test missed). That unit&rsquo;s own
+                schedules have not exercised it on air.
               </li>
             </ul>
           </div>
@@ -985,24 +1074,39 @@
         <div class="reg-item">
           <h3>A faster source plays at its own speed</h3>
           <p class="reg-why">A source faster than the channel&rsquo;s output rate airs slow, by the ratio
-            of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). The
-            exception, on the first unit since 5 Oct 2026, is a source at a whole multiple of the
-            channel&rsquo;s rate, such as 50p on its 1080i50 channel, which airs at its own speed, one source frame
-            to each field. The second unit has no such exception. The engine does not refuse a faster source,
-            and flags one in its log only for the items it checks at start-up &mdash; by default the
-            first 30, and any due within 30 minutes.</p>
-          <p class="reg-earn"><span>Would earn it:</span> the fix made on 13 Oct 2026, on both units; it
-            is on neither as of 29 Oct 2026.</p>
+            of the two rates (0.834&times; for a 59.94 source on a 50 channel, 4 Aug 2026, RET-128). On the
+            first unit since 6 Nov 2026 it does not: each channel frame &mdash; each field, on an interlaced
+            channel &mdash; shows the source frame due at its time, so the source airs at its own speed and for
+            its scheduled length, with fewer of its frames and less even motion. In the 24 hours from that
+            evening a 29.97 clip on the first unit&rsquo;s 1080i50 channel aired 264 times, each for exactly its
+            750&nbsp;frames, where the build before had aired it for 899. A source whose stated frame rate
+            disagrees with its average still airs slow. The engine does not refuse a faster source; on the
+            first unit it reports each one in its log, at start-up and when a playlist is loaded while it
+            plays. The second unit has none of this: it airs every faster source slow, and flags one in its
+            log only for the items it checks at start-up &mdash; by default the first 30, and any due within
+            30 minutes.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the same on the second unit; and a fixed-time item
+            after a faster source measured on time on air.</p>
         </div>
 
         <div class="reg-item">
           <h3>Four outputs ride out a stall</h3>
           <p class="reg-why">On 14 Sep 2026 a 220&nbsp;ms stall during a test of ours cost three of the
             second unit&rsquo;s four outputs their card buffer, and an ordinary clip change twelve minutes
-            later began an hour of frames dropped at the card. They did not recover without a restart.
-            Why is open.</p>
-          <p class="reg-earn"><span>Would earn it:</span> the cause found, and an output that regains its
-            card buffer without a restart when the stall is repeated.</p>
+            later began an hour of frames dropped at the card; we restarted the engine before the buffer
+            came back. It has happened twice since, with no test running. At 13:53&nbsp;UTC on 30 Oct 2026 the
+            second unit&rsquo;s card took no frame from any of its four outputs for about 200&nbsp;ms: 9,550 frames
+            were dropped at the outputs, the last at 15:15&nbsp;UTC, about three minutes of pictures across
+            the four, and each output ran a frame late for 27 to 74 minutes; by 19:35&nbsp;UTC every buffer
+            had come back without a restart, as the card&rsquo;s clock drift refilled it. On 2 Nov 2026 the
+            first unit&rsquo;s first channel lost its buffer the same way in a 300&nbsp;ms stall, and dropped
+            about 1,700 frames, most of them in a five-minute burst after we changed a memory setting to stop
+            it recurring, before we restarted its engine. Both stalls began while monitoring tools of our own
+            were loading large log files into a machine short of free memory, and that is the cause we
+            infer; it is not established. We have since made those tools read less, and set both units to
+            keep more memory free.</p>
+          <p class="reg-earn"><span>Would earn it:</span> the cause found, and a stall repeated on purpose
+            that the outputs ride out without dropping frames.</p>
         </div>
 
         <div class="reg-item">
@@ -1063,7 +1167,7 @@
       </div>
 
       <div class="reg-band">
-        <p class="band-lab">Not yet earned</p>
+        <p class="band-lab">Not earned</p>
 
         <div class="reg-item">
           <h3>Uptime and reliability figures</h3>
@@ -1100,7 +1204,7 @@
 
     <p class="reg-foot">
       If a claim you need isn't here and isn't on the evidence table, ask — the answer will be a
-      measurement, a date, or &ldquo;we don't know yet&rdquo;.
+      measurement, a date, or &ldquo;we don't know&rdquo;.
     </p>
   </section>
 
@@ -1150,13 +1254,13 @@
         <div class="tool-top"><span class="tool-name">Karhu&nbsp;Player</span><span class="tag">in development &middot; not released</span></div>
         <p><strong>A media player for people who need to see what is really in a file.</strong> Made with
           broadcast material in mind, with EBU&nbsp;R128 loudness metering in the engine rather than
-          bolted on, its measurements made to the published standards for checking broadcast files. <strong>Its frame-rate arithmetic and handoff ring are Rytmi's</strong> — copied
-          verbatim from a dated engine snapshot, each with a provenance record naming its origin;
-          its TAI sourcing and precision sleep are new code built to the same design, and the record says which is which
-          in the engine.</p>
+          bolted on, its measurements made to the published standards for checking broadcast files. <strong>Its handoff rings are Rytmi's</strong> — copied
+          verbatim from a dated engine snapshot, with a provenance record naming their origin; its clock
+          is new code informed by Rytmi's, kept on the computer's own unsteered clock rather than TAI, so
+          that it keeps step with the screen it draws on.</p>
         <p class="note" style="margin-top:.4rem">Work in progress and <strong>not available</strong>
-          — no download, no date. It is listed because it exists and because a player that says
-          29.97 when the file says 30000/1001 is the problem it was written to stop being.</p>
+          — no download, no date. It is listed because it exists and because a player whose timecode
+          drifts when the file says 30000/1001 is the problem it was written to stop being.</p>
         <p class="tool-dl"><a class="alt" href="/player.html">What it does, and what we have measured</a></p>
       </div>
     </div>
@@ -1499,7 +1603,24 @@
         }
         lede.append('.');
       } else {
-        lede.append('Live soak figures return when the lamp is lit.');
+        const hist = Array.isArray(snap.historical) ? snap.historical : [];
+        const hf = hist.find(h => h && h.label === 'Frames produced, that run');
+        const hs = hist.find(h => h && h.label === 'Late SDI frames, that run');
+        if (hf && typeof hf.value === 'number' && hf.when) {
+          const b1 = document.createElement('strong');
+          b1.textContent = fmt(hf.value, 'frames');
+          lede.append('In its run of ' + String(hf.when).split(',')[0]
+            + ' the first unit produced ', b1);
+          if (hs && typeof hs.value === 'number') {
+            const b2 = document.createElement('strong');
+            b2.textContent = hs.value === 0 ? 'none late on the SDI output'
+                                             : fmt(hs.value) + ' late on the SDI output';
+            lede.append(', with ', b2);
+          }
+          lede.append('.');
+        } else {
+          lede.append('Live soak figures return when the lamp is lit.');
+        }
       }
     }
 
@@ -1528,7 +1649,9 @@
       const order = pv < 100 ? 'tens of nanoseconds'
                   : pv < 1000 ? 'hundreds of nanoseconds'
                   : 'microseconds';
-      tail.textContent = 'We hold it to ' + order + '.';
+      const pdWhen = (snap.phase_dist && snap.phase_dist.when) || null;
+      tail.textContent = pvLive ? 'We hold it to ' + order + '.'
+                       : 'We held it to ' + order + (pdWhen ? ', ' + pdWhen : '') + '.';
     }
 
     const DATED = 'These are dated records from the engineering log, not current '

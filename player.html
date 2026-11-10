@@ -236,34 +236,55 @@
   <p class="page-body">
     <strong>A media player for people who need to see what is really in a file.</strong> It plays a file or a
     stream and tells you what is in it: the frame you are on and its SMPTE timecode, the loudness of
-    what you hear by EBU&nbsp;R128, the decoded value of any pixel of a paused picture, and what the file says about
-    itself against what it actually does. It is made by the people who make Rytmi, it runs on Linux
-    and Windows, and it will be free of charge.
+    what you hear by EBU&nbsp;R128, every audio track and every channel in it, the subtitles and captions it carries,
+    the decoded value of any pixel of a paused picture, and what the file says about itself against what it actually
+    does. It is made by the people who make Rytmi, it runs on Linux and Windows, and it will be free of charge.
+  </p>
+  <p class="page-body">
+    <strong>Made for checking broadcast files.</strong> Its loudness meter measures to EBU&nbsp;R128 and
+    ITU-R&nbsp;BS.1770-4, its captions are CEA-608 as CTA-608-E defines them, and its timecode is the file&rsquo;s
+    own. How the loudness meter and the captions are tested, and what is not tested, is set out below, and in the
+    manual that comes with the player in its package.
   </p>
   <p class="page-body">
     <strong>It is not released: there is no download and no date.</strong> This page says what it
     does today, what it plays, what we have measured, and what we do not claim, so that when it is
     released it can be checked against what was said here. Everything on this page is as of
-    25 Oct 2026 unless it carries another date.
+    10 Nov 2026 unless it carries another date.
   </p>
 </div>
 
 <section class="hw-section" id="does" aria-labelledby="does-title">
   <div class="sec-head">
     <h2 class="sec-title" id="does-title">What it does</h2>
-    <p>As of 29 Oct 2026, in the build we test.</p>
+    <p>As of 10 Nov 2026, in the build we test.</p>
   </div>
   <ul class="duty">
     <li><strong>Frame-accurate transport.</strong> Step one frame back or forward, seek to a frame, a
       timecode or a time, and land on exactly that frame, B-frames and long GOPs included, in MP4,
       Matroska and HLS. A plain MPEG-TS file has no index to seek by: a seek in one lands on the
-      first keyframe after the frame asked for. SMPTE
-      timecode is read from the file, drop-frame included; play, pause, an A&ndash;B loop, and
-      J-K-L shuttle, forward only, from a quarter speed to eight times, with sound kept at its own
-      pitch from half speed to double.</li>
-    <li><strong>Loudness by EBU&nbsp;R128.</strong> Momentary, short-term and integrated loudness and
-      true peak of what is heard, each channel weighted from the stream&rsquo;s own layout, and a
-      separate measurement of the whole file from start to end.</li>
+      first keyframe after the frame asked for. SMPTE timecode is read from the file, drop-frame included.
+      A file opens paused on its first picture; play, pause, an A&ndash;B loop, and J-K-L shuttle, forward only,
+      from a quarter speed to eight times, with sound kept at its own pitch from half speed to double.</li>
+    <li><strong>Loudness by EBU&nbsp;R128, in EBU Mode.</strong> Momentary and short-term loudness with
+      their maxima, integrated loudness, the loudness range of EBU&nbsp;Tech&nbsp;3342 and true peak, of what is
+      heard, on either of the two scales EBU&nbsp;Tech&nbsp;3341 sets for an EBU Mode meter; each channel weighted by
+      its position, from the stream&rsquo;s own layout. Since 10 Nov 2026, the phase correlation of a stereo pair.
+      Separately, a measurement of the whole file from start to end, of the track or pair heard, with an AC-3
+      track&rsquo;s declared loudness (its dialnorm) beside it and a difference of more than 2&nbsp;LU said.</li>
+    <li><strong>Every audio track.</strong> Every track metered at once, each channel&rsquo;s peak and true peak,
+      while one is heard; a channel silent through what was read is said. Choose the track heard, or hear an MXF
+      master&rsquo;s mono tracks two at a time as stereo pairs, paired by their places (the labels a wrapper may
+      carry are not read). Since 10 Nov 2026, send any channel of the track heard to the left or the right, hear
+      one alone, mute one, or hear left and right as mono, without changing what is measured. A source with more
+      channels than the speakers is folded to them by ITU-R&nbsp;BS.775, and the stream panel says so.</li>
+    <li><strong>Subtitles and captions.</strong> Text subtitles (SRT, WebVTT, MP4 text, and ASS and SSA as plain
+      text) and the CEA-608 captions carried in the video (H.264, HEVC and MPEG-2), each of its four channels on
+      its own; from a local file they are read on a timeline of their own, so a jump to any frame shows what is on
+      screen there. Since 10 Nov 2026, teletext subtitles from a local file, read by a decoder of our own: page 888
+      of an MXF&rsquo;s OP-47 track (SMPTE&nbsp;436M), and from a transport stream&rsquo;s DVB teletext the page its
+      descriptor names, or else 888. Bitmap subtitles (DVB, Blu-ray, DVD) and CEA-708 captions are named and not
+      shown.</li>
     <li><strong>The picture as decoded.</strong> Paused, the Y&prime;CbCr and RGB values of the pixel
       under the cursor; and any frame saved as a PNG. Each frame is drawn with the colour matrix its file
       declares; BT.2020 and P3 standard-dynamic-range pictures are converted to BT.709&rsquo;s gamut,
@@ -273,6 +294,10 @@
       actually runs at. For MXF, what the wrapper says (its operational pattern, field order and
       audio track map) is read and shown, and its field order is checked against the picture inside
       it.</li>
+    <li><strong>What happened as it played, and why.</strong> Each event numbered, with its reason and the
+      event that led to it: a jump in the timestamps or the timecode, a picture or a block of sound the decoder
+      reports damaged, frames dropped with when and how late, a picture that stopped changing while the clock
+      ran, a switch from hardware to software decoding. The record exports as JSON.</li>
     <li><strong>Sound held to its picture</strong>, with a trim to move it earlier or later, and a
       readout of how closely it is following. The readout measures the player&rsquo;s own tracking;
       it cannot see the delay a display or a headset adds, which is why we measure that on the
@@ -280,45 +305,71 @@
     <li><strong>Output to a chosen screen.</strong> The picture can be sent full screen to a named
       display. The main display is left out of that list, so the player cannot cover the screen you
       are working on unless you ask it to.</li>
-    <li><strong>Hardware decoding</strong> where the graphics hardware offers it (VA-API on Linux,
-      D3D11VA on Windows), with software decoding where it does not. Most hardware-decoded frames are
-      drawn without being copied back to the processor: on Linux with Intel graphics, and on Windows
-      since 26 Oct 2026, where each frame is copied once within the graphics processor. Some are still
-      copied back: on Linux HEVC 4:2:2 and a layout the graphics driver does not offer, and on Windows
-      a frame of an odd size.</li>
+    <li><strong>Network streams.</strong> An MPEG-TS multicast over UDP (since 8 Nov 2026), HLS on demand and
+      live, or a plain http or https file as it downloads, opened from the command line or from a field in the
+      window.</li>
+    <li><strong>Hardware decoding</strong> where the graphics hardware offers it: D3D11VA on Windows, VA-API on
+      Linux, and on Linux NVIDIA&rsquo;s NVDEC where no VA-API driver opens, built on 10 Nov 2026 and not run on
+      an NVIDIA graphics card. Software decoding where it does not, and by choice: a hardware decoder reports far
+      less damage than a software one, so for checking a file for damage the player can be kept off the
+      graphics hardware. Most hardware-decoded frames are drawn without being copied back to the processor: on
+      Linux with Intel graphics, and on Windows since 26 Oct 2026, where each frame is copied once within the
+      graphics processor (seen on Intel graphics, and on AMD graphics since 5 Nov 2026). Some are still copied
+      back: on Linux HEVC 4:2:2, a layout the graphics driver does not offer and every NVDEC frame, and on
+      Windows a frame of an odd size.</li>
+    <li><strong>HEVC on the graphics hardware only, never in software.</strong> Since 10 Nov 2026: one of
+      HEVC&rsquo;s patent pools told us in November 2026 that a program decoding HEVC itself is licensed per copy,
+      a free one included. On a computer with no graphics decoder an HEVC file does not open, and the player says
+      why; nor does a file whose HEVC stream the graphics processor does not take (10-bit 4:2:2 on many graphics
+      cards, for one, or monochrome on any), a local file refused as it opens with the stream&rsquo;s format named.
+      Software decoding cannot be chosen for HEVC, so what the player says of damage in an HEVC file is what the
+      hardware decoder says.</li>
   </ul>
 </section>
 
 <section class="hw-section" id="plays" aria-labelledby="plays-title">
   <div class="sec-head">
     <h2 class="sec-title" id="plays-title">What it plays</h2>
-    <p>As of 29 Oct 2026. Every codec below is compiled into our build and checked to be there;
-      H.264, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
-      also played by tests of ours.</p>
+    <p>As of 10 Nov 2026. Every codec below is compiled into our build and checked to be there;
+      H.264, HEVC, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
+      also played by tests of ours, and since 6 and 9 Nov 2026 MP2, AC-3, DTS&rsquo;s core, TrueHD and
+      SMPTE&nbsp;302M.</p>
   </div>
   <div class="tbl-scroll" role="region" aria-labelledby="plays-title" tabindex="0">
     <table class="parts">
       <tbody>
         <tr><th scope="row">Containers</th>
           <td>MP4 and MOV, Matroska and WebM, MXF, MPEG-TS; HLS streams, on demand and live</td></tr>
+        <tr><th scope="row">Sources</th>
+          <td>Local files; an MPEG-TS multicast over UDP; HLS; a plain http or https file as it downloads. Not
+            MPEG-TS over RTP (SMPTE&nbsp;ST&nbsp;2022-2), SRT, RTMP, RTSP, MPEG-DASH or NDI</td></tr>
         <tr><th scope="row">Video</th>
-          <td>H.264, VP9 and AV1; MPEG-2 (its 4:2:2 profile included), ProRes&nbsp;422,
-            DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and VP8</td></tr>
+          <td>H.264, H.265/HEVC (on the graphics hardware only, never in software), VP9 and AV1; MPEG-2 (its
+            4:2:2 profile included), ProRes&nbsp;422, DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and
+            VP8</td></tr>
         <tr><th scope="row">Pictures shown</th>
           <td>Planar 4:2:0 and 4:2:2 at 8 and 10 bits, and packed 8-bit 4:2:2 (uncompressed 2vuy),
             limited or full range. Planar 4:2:2 since 25 Oct 2026, packed since 26 Oct 2026; drawn as
             it is coded, each line with its own colour</td></tr>
         <tr><th scope="row">Audio</th>
-          <td>AAC, MP3, FLAC, Opus, Vorbis and PCM, in a file that also has a picture</td></tr>
+          <td>AAC, MP3, MP2, AC-3 (as mastered, with no dynamic range compression), FLAC, Opus and Vorbis; PCM in
+            every common form, and SMPTE&nbsp;302M; DTS&rsquo;s core (a DTS-HD Master Audio track plays its core, a
+            DTS Express track does not decode); Dolby TrueHD. In a file with a picture, an audio file&rsquo;s cover
+            art included. Not decoded: E-AC-3 (Dolby Digital Plus). Dolby&nbsp;E, and anything else carried in a PCM
+            track as SMPTE&nbsp;337 data, is named and muted, never played or measured as the noise it is</td></tr>
+        <tr><th scope="row">Subtitles</th>
+          <td>Shown: SRT, WebVTT, MP4 text, ASS and SSA (as plain text), CEA-608 captions in the video, and
+            teletext subtitles (OP-47 in MXF, DVB teletext in MPEG-TS) from a local file. Named and not shown: DVB,
+            Blu-ray and DVD subtitles, and CEA-708 captions</td></tr>
       </tbody>
     </table>
   </div>
   <p class="after-table">Its media libraries are FFmpeg&rsquo;s, built by us from FFmpeg&rsquo;s own
     source under the GNU Lesser General Public License (LGPL) version&nbsp;2.1, with nothing
-    licensed under the GPL inside them. Their
-    source and the script that built them will be published beside each download. Why we build them
-    ourselves is in the archive:
-    <a href="/archive/lgpl-ffmpeg-build-2026-10-25/">why we build our own FFmpeg</a>.</p>
+    licensed under the GPL inside them. Their source and the script that built them will be published beside each
+    download. Why we build them ourselves is in the archive:
+    <a href="/archive/lgpl-ffmpeg-build-2026-10-25/">why we build our own FFmpeg</a>. On Linux the download also
+    carries libva, the runtime of VA-API, built by us from Intel&rsquo;s release, under the MIT licence.</p>
 </section>
 
 <section class="hw-section" id="measured" aria-labelledby="measured-title">
@@ -335,25 +386,34 @@
       <tbody>
         <tr><th scope="row">Sound against its picture, seen and heard
             <span class="cell-note">positive: the sound arrives after its picture</span></th>
-          <td class="ver">+9.9&nbsp;ms Ubuntu<br>+21.5&nbsp;ms Windows, the build of 24 Oct</td>
-          <td>24 Oct 2026, the mini PC below on one monitor and one USB headset: a camera and a
+          <td class="ver">+9.9&nbsp;ms Ubuntu<br>+21.5&nbsp;ms Windows<br>the builds of 24 Oct</td>
+          <td>24 Oct 2026, the Intel mini PC below on one monitor and one USB headset: a camera and a
             microphone recording the screen and the earpiece together, and a clip that flashes and
             beeps once a second. The tolerance EBU&nbsp;R37 sets for a broadcast chain allows the
             sound up to 60&nbsp;ms late. How it was measured, and what it found on the way, is in the
-            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>. Since 26 and 27 Oct 2026 the
-            Windows build has put its pictures on the screen differently, and it has not been measured
-            on the screen since.</td></tr>
+            <a href="/archive/picture-against-sound-2026-10-24/">archive</a>. The Windows build has changed how it
+            puts its pictures on the screen since (on 26 and 27 Oct and 6 Nov 2026). It has been measured once since,
+            on 7 Nov 2026, on another machine, display and sound path, and that reading is not comparable with the
+            figures given here.</td></tr>
         <tr><th scope="row">Seeks and go-tos that land on the frame asked for
             <span class="cell-note">by time, frame number, timestamp and timecode</span></th>
           <td class="ver">156 of 156</td>
           <td>Our frame-accuracy test, which reads a barcode burnt into every frame of three test
-            files, B-frames included: on the mini PC under Windows, 25 Oct 2026; first on Linux in
+            files, B-frames included: on the Intel mini PC under Windows, 25 Oct 2026; first on Linux in
             July 2026.</td></tr>
-        <tr><th scope="row">Integrated loudness against FFmpeg&rsquo;s <code>ebur128</code> filter</th>
-          <td class="ver">0.03&nbsp;LU apart</td>
-          <td>A steady 1&nbsp;kHz tone, 12&nbsp;s; true peak 0.01&nbsp;dB apart. The mini PC under
-            Windows, 25 Oct 2026. One test signal: it exercises neither the gating nor the channel
-            weighting, and is not the EBU&nbsp;Tech&nbsp;3341 test set.</td></tr>
+        <tr><th scope="row">Loudness against the EBU&rsquo;s conformance cases
+            <span class="cell-note">every reading within its case&rsquo;s own tolerance</span></th>
+          <td class="ver">109 of 109<br>114 of 114<br>24 of 24</td>
+          <td>8 Nov 2026. Every case of EBU&nbsp;Tech&nbsp;3341 (version&nbsp;4, 2023) and Tech&nbsp;3342 (2023)
+            that is defined as a signal (3341 cases 1&ndash;6 and 9&ndash;23, the live-meter forms included, and
+            3342 cases 1&ndash;4), generated at 44.1, 48 and 96&nbsp;kHz: 109 readings. Then every file of the
+            EBU&rsquo;s own loudness test set (version&nbsp;05, 2016): 114 readings on the meter, and 24 whole-file
+            readings through the player&rsquo;s own file measure. On the set&rsquo;s recorded programme, integrated
+            loudness &minus;22.99 and &minus;23.00&nbsp;LUFS against &minus;23.0, and loudness range 4.98 and
+            15.01&nbsp;LU against 5 and 15. On a 7.1 or immersive file with sound in a 7.1&rsquo;s back pair, a rear
+            centre or the top-back channels, the meter reads up to about 1.5&nbsp;LU below FFmpeg&rsquo;s
+            <code>ebur128</code> filter, which weights those channels as surrounds where ITU-R&nbsp;BS.1770 does not;
+            stereo and 5.1 read the same in both.</td></tr>
         <tr><th scope="row">4:2:2 pictures as drawn against our own processor conversion</th>
           <td class="ver">1.5&ndash;1.7 levels</td>
           <td>The mean difference, in 8-bit levels, between the picture drawn on the graphics card and
@@ -362,8 +422,34 @@
             test files. The two differ where colour changes, because the graphics card blends between
             colour samples and the probe takes the nearest one; the same picture in 4:2:0 differs more
             (2.4), as it should, since 4:2:2 carries colour for every line and 4:2:0 for every other
-            line. The laptop below, 25 Oct 2026; the mini PC under Windows gave the same figures, on a
+            line. The laptop below, 25 Oct 2026; the Intel mini PC under Windows gave the same figures, on a
             graphics adapter the test does not name.</td></tr>
+        <tr><th scope="row">4K at full screen on a small computer under Windows
+            <span class="cell-note">frames dropped or repeated</span></th>
+          <td class="ver">0 of 132,004</td>
+          <td>26 Oct 2026, the Intel mini PC below, a development build: four 4K HEVC test files, at 50 and 60 frames a
+            second, 8-bit and 10-bit, ten minutes each at full screen on a monitor set to the file&rsquo;s rate,
+            decoded on the graphics hardware and drawn in place. Before drawing in place, the same files played at
+            about a quarter of their rate there.</td></tr>
+        <tr><th scope="row">Hours of play, nothing growing
+            <span class="cell-note">the customer build, as installed</span></th>
+          <td class="ver">6 of 760,851 dropped<br>0 of 273,725 dropped</td>
+          <td>7 Nov 2026, the AMD mini PC below, nobody at the machine, each file looped by the player&rsquo;s own
+            A&ndash;B marks, with AMD Software&rsquo;s background service stopped: 3.5 hours of a 4K 59.94 10-bit
+            HEVC file decoded on the graphics hardware, and 3 hours of an MPEG-2 4:2:2 1080p25 file of ours with sound,
+            decoded in software. Neither repeated a frame. Memory, handles and threads held level from the first
+            quarter of each run to the last.</td></tr>
+        <tr><th scope="row">Files we damaged ourselves
+            <span class="cell-note">bytes overwritten at a chosen frame</span></th>
+          <td class="ver">0 crashed or hung<br>46 of 74 reported</td>
+          <td>6 Nov 2026. 91 files made from nine clean clips (H.264, HEVC and AV1 in MP4, MPEG-2 4:2:2 in MXF,
+            ProRes and DNxHD in MOV, H.264 in MPEG-TS, and H.264 in Matroska with MP2 or with AC-3 sound), read by
+            the engine alone, with no screen: on the laptop below in software and with its hardware decoder, and
+            the H.264, HEVC and AV1 files with the graphics hardware of both mini PCs under Windows. None crashed,
+            hung or stalled; two MOV files cut short, whose index sits at the end, did not open. Of the 74 faults
+            that showed in the picture or the sound, the software decoders reported 46 and said nothing of 28: the
+            frames that follow a damaged one are wrong too and are not counted, and PCM and MP2 carry no check
+            that could fail.</td></tr>
       </tbody>
     </table>
   </div>
@@ -372,33 +458,48 @@
 <section class="hw-section" id="machines" aria-labelledby="machines-title">
   <div class="sec-head">
     <h2 class="sec-title" id="machines-title">Where it is tested</h2>
-    <p>As of 25 Oct 2026, on two machines, both with Intel graphics. Until 7 Oct 2026 it was
-      developed on a laptop with AMD Radeon Vega graphics under Linux; nothing since, the path that
-      draws hardware-decoded frames in place included, has run on AMD graphics.</p>
+    <p>As of 10 Nov 2026, on three machines: two with Intel graphics, and one with AMD graphics since
+      5 Nov 2026. Until 7 Oct 2026 it was developed on a laptop with AMD Radeon Vega graphics under Linux.</p>
   </div>
   <ul class="duty">
-    <li><strong>A laptop</strong>, a Lenovo ThinkPad E16 Gen&nbsp;3 with an Intel Core Ultra&nbsp;7 255H, under Ubuntu 24.04&nbsp;LTS:
-      where it is developed, and where every change is tested.</li>
-    <li><strong>A mini PC</strong>, a GMKtec NucBox&nbsp;G3 with an Intel N100, under Windows&nbsp;11
-      and under Ubuntu 24.04&nbsp;LTS, on an ordinary monitor and USB headsets: where the Windows
-      build is tested, and where the sound and picture above were measured.</li>
+    <li><strong>A laptop</strong>, a Lenovo ThinkPad E16 Gen&nbsp;3 with an Intel Core Ultra&nbsp;7 255H, under
+      Ubuntu 24.04&nbsp;LTS: where it is developed, and where every change is tested.</li>
+    <li><strong>An Intel mini PC</strong>, a GMKtec NucBox&nbsp;G3 with an Intel N100, under Windows&nbsp;11
+      and under Ubuntu 24.04&nbsp;LTS: where the Windows build is tested, and where the sound and picture above
+      were measured.</li>
+    <li><strong>An AMD mini PC</strong>, a GMKtec M6 Ultra with an AMD Ryzen&nbsp;5 7640HS and Radeon&nbsp;760M
+      graphics, under Windows&nbsp;11 since 5 Nov 2026, and since 9 Nov 2026 under Ubuntu 24.04&nbsp;LTS as its
+      installer sets it up by default, with no VA-API driver: there it decodes in software.</li>
   </ul>
+  <p class="after-table">The mini PCs are tested on ordinary computer monitors, 4K among them.</p>
 
   <div class="known-issues" id="dont-claim">
     <h3 class="ki-title">What we don&rsquo;t claim</h3>
-    <div class="ki-date">As of 29 Oct 2026</div>
+    <div class="ki-date">As of 10 Nov 2026</div>
     <ul class="ki-list">
-      <li><strong>Made for checking broadcast files.</strong> The loudness meter measures to EBU R128
-        and ITU-R BS.1770-4, captions are CEA-608 as CTA-608-E defines them, and timecode is the
-        file's own. The manual says how each is tested, and what is still to be.</li>
-      <li><strong>Tested on Intel graphics only.</strong> As of 25 Oct 2026 the player is tested on
-        Intel graphics. It ran on AMD Radeon Vega graphics under Linux until 7 Oct 2026, and not
-        since; it has never run on NVIDIA graphics, and on Linux it has no NVIDIA decoding path.</li>
+      <li><strong>Not tested on NVIDIA graphics.</strong> It is tested on Intel graphics under Linux and Windows,
+        and on AMD graphics under Windows since 5 Nov 2026. Under Linux it has run on AMD graphics only in
+        software decoding since 7 Oct 2026. It has never run on NVIDIA graphics: on Linux its NVIDIA decoding
+        path is built and has not run on an NVIDIA card.</li>
+      <li><strong>What it says about damage is what the decoder says.</strong> In the files we damaged ourselves
+        (6 Nov 2026, above), 28 of the 74 faults that showed went unreported in software decoding. No graphics
+        hardware decoder we have tried flags a damaged picture, and the AMD mini PC&rsquo;s held the last good
+        picture for two seconds with nothing reported. The player says when the picture has stopped changing (a
+        hold of 1.6 seconds or more is always said, one under a second never), which caught that hold; for
+        checking a file for damage, software decoding is the better choice, and the player offers it.</li>
+      <li><strong>4K broadcast mezzanines decoded in software do not all keep their rate on a small
+        computer.</strong> On the Intel mini PC, decoding alone, 4K 59.94 ProRes&nbsp;HQ, DNxHR&nbsp;HQX and
+        4:2:2 H.264 reached at most 62&nbsp;% of their rate (30 Oct 2026). On the AMD mini PC, 4K 59.94
+        ProRes&nbsp;HQ and DNxHR&nbsp;HQX played at 58&ndash;60 frames a second, dropping about 1&ndash;2&nbsp;% of
+        their frames (5 Nov 2026).</li>
+      <li><strong>No HEVC without a graphics decoder for it.</strong> Since 10 Nov 2026 HEVC is decoded on the
+        graphics hardware only: a computer without a decoder for the file&rsquo;s HEVC does not open it, and
+        software decoding, the better choice for checking a file for damage, cannot be chosen for HEVC.</li>
       <li><strong>On 24 Oct 2026 the sound reached the listener 10&nbsp;ms (Ubuntu) and 22&nbsp;ms
         (Windows) after its picture</strong> on the set-up we measured, by latency that no device
-        reported to us. The Windows build has changed how it draws since then and has not been
-        measured again. We have not corrected for it, and we have measured one display and one
-        headset.</li>
+        reported to us. The Windows build has changed how it draws since then. It has been measured once since,
+        on 7 Nov 2026, on another machine, display and sound path, not comparable with these figures. We have not
+        corrected for it, and on 24 Oct we measured one display and one headset.</li>
       <li><strong>Under GNOME the player drops one picture every ten to fifteen seconds, and it is
         the desktop&rsquo;s.</strong> On 3 Nov 2026 we traced it, on two machines, to GNOME
         Shell&rsquo;s JavaScript garbage collector running across the compositor&rsquo;s own
@@ -406,23 +507,36 @@
         catch up and logs it. The trace, and what the player does and does not do about a miss it
         cannot prevent, is in the
         <a href="/archive/compositor-garbage-collection-2026-11-03/">archive</a>.</li>
+      <li><strong>Captions and teletext are tested on files we made.</strong> The captions&rsquo; text and times
+        are checked against what the bytes say, through FFmpeg&rsquo;s own CEA-608 decoder, in each of 608&rsquo;s
+        modes and on each of its four channels; the teletext on files of our own making. No captioned broadcast
+        file, no real OP-47 file and no broadcast transport stream&rsquo;s teletext has been read. Teletext has
+        been read on a screen once, on 10 Nov 2026.</li>
       <li><strong>Seeking in MXF</strong> is not covered by our frame-accuracy test.</li>
       <li><strong>Not every picture is shown.</strong> 4:4:4 (ProRes&nbsp;4444, DNxHR&nbsp;444),
-        12-bit, RGB, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound, timecode and loudness,
-        and the picture area names the format it could not show. HDR (PQ and HLG) is not tone
-        mapped, and the stream panel says so. Interlaced video is shown as it is coded, both fields
+        12-bit, RGB, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound,
+        timecode and loudness, and the picture area names the format it could not show. HDR (PQ and HLG) is not
+        tone mapped, and the stream panel says so. Interlaced video is shown as it is coded, both fields
         in one frame, not deinterlaced.</li>
       <li><strong>The Windows program is not code-signed.</strong> Windows&rsquo; Smart App Control
-        judges an unsigned program file by file, and on our mini PC it refused one of our test
-        programs and allowed it four minutes later.</li>
-      <li><strong>Not shown to survive a graphics driver reset.</strong> Since 29 Oct 2026 the build
-        we test draws its picture again after its graphics device is lost and plays on, which we
-        have tried only on Linux, by destroying the device on purpose. A real driver reset has not been tried,
-        and the hardware decoder is not rebuilt after one.</li>
+        judges an unsigned program file by file. On our Intel mini PC it refused one of our test programs on
+        25 Oct 2026 and allowed it five minutes later, and it refused our unsigned installer on 27 Oct and on
+        9 Nov 2026, the second time installing the same file seven minutes later.</li>
+      <li><strong>A graphics driver reset, survived once.</strong> On 3 Nov 2026, on the Intel mini PC under
+        Windows, a driver reset forced with Microsoft&rsquo;s own tool during a 4K HEVC file decoded on the
+        graphics hardware: a development build of 30 Oct 2026 drew its picture again, opened the file again where
+        it was and played on. The picture was gone for about 4.5 seconds after the loss, and frames were dropped
+        in the graphics stall before it. On Linux it has survived only a graphics device destroyed on purpose; a
+        real driver reset there has not been tried. The build we test has not been through a real driver reset,
+        and by our reading of its code, if no graphics decoder is there when it opens the file again, an HEVC
+        file is not opened again and its picture stays as the loss left it to the end, its sound playing on,
+        where another codec comes back decoded in software.</li>
+      <li><strong>Sound on Windows after its audio service restarts.</strong> If Windows&rsquo; audio service
+        is restarted while the player runs, the player stays silent until it is started again.</li>
       <li><strong>No macOS</strong>, and on Linux the native Wayland window is not measured: every
         measurement on Linux has been taken through X11 on Xwayland.</li>
       <li><strong>Computer displays only.</strong> The picture goes to the computer&rsquo;s own
-        displays: there is no SDI or IP output, and captions and AFD are not shown.</li>
+        displays: there is no SDI or IP output, and AFD is not shown.</li>
     </ul>
   </div>
 </section>

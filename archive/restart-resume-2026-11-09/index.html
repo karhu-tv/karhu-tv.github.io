@@ -58,7 +58,8 @@
   "legalName": "Bear Media Services LTD",
   "url": "https://karhu.tv/"
  },
- "temporalCoverage": "2026-10-14/2026-11-09"
+ "temporalCoverage": "2026-10-14/2026-11-09",
+ "dateModified": "2026-11-10"
 }
 </script>
 </head>
@@ -145,6 +146,7 @@
 <li><strong>One engine to a state directory.</strong> Nothing locks it, so a second engine run as the same user overwrites the first&rsquo;s copy. The worst case is a restart that starts from its file and loses the day&rsquo;s loaded playlists.</li>
 </ul></aside>
 <p class="record">Written on 9 November 2026 from the record: the design and its testing log (docs/restart-resume-design-2026-10-14.md), the test (restart_resume_cardless.py) and its two run logs.</p>
+<section class="addendum" id="addendum-2026-11-10"><h2>Addendum · <time datetime="2026-11-10">10 Nov 2026</time></h2><p>Two things this entry leaves open, what a restart should air and the record of an item it skips, were settled on 9 November 2026, the day it was published. We had chosen what airs about half an hour before the entry went up, and it did not say so.</p><p><strong>What airs.</strong> A restart now cuts in at the keyframe before the point the schedule says it should be at, and decodes forward from there. It puts its first aired frame far enough on that the decoding fits at four times real time, or takes the next keyframe if that comes sooner. Counted from the master clock&rsquo;s first tick, the black before the cut-in is now the 0.3&nbsp;seconds plus at most a third of the way back from that point to the keyframe, and never longer than waiting for the next keyframe would have been. The matrix above was run again that day and all 36 cases passed. The twelve stopped in the first item&rsquo;s last second joined the bars about half a second in, and the ten-second GOP cut in 1.92 to 2.38&nbsp;seconds after the second engine started, where it had taken 6.13 to 7.93.</p><p><strong>The record.</strong> At a start the engine now reads the compliance log back from its end to the last item it names, and records every item due between that one and the cut-in as passed over, or says in its own log why it cannot. In the matrix run on 9 November 2026 with the second engine started after the bars had ended, every case recorded them as passed over.</p><p>Building the decode forward found an older fault. An item begun inside a GOP, such as a trimmed item or a playlist joined part-way through an item, left the decoder with its sound two frames, 40&nbsp;ms at 50 frames a second, behind its picture. A test without the SDI card found it, and it was fixed in the same change. The first unit&rsquo;s timelines held no such item when we looked, on 9 November 2026.</p><p>All of this has been in the engine on our first unit since an engine restart at 18:58&nbsp;UTC on 9 November 2026. As this entry says, that unit&rsquo;s schedules never resume, so as of 10 November 2026 none of it has run on air. The second unit&rsquo;s engine, as of the same date, predates the restart resume itself.</p><p>One limit is open. On a container whose backward seek overshoots the keyframe it asks for, such as a transport stream with no index, the decode forward does not happen, and the restart cuts in at a later keyframe instead. Neither unit plays from one as of 10 November 2026.</p></section>
 
       </div>
 

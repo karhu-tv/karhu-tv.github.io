@@ -59,7 +59,7 @@
   "url": "https://karhu.tv/"
  },
  "temporalCoverage": "2026-10-24/2026-10-24",
- "dateModified": "2026-10-29"
+ "dateModified": "2026-11-10"
 }
 </script>
 </head>
@@ -134,6 +134,7 @@
 </ul>
 </aside>
 <p class="record">Written on 25 October 2026 from the record: Karhu Player&rsquo;s status log for 24 October 2026, and the recordings and timing scripts it names.</p><section class="addendum" id="addendum-2026-10-29"><h2>Addendum · <time datetime="2026-10-29">29 Oct 2026</time></h2><p>The Windows figures above are for Karhu Player as built on 24 October 2026, and the way its Windows build puts pictures on the screen has changed twice since. On 26 October 2026 we found that under Windows the player had been drawing through Vulkan wherever a Vulkan driver was installed, these measurements included; it now draws through Direct3D&nbsp;12, as it was meant to. On 27 October 2026 we made it wait for each refresh of the screen before showing the next picture, as it already did under Ubuntu. Measured on a 60&nbsp;Hz screen that evening, that puts each picture on the screen about one refresh, roughly 16&nbsp;ms, later than before. So the 21.5&nbsp;ms under Windows in the table, and the 22&nbsp;ms we said remains, describe the build of 24 October, not the current one, and we have not measured the sound against the picture on the screen under Windows since. Both changes were to the Windows build only.</p></section>
+<section class="addendum" id="addendum-2026-11-10"><h2>Addendum · <time datetime="2026-11-10">10 Nov 2026</time></h2><p>Our addendum of 29 October said we had not measured the sound against the picture on the screen under Windows since the build changed. We have measured it once since, on 7 November 2026, with the build that draws through Direct3D&nbsp;12, but on another machine, another display and another sound path. It is not comparable with the figures in this entry.</p></section>
 
       </div>
 

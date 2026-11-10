@@ -346,11 +346,14 @@
       another. A third connector is set as an input, for recording tests. Its card is a replacement
       since 29 Oct 2026, and all four of its outputs work (the <a href="#known-fault">fault</a>
       below); since then the fourth connector takes the second channel&rsquo;s output back in, for
-      checking what leaves the card.</li>
+      checking what leaves the card. Since 10 Nov 2026 the second channel also carries, in its
+      output&rsquo;s ancillary data, the OP-47 subtitles a file holds; the only file in its schedule
+      that holds any is a test pattern of our own.</li>
     <li><strong>The second unit</strong> plays four channels, each 1080p50, one on each SDI output.
       Since 7 Oct 2026 one of those outputs has been cabled to the first unit, which records it
       during tests. On 27 Sep 2026 none of its four outputs had a cable attached, and we have not
-      recorded the other three since. So most of what it plays is counted inside the machine, by
+      recorded two of them since; another fed the audio check for a time, until 30 Oct 2026. So
+      most of what it plays is counted inside the machine, by
       the engine and the card, and outside a test nothing downstream watches it.</li>
     <li><strong>Reference.</strong> On 27 Sep 2026 both units took a reference from the sync generator
       listed under test kit. With the generator at 1080i50 their cards did not lock their 1080p50
@@ -463,8 +466,9 @@
             analogue; a Steinberg UR22mkII USB audio interface, recording at 48 kHz; Genelec 8030A
             monitor loudspeakers</td>
           <td>Measuring and hearing the audio on an SDI output from outside the engine, such as a
-            test tone&rsquo;s level. Last shown working on 16 Sep 2026, reading a 1 kHz test tone
-            off an SDI output.</td></tr>
+            test tone&rsquo;s level. Last shown working on 30 Oct 2026, on the first unit&rsquo;s
+            first channel: its programme audio read 5.2&nbsp;dB below the source file, as our
+            calibration of the chain predicts to within 0.1&nbsp;dB.</td></tr>
         <tr><th scope="row">Picture monitor</th>
           <td>An SDI monitor from Blackmagic&rsquo;s SmartScope range</td>
           <td>Looking at the picture on an SDI output.</td></tr>
@@ -488,7 +492,9 @@
     unit&rsquo;s outputs during tests, and since 29 Oct 2026 one of its own outputs has been cabled
     back into one of its inputs. As of 29 Oct 2026 no figure on this site comes from those
     recordings; apart from the checks above, the figures are measured inside the machines
-    themselves.</p>
+    themselves. On 9 and 10 Nov 2026 we read the first unit&rsquo;s loop back: a test picture
+    returned identical apart from the two code values SDI reserves, and a test pattern&rsquo;s nine
+    subtitles returned in order, none missing.</p>
 </section>
 
 </main>

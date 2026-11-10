@@ -96,6 +96,7 @@
   <p class="entry-date"><time datetime="2026-11-09">9 Nov 2026</time></p>
   <h3><a href="/archive/restart-resume-2026-11-09/">Back where the schedule is: a restart that cuts in at the next keyframe, and the case our test missed</a></h3>
   <p class="entry-dek">When our playout engine stops in the middle of a programme, by a crash or by our own hand, it comes back where the schedule says it should be and cuts in at the file&rsquo;s next keyframe. On 9 November 2026 we tested it on six kinds of source without the SDI card. Writing this entry, we found that twelve of the 36 cases the test had passed hid a fault: a restart landing just after a short item began skipped it, aired black in its place, and left no record of it.</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-11-03">3 Nov 2026</time></p>
@@ -106,7 +107,7 @@
   <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
   <h3><a href="/archive/picture-against-sound-2026-10-24/">Picture against sound, measured on the screen: what a camera and a microphone found, 24&nbsp;October&nbsp;2026</a></h3>
   <p class="entry-dek">We measured where Karhu Player&rsquo;s sound lands against its picture where a viewer meets them, on the screen and at the earpiece. It found a fault on Windows that none of our counters showed. After the fixes, on 24 October 2026, the sound arrived 9.9&nbsp;ms after its picture under Ubuntu and 21.5&nbsp;ms after under Windows.</p>
-  <p class="entry-span">Addendum 29 Oct 2026</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-25">25 Oct 2026</time></p>
@@ -117,13 +118,13 @@
   <p class="entry-date"><time datetime="2026-10-15">15 Oct 2026</time></p>
   <h3><a href="/archive/moved-freeze-2026-10-15/">Moving a frozen frame is not removing it: a fix we took out, 15 October 2026</a></h3>
   <p class="entry-dek">We built a rule to stop a one-frame freeze in our playout engine. Two of our own reviews found that it only moved the freeze, and in cases it was never meant for it put frames of emergency material between programmes. We took it out and measured that nothing else changed.</p>
-  <p class="entry-span">Addendum 29 Oct 2026</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-14">14 Oct 2026</time></p>
   <h3><a href="/archive/decoder-deadlock-2026-10-13/">One line held a lock too long: a decoder deadlock, 13 October 2026</a></h3>
   <p class="entry-dek">A review of our own code found that a file failing to open at a programme change, while a playlist load was waiting to write, would stop a channel's decoder for good. It had been in our first unit's builds for eleven days. We proved it with a deliberately slow open, fixed it with one line, and put the fix on air as a restart of its own.</p>
-  <p class="entry-span">Addendum 30 Oct 2026</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-10-08">8 Oct 2026</time></p>
@@ -134,6 +135,7 @@
   <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
   <h3><a href="/archive/late-wakes-2026-08/">Late wakes near 400 microseconds, August 2026: we found where Linux had put the timer, not what made them late</a></h3>
   <p class="entry-dek">Two late wakes failed our fourteen-day soak in August 2026. They were the top of 109 excursions near 413 µs that recurred with the content and fell only in items handled one way on their way to the output. Kernel traces found where Linux puts the wake timer of a thread on an isolated CPU, but not what made the wake late.</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
 <li>
   <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
@@ -145,7 +147,7 @@
   <p class="entry-date"><time datetime="2026-09-28">28 Sep 2026</time></p>
   <h3><a href="/archive/fortnight-soak-2026-08/">Fourteen days of SDI playout, 61 million frames produced: the August 2026 soak, including the part that failed</a></h3>
   <p class="entry-dek">Between 6 and 20 August 2026 the first unit ran one unbroken 339-hour playout with no late frames on the SDI output, and still failed the criterion we had frozen before it started, because twice the engine's clock thread woke more than half a millisecond late.</p>
-  <p class="entry-span">Addendum 29 Oct 2026</p>
+  <p class="entry-span">Addendum 10 Nov 2026</p>
 </li>
       </ol>
     </section>

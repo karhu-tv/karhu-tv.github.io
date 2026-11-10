@@ -227,17 +227,23 @@
     <a href="#not-proved">below</a>. Everything on this page is as of 10 Oct 2026 unless it
     carries another date; how the log works was read from our own code on 6 Oct 2026, and its
     third version on 10 Oct 2026 and its fourth (one more reason an item is recorded as skipped) on 5 Nov 2026, and what the
-    verifier does with each case below was tried on it on 5 Nov 2026.
+    verifier does with each case below was tried on it on 9 Nov 2026.
   </p>
   <p class="page-body">
-    <strong>Our two units&rsquo; logs hold three versions.</strong> From 3 Oct 2026 the first
+    <strong>Our two units&rsquo; logs hold four versions.</strong> From 3 Oct 2026 the first
     unit wrote a second version, which adds a record for each airing of a schedule item, a record
     withdrawing a frame the engine discarded after recording it, and a signature on each seal.
-    Since 11 Oct 2026 it writes a third, which is the second with two kinds of record added: one for
+    From 11 Oct 2026 it wrote a third, which is the second with two kinds of record added: one for
     each frame the engine adds or leaves out on purpose to keep pace with the card&rsquo;s clock,
-    of which it writes none while that change is switched off, as it is as of 11 Oct 2026; and
-    records for events laid over the programme, such as cues, which neither unit&rsquo;s engine writes, as of 29 Oct 2026. What this
-    page says of the second version holds for the third. The second unit, on the build it has run
+    of which it wrote some while that change was switched on, from 31 Oct to 2 Nov 2026, and
+    writes none while it is off, as it has been since then; and records for events laid over the
+    programme. Of those, since 10 Nov 2026 the first unit writes one kind, on its second channel: a
+    span for each airing whose file carries subtitles it passes through to the output &mdash; in its
+    schedule, only a test pattern of our own. Neither unit writes cues, as of 10 Nov 2026. Since
+    5 Nov 2026 the first unit writes a fourth version, which is the third with one more reason an
+    item is recorded as not aired: an item shorter than one frame of its channel, taken out when the
+    schedule is loaded. What this page says of the second version holds for the third and the
+    fourth. The second unit, on the build it has run
     since 18 Sep 2026, writes the first version. Where
     something below belongs to one version only, it says so; the
     <a href="/hardware.html">hardware page</a> says which machine is which.
@@ -347,7 +353,10 @@
       engine held a frame on air while its source was late, which excuses that span; and that a
       source is slow enough for its frames to fall more than a quarter of a second apart on the
       channel, which lets that airing&rsquo;s frame records follow one another by its own step and at most
-      one frame more (of the slowest frame rate the engine outputs). A hole neither covers is still a fault.</li>
+      one frame more (of the slowest frame rate the engine outputs). A hole neither covers is still a fault.
+      From the third version, a span of an event laid over the programme, such as the subtitle spans
+      the first unit writes since 10 Nov 2026, must open and close inside the airing that carries it;
+      spans are numbered one after another, and none may be left open when its airing ends.</li>
     <li><strong>Day files follow one another.</strong> A file that continues the one before it
       must open with the actual hash of that file&rsquo;s last record, and the clock&rsquo;s lock
       to TAI is carried from file to file rather than assumed. A file that begins a new chain
@@ -355,7 +364,9 @@
       fault. And each day file is held to its name: the records that open its chains must name
       the channel and the channel identifier its name gives, and its first record must fall on the
       UTC day it names, so another channel&rsquo;s or another day&rsquo;s log under that name
-      fails.</li>
+      fails. One reading of that day is allowed besides ours: the day the first record falls on by the
+      clock of a writer whose computer holds no offset between TAI and UTC, which opens its day files in
+      the first seconds of its own day. A file read that way verifies, and the verifier says so.</li>
     <li><strong>Crash damage is not read as tampering.</strong> A last line cut short by a
       crash is reported as a torn line, and the chain up to it still checks; a complete line of
       anything else in that place fails the file. A whole record whose newline a power cut turned
@@ -496,7 +507,12 @@
         <p><strong>What reached the wire.</strong> The engine writes the log, and nothing in it is a
           measurement of the SDI output. Whether a frame left the card, and what it looked and
           sounded like at the connector, is outside it. On 6 Oct 2026 no recorder watched our
-          outputs (<a href="/hardware.html#test-kit">the hardware page&rsquo;s test kit</a>).</p>
+          outputs (<a href="/hardware.html#test-kit">the hardware page&rsquo;s test kit</a>).
+          Since 29 Oct 2026 the first unit&rsquo;s second channel is cabled back into one of its own
+          inputs, and we have read its output there in tests: on 9 Nov 2026 a test picture came back
+          identical apart from the two code values SDI reserves, and on 10 Nov 2026 the subtitles a
+          test pattern of our own carries came back, all nine, in order. That is the same card
+          reading itself, and nothing from it enters the log.</p>
       </li>
     </ol>
   </div>
@@ -507,8 +523,8 @@
     <h2 class="sec-title" id="verifier-title">The verifier, as it stands</h2>
     <p><code>opx-verify</code> does the checking described above, and we use it on our own
       archive. It is not released: <a href="/tools.html#opx-verify">the tools page</a> lists it as
-      in progress, and it is not offered for download. This is the version built on 13 Oct 2026,
-      and since 5 Nov 2026 the one that checks the first unit&rsquo;s log every night. It reads all four
+      in progress, and it is not offered for download. This is the version built on 9 Nov 2026,
+      and since that day the one that checks the first unit&rsquo;s log every night. It reads all four
       versions of the log.</p>
   </div>
   <ul class="facts">
@@ -557,6 +573,13 @@
     6 Oct to 13 Oct 2026 this page said the log holds a record for each source frame. On the first
     unit&rsquo;s 1080i50 channel a 50p source had one record for every two of its frames, as it still
     has; the page now says so.</p>
+  <p class="after-list" data-record><strong>A fifth correction.</strong> From 6 to 10 Nov 2026 the list
+    above of how a day file is held to its name left one case out. The verifier on the first unit since
+    6 Nov 2026 also reads a file&rsquo;s first record by the clock of a writer that holds no offset between
+    TAI and UTC, and accepts the file with a warning; the page now says so.</p>
+  <p class="after-list" data-record><strong>A sixth correction.</strong> From 5 to 10 Nov 2026 this page
+    said our two units&rsquo; logs hold three versions. From 17:29&nbsp;UTC on 5 Nov the first unit wrote a
+    fourth, on both channels; the page now says so.</p>
 </section>
 
 </main>
