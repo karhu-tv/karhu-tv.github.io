@@ -6,16 +6,6 @@
 <title>Karhu TV — TAI-disciplined broadcast playout, in software</title>
 <meta name="description" content="Rytmi is a software playout engine — a stock PC and a Blackmagic DeckLink card, disciplined to TAI, with a tamper-evident as-run log built into the timing core. Free tools for broadcast delivery QC.">
 
-<!-- The -v1 in the image filename is LOAD-BEARING. Facebook caches a card by
-     URL and does not re-fetch unless the URL changes, so an edited og-card.png
-     keeps serving the old art to every surface that has already seen it. A new
-     art revision gets a new path: og-card-v2.png, and this tag moves with it.
-
-     Open Graph. tools_brief W-11: without these every LinkedIn share of karhu.tv
-     renders a blank card, and outreach is already in flight.
-     No live counters in any of these strings: a meta tag is not re-rendered by the
-     page's JS, so a frozen "N frames delivered" here would rot the same way the
-     hero prose did. Durable claims only. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Karhu TV">
 <meta property="og:url" content="https://karhu.tv/">
@@ -28,7 +18,6 @@
 <meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
 <meta property="og:locale" content="en_GB">
 
-<!-- X/Twitter reads og:* as fallback but wants the card type declared. -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Karhu TV — TAI-disciplined broadcast playout, in software">
 <meta name="twitter:description" content="At 1080p50, a frame is 20 milliseconds. We measure our clock error in nanoseconds, on a stock PC — and we publish what we don't claim.">
@@ -97,7 +86,6 @@
   p { margin: 0; max-width: var(--measure); }
   .lede { font-size: 1.125rem; color: var(--ink-soft); }
   .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-  /* ── masthead ────────────────────────────────────────────────── */
   header.top {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: .75rem 1.5rem; flex-wrap: wrap;
@@ -112,34 +100,9 @@
   nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
   nav a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent; padding: .15rem 0; }
   nav a:hover, nav a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
-  /* The other pages' masthead metrics (header gap, link padding, and the phone padding and
-     gap), so the eight-item menu sits in the same place and breaks into the same rows on
-     every page. */
   @media (max-width: 30rem) { header.top { padding-top: 1.5rem; } nav { gap: .5rem 1.25rem; } }
 
-  /* ── hero: the instrument reports a value ────────────────────── */
   .hero { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
-  /* FULL WIDTH, STACKED — reverted 2026-08-06 at the operator's call. The
-     side-by-side split (1.15fr / .85fr above 62rem) put the intro prose beside the
-     live stat panel, and the two are inherently different lengths: the prose is a
-     fixed paragraph, the panel grows and shrinks with however many figures the
-     engine is publishing and whether each is present or absent. No column ratio can
-     hold that neat, because one side changes height at runtime and the other does
-     not. Stacked, each gets the full measure and neither has to match the other.
-
-     THE MEASURE CAME OFF TOO, 2026-08-07, on the same call. The revert freed the
-     GRID and left the prose capped at 62ch, so the hero still read as split —
-     half-width intro above a full-width panel, which is the layout the revert was
-     meant to end. "Full width" means both edges line up with the panel's, and TWO
-     caps had to go for that: this block's own, and the GLOBAL
-     `p { max-width: var(--measure) }` at the top of the sheet, which would have held
-     the paragraph narrow however wide its parent became. Removing only the block cap
-     is a silent no-op on the one element being complained about — the h1 would have
-     widened and the paragraph would not.
-
-     The cost is stated, not hidden: at 76rem the lede runs past a comfortable
-     reading measure. Operator's call, made twice, on a short block that is read once
-     — this is not the body copy of the page, which keeps its measure. */
   .hero-grid { display: grid; gap: clamp(2rem, 5vw, 3.5rem); grid-template-columns: 1fr; }
   .hero-grid p { max-width: none; }
   .hero h1 { margin-bottom: 1.25rem; }
@@ -165,9 +128,6 @@
   .live-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem;
     flex-wrap:wrap; }
 
-  /* Tally. Facility idiom, but it says SOAK LIVE and not ON AIR — this is a bench,
-     and a lamp implying a live transmission would be the overclaim the register
-     exists to prevent. Semantic colour, deliberately outside the accent palette. */
   .tally { display:inline-flex; align-items:center; gap:.5rem;
     border:1px solid var(--rule); background:var(--ground);
     padding:.32rem .6rem .32rem .5rem; }
@@ -183,11 +143,6 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .tally.on .tally-txt { color:#F2736D; }
   }
-  /* NO SIGNAL IS A THIRD STATE AND MUST NOT LOOK LIKE EITHER OF THE OTHER TWO.
-     Not the red on-air lamp, and not the grey "we looked and the soak is dark" — it
-     says the page could not REACH the feed, which is a statement about the connection
-     and not about the engine. Amber, semantic, deliberately outside the accent palette,
-     and deliberately NOT breathing: a pulsing lamp reads as on-air. */
   .tally.nosig { border-color:#8A6A16; }
   .tally.nosig .lamp { background:#C08A1E; box-shadow:0 0 6px 1px rgba(192,138,30,.5); }
   .tally.nosig .tally-txt { color:#8A6A16; }
@@ -200,61 +155,31 @@
   .freshness { font-family:var(--mono); font-size:.6875rem; letter-spacing:.06em; }
   .freshness.ok { color: var(--accent); }
   .freshness.stale { color: var(--warn); }
-  /* The dated reason for there being no live soak. Rendered ONLY when the tally is not
-     live AND the snapshot carries a `reason` — a ruling written on the engine side, with
-     its date first, so it never claims to be now. Under a lit tally it is hidden. */
   .reason { font-family:var(--mono); font-size:.75rem; color:var(--ink-soft); line-height:1.5;
             padding:.55rem 0 .15rem; border-bottom:1px solid var(--rule-soft); }
-  /* Full-width panel (2026-08-06): a row is value+label on the left and provenance
-     on the right, so the width is USED rather than turned into 241-character lines —
-     the longest provenance the engine currently emits is 241 chars, which unbroken is
-     roughly three times a comfortable measure. Below 46rem it collapses back to the
-     original stack, where a single column is the only sensible shape. */
   .lrow { display:flex; flex-direction:column; gap:.15rem; padding:.7rem 0; border-bottom:1px solid var(--rule-soft); }
   @media (min-width: 46rem) {
     .lrow { display:grid; grid-template-columns: minmax(12rem, 22ch) 1fr;
             column-gap: clamp(1rem, 3vw, 2.5rem); align-items:baseline; }
     .lrow .lval { grid-row:1; grid-column:1; }
     .lrow .llab { grid-row:2; grid-column:1; }
-    /* Provenance spans both rows in the right column and gets its own measure. */
     .lrow .lsrc { grid-row:1 / span 2; grid-column:2; max-width:78ch; align-self:center; }
-    /* The underrun timeline belongs under the provenance, not beside the number. */
     .lrow .urt { grid-column:2; }
-    /* And so does the phase ladder. Without this it auto-places into the first free
-       cell — column 1, the 22ch value column — which squashes a four-decade axis into
-       a fifth of the width it needs and leaves column 2 blank beside it. Anything
-       appended to .lrow that is not a value or a label wants column 2 named
-       explicitly; the grid will not guess it. */
     .lrow .pdist { grid-column:2; }
   }
   .lrow:last-child { border-bottom:0; }
   .lval { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:1.5rem;
           line-height:1.1; color:var(--accent); }
   .lval.absent { color: var(--ink-faint); }
-  /* Historical figures must never be mistakable for live ones: muted, not accent. */
   .lval.hist { color: var(--ink-soft); }
   #live-rows.historic .lsrc { color: var(--ink-soft); }
   .llab { font-size:.8125rem; color:var(--ink); }
-  /* Scope tag. Recessive on purpose: it is a qualifier on the label, not a value. Its
-     job is to make a future scope mix visible rather than to be read every time. */
   .lscope { font-size:.625rem; letter-spacing:.06em; text-transform:uppercase;
             color:var(--ink-faint); border:1px solid var(--rule); border-radius:3px;
             padding:.05em .35em; white-space:nowrap; vertical-align:.1em; }
   .lscope.now { color:var(--ink-soft); }
-  /* The pipeline locator. Deliberately quieter than .lscope: scope changes what a
-     number MEANS, stage only says where it was measured. */
   .lstage { font-size:.625rem; letter-spacing:.04em; color:var(--ink-faint);
             font-family:var(--mono); white-space:nowrap; }
-  /* Trend sparklines. Single series each, so the row label IS the legend; the line
-     wears the accent (the page's measured-value colour), text stays in ink tokens.
-     A gap in the data BREAKS the line — drawing across it would claim a
-     measurement nobody made. */
-  /* Underrun timing. The prose says "none since priming"; this lets a reader CHECK
-     it. A RUN-PROPORTIONAL axis, so a mark's position IS how far into the run it
-     happened — the settling window is drawn as a shaded region rather than a legend
-     entry, because it is a region of the axis. Priming marks are muted; anything
-     after the window wears the alarm colour, since that is the only kind that means
-     something. */
   .urt { margin-top:.45rem; }
   .urt-lab { font-size:.6875rem; font-family:var(--mono); color:var(--ink-faint);
              display:flex; justify-content:space-between; gap:1rem; }
@@ -264,11 +189,6 @@
   .urt .mk { stroke-width:2; }
   .urt .mk.prime { stroke:var(--ink-faint); }
   .urt .mk.real  { stroke:#D2544A; }
-  /* Phase distribution. The ladder was published only inside a provenance string,
-     which is .625rem in the faintest ink on the page — technically present and
-     genuinely unreadable. A shape wants a shape. Log axis, because the data spans
-     four decades and a linear one would collapse everything below the maximum
-     into the left edge, which is exactly the misreading the row exists to prevent. */
   .pdist { margin-top:.6rem; max-width:78ch; }
   .pdist-lab { font-size:.6875rem; font-family:var(--mono); color:var(--ink-faint);
                display:flex; justify-content:space-between; gap:.75rem; }
@@ -277,8 +197,6 @@
                      height:1px; background:var(--rule-soft); }
   .pdist-dec { position:absolute; bottom:0; font-size:.5625rem; font-family:var(--mono);
                color:var(--ink-faint); transform:translateX(-50%); white-space:nowrap; }
-  /* The decade tick itself, so the label is anchored to a position and not floating
-     near one — at four decades across a wide column, "near" is several pixels. */
   .pdist-dec::after { content:''; position:absolute; left:50%; bottom:11px; width:1px;
                       height:4px; background:var(--rule-soft); }
   .pdist-mk { position:absolute; bottom:12px; width:2px; height:15px;
@@ -287,8 +205,6 @@
   .pdist-vals { font-family:var(--mono); font-size:.6875rem; color:var(--ink-soft);
                 margin-top:.5rem; line-height:1.7; }
   .pdist-vals b { color:var(--ink); font-weight:600; }
-  /* Below the grid breakpoint the row is a flex stack and the ladder is the full
-     width of the panel, so it needs no column of its own. */
   @media (max-width: 45.999rem) { .pdist { max-width:none; } }
   .trends { margin-top:.4rem; border-top:1px solid var(--rule-soft); padding-top:.6rem;
             display:flex; flex-direction:column; gap:.55rem; }
@@ -297,8 +213,7 @@
   .trend svg { display:block; width:100%; height:30px; }
   .trend polyline { fill:none; stroke:var(--accent); stroke-width:2; stroke-linejoin:round; }
   .trend circle { fill:var(--accent); }
-  .lsrc { font-family:var(--mono); font-size:.625rem; color:var(--ink-faint); line-height:1.45; }  /* ── scale bar: ns against a frame ───────────────────────────── */
-  .scale { margin-top: 1.25rem; }
+  .lsrc { font-family:var(--mono); font-size:.625rem; color:var(--ink-faint); line-height:1.45; }  .scale { margin-top: 1.25rem; }
   .scale-track {
     position: relative; height: 34px; border: 1px solid var(--rule);
     background: var(--ground); overflow: hidden;
@@ -307,7 +222,6 @@
   .scale-cap { display: flex; justify-content: space-between; margin-top: .4rem;
     font-family: var(--mono); font-size: .6875rem; color: var(--ink-faint); }
 
-  /* ── sections ────────────────────────────────────────────────── */
   section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
   .sec-head { margin-bottom: 2rem; }
   .sec-head p { margin-top: .75rem; color: var(--ink-soft); }
@@ -319,7 +233,6 @@
   .exceptions li::marker { color: var(--ink-faint); }
   .reg-why .exceptions { margin-top: .6rem; }
 
-  /* ── evidence table ──────────────────────────────────────────── */
   .tbl-scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: .875rem; min-width: 34rem; }
   th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
@@ -330,17 +243,11 @@
   td.v { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
   td.src { font-family: var(--mono); font-size: .75rem; color: var(--ink-faint); }
 
-  /* The note under the evidence table. Deliberately NOT another row: it is
-     commentary on a failed test, measure-limited and set in body type so it
-     cannot be mistaken for a measurement. Rule above rather than a box —
-     a callout would give a paragraph about an unsolved problem more visual
-     weight than the rows of solved ones above it. */
   .afterword { margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
                display: flex; flex-direction: column; gap: .85rem; max-width: 74ch; }
   .afterword h3 { font-size: 1.0625rem; font-weight: 600; }
   .afterword p { color: var(--ink-soft); font-size: .9375rem; }
 
-  /* ── claim register ──────────────────────────────────────────── */
   #register {
     background: var(--warn-soft);
     padding-left: clamp(1.25rem, 3vw, 2.5rem);
@@ -389,7 +296,6 @@
   @media (min-width: 62rem) { .reg-item { display: grid; grid-template-columns: 15rem 1fr; gap: .5rem 2rem; }
     .reg-item h3 { grid-row: span 2; } }
 
-  /* ── tools ───────────────────────────────────────────────────── */
   .tools { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
   @media (min-width: 48rem) { .tools { grid-template-columns: repeat(2, 1fr); } }
   .tool { background: var(--ground); padding: 1.5rem; display: flex; flex-direction: column; gap: .6rem; }
@@ -401,11 +307,6 @@
   }
   .tag.live { color: var(--accent); border-color: var(--accent); }
   .tool p { font-size: .9375rem; color: var(--ink-soft); }
-  /* Download links. The tools section said "available" for two released binaries and
-     carried no link to either — the page claimed availability without providing access,
-     because this layout orphaned tools.html rather than dropping the buttons on
-     purpose. margin-top:auto pins these to the card's bottom edge so cards of unequal
-     prose length still line their links up. */
   .tool-dl { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: auto; padding-top: .3rem; }
   .tool-dl a { font-family: var(--mono); font-size: .75rem; text-decoration: none;
                color: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
@@ -414,16 +315,9 @@
   .tool-dl a.alt { color: var(--ink-soft); border-color: var(--rule); }
   .tool-dl a.alt:hover, .tool-dl a.alt:focus-visible { background: var(--rule); color: var(--ink); }
 
-  /* --ink-soft, as on tools.html, hardware.html and the archive: the footer now carries the
-     company's statutory details, and --ink-faint is below 4.5:1 for text this size. */
   footer { border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem; color: var(--ink-soft); font-size: .875rem; }
   footer a { color: var(--accent); }
-  /* The statutory line and the page's own sentence sit under the contact line, in the small
-     size tools.html, hardware.html and archive.css give every footer line after the first. */
   footer p + p { margin-top: .5rem; font-size: .8125rem; }
-  /* Links inside running prose on this page (to /hardware.html and /as-run.html). Without a
-     rule they take the browser's default blue, which is unreadable on the dark ground. Drawn
-     as tools.html and archive.css draw a prose link. */
   #rytmi p a, #register .reg-why a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .18em; }
   #rytmi p a:hover, #register .reg-why a:hover { text-decoration-thickness: 2px; }
   .note { font-size: .875rem; color: var(--ink-soft); }
@@ -468,11 +362,6 @@
           tamper-evident as-run log built into the timing core rather than bolted on
           afterwards. The free <span class="inline-code">opx-*</span> tools below are the
           instruments we wrote to prove it correct.
-          <!-- #lede-soak is REWRITTEN FROM THE LIVE SNAPSHOT by render(). The static text
-               below is the no-JS fallback and is deliberately DATED, past-tense: an undated
-               copy of a live counter in prose was exactly how this sentence rotted within
-               hours of being typed (it read 7,296,650 while the panel beside it said
-               7,656,700). A dated figure stays true; an undated one is stale on arrival. -->
           <span id="lede-soak">Between 6 and 20 August 2026 the first unit produced
           <strong>61,088,850 frames</strong> in one unbroken 339-hour run, with
           <strong>none late on the SDI output</strong>.</span>
@@ -823,12 +712,6 @@
       </table>
     </div>
 
-    <!-- WHAT THIS SECTION MAY AND MAY NOT SAY. Every sentence here is a RESULT:
-         how many, how big, which direction, what recovered, what was excluded.
-         The mechanism work behind it is not published and is not going to be —
-         not because it is embarrassing, but because the analysis is the product.
-         No timeframes (policy SS3), no figure that is not either dated or derived
-         from one already on the page, and no cause named until one is proven. -->
     <div class="afterword">
       <h3>After the run: what fourteen days of logs were worth</h3>
       <p>
@@ -1170,16 +1053,6 @@
             that share a denominator &mdash; 25 with 50, 29.97 with 59.94 &mdash; are what that clock is
             scoped to mix. We would rather say that than let a decision of ours read as a
             hardware limit.</p>
-          <!-- A RULING, NOT A TIMEFRAME (updated 2026-09-27: the 120 kHz grid is no longer planned —
-               docs/clock-v2-scope-2026-09-16.md §0 row B ruled cross-denominator mixing OUT on
-               16 Sep, with re-opening conditions in §1.6). The distinction below is still policy §3.
-               "planned" was a decision — the same construction as the HEVC row's "Neither is
-               planned" — and it carries no date that can slip in public. Do NOT soften this
-               into "not built YET": that exact phrase is in freshness_check.py's TIMEBOUND
-               list and §3 names it as the canonical wrong version, because an adverb makes a
-               promise the sentence never has to keep. Two future-work claims have already
-               rotted on this site ("shipping this week", "a sync generator is on order"),
-               which is why the rule exists at all. -->
           <p class="reg-earn"><span>Would earn it:</span> genlocked cross-family &mdash; a second
             card with its own reference, and a clock that can run two rates in one box. Free-running
             cross-family &mdash; a clock per channel, which we have deferred; a finer shared tick is not
@@ -1302,34 +1175,12 @@
 
 <script>
 (function () {
-  // In production the page fetches SOAK_URL (raw.githubusercontent.com, soak-data
-  // branch); SNAPSHOT is the embedded fallback when that fetch fails.
   const SNAPSHOT = {"measured_at": "2026-08-06T20:32:59Z", "series": {"phase_abs_mean_ns": {"label": "Typical clock phase", "unit": "ns", "points": [[1786046370, 86.0], [1786046430, 73.0], [1786046490, 60.0], [1786046550, 53.0], [1786046610, 44.0], [1786046670, 48.0], [1786046730, 53.0], [1786046790, 27.0], [1786046850, 142.0], [1786046910, 28.0], [1786046970, 39.0], [1786047030, 43.0], [1786047090, 37.0], [1786047150, 54.0], [1786047210, 62.0], [1786047270, 37.0], [1786047330, 39.0], [1786047390, 36.0], [1786047450, 67.0], [1786047510, 39.0], [1786047570, 47.0], [1786047630, 36.0], [1786047690, 46.0], [1786047750, 46.0], [1786047810, 55.0], [1786047870, 33.0], [1786047930, 41.0], [1786047990, 51.0], [1786048050, 54.0], [1786048110, 46.0], [1786048170, 73.0], [1786048230, 42.0], [1786048290, 57.0], [1786048350, 36.0]]}, "card_drift_ppm": {"label": "Card crystal error", "unit": "ppm", "points": [[1786046370, 3.364], [1786046430, 1.553], [1786046490, -0.208], [1786046550, -0.818], [1786046610, -1.158], [1786046670, -1.331], [1786046730, -1.486], [1786046790, -1.575], [1786046850, -1.632], [1786046910, -1.675], [1786046970, -1.705], [1786047030, -1.733], [1786047090, -1.755], [1786047150, -1.789], [1786047210, -1.839], [1786047270, -1.891], [1786047330, -1.934], [1786047390, -1.97], [1786047450, -2.005], [1786047510, -2.033], [1786047570, -2.062], [1786047630, -2.091], [1786047690, -2.116], [1786047750, -2.141], [1786047810, -2.167], [1786047870, -2.187], [1786047930, -2.221], [1786047990, -2.275], [1786048050, -2.326], [1786048110, -2.373], [1786048170, -2.417], [1786048230, -2.433], [1786048290, -2.45], [1786048350, -2.467]]}, "cpu_pct": {"label": "Host CPU", "unit": "%", "points": [[1786046370, 2.0], [1786046430, 1.5], [1786046490, 8.04], [1786046550, 1.98], [1786046610, 1.493], [1786046670, 1.493], [1786046730, 0.5], [1786046790, 0.0], [1786046850, 4.975], [1786046910, 0.0], [1786046970, 0.503], [1786047030, 1.0], [1786047090, 1.005], [1786047150, 1.0], [1786047210, 1.5], [1786047270, 1.005], [1786047330, 1.493], [1786047390, 0.5], [1786047450, 0.505], [1786047510, 0.503], [1786047570, 1.0], [1786047630, 1.493], [1786047690, 0.505], [1786047750, 1.0], [1786047810, 1.0], [1786047870, 1.5], [1786047930, 1.0], [1786047990, 1.0], [1786048050, 1.0], [1786048110, 1.493], [1786048170, 1.0], [1786048230, 1.0], [1786048290, 1.0], [1786048350, 2.0]]}}, "underruns": {"run_secs": 2373, "settle_secs": 120, "settled": true, "baseline": 71, "since_baseline": 0, "events": [{"at": 7, "delta": 50, "priming": true}, {"at": 8, "delta": 21, "priming": true}]}, "unit": "first unit \u2014 i7-12700, DeckLink Duo 2. A development bench running a test schedule, not a production fleet.", "figures": [{"label": "Soak elapsed", "value": null, "unit": "h", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames produced", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card-reported late frames", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frame underruns", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, worst this run", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Clock phase, typical", "value": null, "unit": "ns", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Card crystal error vs TAI", "value": null, "unit": "ppm", "provenance": "the live feed could not be read, so no current figure is claimed"}, {"label": "Frames shed by drift compensation", "value": null, "unit": "", "provenance": "the live feed could not be read, so no current figure is claimed"}], "historical": [{"label": "Longest continuous engine run", "value": 339, "unit": "h", "when": "6\u201320 Aug 2026, ended", "provenance": "one unbroken run, 2026-08-06T19:53:26Z to 2026-08-20T23:16:43Z, ended deliberately at the close of the 14-day campaign. Derived three independent ways that agree to within twenty seconds \u2014 one part in 61,000: systemd reports NRestarts=0 across the whole span (339.3881 h), the engine's own frame counter reached 61,088,850 at 50 fps (339.3825 h, read 14 s before the stop), and the 1 Hz diagnostic line spans 339.3861 h. Rounded DOWN to whole hours \u2014 a final figure, not a floor"}, {"label": "Frames produced, that run", "value": 61088850, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the engine's own frame counter 14 s before it was stopped; at 50 fps it is one of the three derivations of the 339 h above, agreeing with the systemd span to within twenty seconds. Frames PRODUCED by the engine, which is not the same as frames the card put on the wire \u2014 214 were shed to drift compensation, by design"}, {"label": "Late SDI frames, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "reported by the card itself, not by us: frames that reached the SDI output late. Zero, across 339 hours \u2014 and the denominator is the card's own, not the engine's 61,088,850 produced, because 214 of those were shed to drift compensation before the card saw them"}, {"label": "Late engine frames, that run", "value": 2, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "a different counter answering a different question \u2014 twice in 339 hours the clock thread woke more than half a millisecond late. The frame was still built and the card's buffer absorbed it, which is what the row above independently confirms. Published because the campaign's frozen criterion allowed ZERO of these, so it failed its own test, and a criterion you only quote when it passes is not a criterion"}, {"label": "Clock phase, median per-second peak", "value": 197, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "the worst tick in each second, then the spread of those across all 1,221,791 seconds of the run: median 197 ns, p90 735, p99 1,059, p99.9 1,219, p99.99 39,780, worst 569,759. Half the run sat inside 197 ns and 99.9 % of it inside 1.22 \u00b5s. Published as a distribution because a latched maximum is the least representative number a run produces, and quoting it alone flatters nobody honestly"}, {"label": "Worst single tick, that run", "value": 569759, "unit": "ns", "when": "6\u201320 Aug 2026, concluded", "provenance": "latched maximum, never reset \u2014 under 3 % of one 20 ms frame, and the tail of the distribution in the row above rather than its shape. It belongs to a population of 109 excursions of 380 \u00b5s or more across the fortnight, all in the same direction; cause open and under investigation"}, {"label": "Clip junctions, that run", "value": 7439, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every clip change visible in the as-run log, checked against the engine's tick grid: 7,439, and every one of them frame-exact \u2014 the interval between the last frame of the outgoing item and the first frame of the incoming one was exactly one source frame, worst deviation 79 ns. No gaps, no overlaps \u2014 in the video. The audio across them was not checked, and the software that ran this carried RET-135, an audio defect fixed on 16 Sep 2026 that mis-fed audio after a change of source frame rate. One further transition is not counted as a junction: the 48.6 s gap at the very start, where this run itself began. And 782 same-file transitions \u2014 391 schedule wraps and the 391 RET-122 re-airs, from the engine's own advance counter (8,221) \u2014 cannot be seen by the as-run at all, so this figure does not speak for them"}, {"label": "Seconds at exactly 50 frames, that run", "value": 1221791, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "every second of the run \u2014 and there are no missing seconds, because 1,221,791 diagnostic seconds span exactly 1,221,791 seconds of wall clock. In all 1,221,790 intervals between them the frame counter advanced by exactly 50 and the timecode by exactly one second, across 14 midnights, with the engine's clock reporting LOCK in every second \u2014 its own phase lock to TAI, not genlock: no reference was locked, and the card free-ran for the whole run"}, {"label": "Compliance records dropped, that run", "value": 0, "unit": "", "when": "6\u201320 Aug 2026, concluded", "provenance": "the as-run writer hands records to a queue that is allowed to drop its newest entry rather than stall the clock thread, and writes an exception into the chain when it does. It never did: zero drops across the run's 47,518,115 records. Published as a zero only because the thing that would have made it non-zero leaves its own evidence \u2014 an unwitnessed zero is what this page withdrew a row over on 4 Aug"}, {"label": "As-run records checked for tampering", "value": 120483920, "unit": "", "when": "re-verified 21 Aug 2026", "provenance": "every record in the archive, re-checked after the 14-day run: 47 day files, 120,483,920 records, 13 chain segments. One broken boundary, 20\u219221 June 2026, and breaks inside day files \u2014 among them 20 and 21 June and 17 July 2026, the last where two engines wrote into one file \u2014 all three known and pre-dating this run. They are real findings, and they are why the archive reads INVALID rather than clean. 0 false positives; six forgery vectors closed"}], "note": "Each value is what an instrument reported, with the instrument named. Nothing here is a target or a projection. A figure the engine did not report is null and renders as an em dash \u2014 never as zero."};
 
-  // WHERE THE LIVE FILE COMES FROM, and why it is not '/soak.json'.
-  //
-  // GitHub Pages builds this site from `main`. Putting soak.json there would mean a
-  // commit and a full Pages REBUILD every 15 minutes — 96 builds a day against a
-  // documented soft limit near 10 an hour. So the pusher force-pushes a throwaway
-  // `soak-data` branch that is NOT the build source, and the page reads it directly.
-  // raw.githubusercontent.com sends `access-control-allow-origin: *` (verified with
-  // curl, not assumed) so the cross-origin fetch is allowed, and `cache-control:
-  // max-age=300`, which caps effective freshness at ~5 min however often we poll.
-  //
-  // HONESTY NOTE: this IS a third-party request, to a host that is not karhu.tv. The
-  // page must not claim "no external requests" while making one — that is tools_brief
-  // W-09 exactly, where it asserted no telemetry while pulling webfonts.
   const SOAK_URL =
     'https://raw.githubusercontent.com/karhu-tv/karhu-tv.github.io/soak-data/soak.json';
   const POLL_MS = 60 * 1000;
 
-  // THE RULE. A figure older than this stops being reported as a figure. A marketing
-  // page showing three-week-old numbers as current is the failure this exists to
-  // prevent — the same shape as a stale BNC mapping or an unwatched H.265 claim.
-  //
-  // 1 h against a 15-minute push: four consecutive pushes must fail before the page
-  // stops claiming the figures are current. Was 26 h, which assumed a daily cron and
-  // would have let a dead pusher go unnoticed for more than a day.
   const STALE_HOURS = 1;
 
   const fmt = (v, u) => {
@@ -1340,20 +1191,6 @@
     return u ? n + '\u2009' + u : n;
   };
 
-  // Draws WHEN the underruns happened. Returns null rather than an empty axis when
-  // there is nothing to say: an empty timeline reads as "measured, nothing happened",
-  // which is a claim, and missing data is not that claim. The settling window comes
-  // from the ENGINE (settle_secs) — a page hardcoding it would be a second site for a
-  // constant that already has one.
-  // The per-second worst-tick distribution, drawn. A latched maximum is the least
-  // representative number a run produces and 570 us alone invites the reader to take
-  // it as the shape; the shape is a tight cluster four decades below one frame with a
-  // visibly EMPTY decade before the tail. That gap is the whole finding and no single
-  // number can carry it.
-  //
-  // The axis is DERIVED from the data, never hardcoded: adding a step or changing a
-  // value moves the drawing with it, so the picture cannot quietly stop matching the
-  // numbers printed underneath it.
   function phaseLadder(pd) {
     if (!pd || !Array.isArray(pd.steps) || pd.steps.length === 0) return null;
     const vals = pd.steps.map((x) => x && x.ns).filter((n) => typeof n === 'number' && n > 0);
@@ -1362,8 +1199,6 @@
     const lo = Math.pow(10, Math.floor(L10(Math.min.apply(null, vals))));
     const hi = Math.pow(10, Math.ceil(L10(Math.max.apply(null, vals))));
     const span = L10(hi) - L10(lo);
-    // A single-decade span would divide by zero; fall back to the numbers alone
-    // rather than drawing an axis that means nothing.
     const pos = (v) => (span > 0 ? ((L10(v) - L10(lo)) / span) * 100 : 0);
     const int = (n) => Number(n).toLocaleString('en-GB');
     const ns = (n) => (n >= 1e6 ? (n / 1e6) + ' ms'
@@ -1415,8 +1250,6 @@
     out.append(' ns');
     wrap.append(out);
 
-    // The comparison the whole page is built around. Stated, not left to the reader
-    // to work out from an axis that stops four decades short of it.
     if (pd.frame_ns) {
       const f = document.createElement('div');
       f.className = 'pdist-lab';
@@ -1450,15 +1283,6 @@
     const lab = document.createElement('div');
     lab.className = 'urt-lab';
     const left = document.createElement('span');
-    // FRAMES, NOT MARKS. The chart draws one mark per EPISODE, but the headline figure
-    // and the panel sentence both count FRAMES — and this label used to print
-    // `real.length`, the episode count, unlabelled beside them. 33 frames arriving in 2
-    // episodes rendered as "2 after start-up" next to "33 SINCE start-up", and a reader
-    // has no way to reconcile those. Operator, 2026-08-23.
-    //
-    // So: state the FRAME count, and name the episodes as what the marks represent. If
-    // since_baseline is absent, fall back to the episode count but SAY it is episodes —
-    // an unlabelled number beside a differently-counted figure is the whole defect.
     const grewBy = (typeof u.since_baseline === 'number') ? u.since_baseline : null;
     const nEp = real.length;
     const plur = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
@@ -1492,35 +1316,9 @@
   function render(snap, ageHours, forceNull, feed) {
     const stale = ageHours > STALE_HOURS;
 
-    // THE TALLY IS DRIVEN BY THE SAME RULE AS THE FIGURES. It is the most visible
-    // element on the page, so it is the one that must not lie: lit only when the
-    // data is fresh AND the engine actually reported something. A snapshot can be
-    // minutes old and still carry all nulls if the engine was down when it was
-    // taken — that is dark, not live.
     const anyValue = snap.figures.some(f => f.value !== null && f.value !== undefined);
     const live = !stale && !forceNull && anyValue;
 
-    // THREE STATES, NOT TWO — and the third one is why this block exists.
-    //
-    // On 2026-08-17 this page displayed "SOAK OFF" and the aria-label "Soak not
-    // reporting" for about two and a half hours while the engine was running
-    // perfectly, every push was succeeding, and soak.json was sitting on GitHub
-    // half a minute old. raw.githubusercontent.com was answering 429 and 503 through
-    // a GitHub incident, the fetch was failing, and the page fell back to the
-    // build-time snapshot — which is stale by construction, so it aged out and the
-    // tally went dark.
-    //
-    // The rendering was doing what it was built to do: refuse to show a confident
-    // stale number. The LIE was in the words. "Soak not reporting" is a claim about
-    // OUR ENGINE, and it was made on evidence about SOMEBODY ELSE'S NETWORK. That is
-    // the site's own writing policy §2 — a label is a claim — and it is the same
-    // absent-is-not-zero rule the engine side has been applying since acpitz.
-    //
-    // So the two cases are now separated by WHAT WE ACTUALLY OBSERVED:
-    //   we read the file and it does not show a running soak  -> SOAK OFF   (supported)
-    //   we could not read the file at all                     -> NO SIGNAL (claims nothing)
-    // "NO SIGNAL" is the broadcast word on purpose: a monitor showing it is telling you
-    // the receiver cannot see a source, never that the source is off.
     const state = live ? 'live'
                 : feed === 'ok' ? 'off'
                 : feed === 'pending' ? 'checking'
@@ -1530,12 +1328,9 @@
                   aria: 'Soak running, figures current' },
       off:      { cls: '',        txt: 'SOAK OFF',
                   aria: 'Soak not reporting, figures withheld' },
-      // Claims nothing about the soak, because nothing about the soak was observed.
       nosignal: { cls: ' nosig',  txt: 'NO SIGNAL',
                   aria: 'Live figures unavailable — the data feed could not be reached. '
                       + 'This is not a statement about whether the soak is running.' },
-      // Before the first fetch has settled we have not looked yet, and saying so beats
-      // both alternatives: SOAK OFF would be false and NO SIGNAL would be premature.
       checking: { cls: '',        txt: 'CHECKING',
                   aria: 'Checking for current figures' },
     }[state];
@@ -1547,11 +1342,6 @@
     const fresh = document.getElementById('fresh');
     rows.replaceChildren();
 
-    // WHEN THERE IS NO LIVE SOAK, SHOW THE DURABLE RECORD INSTEAD OF EM DASHES.
-    // Safe for one reason only: every historical figure carries the date it was
-    // established, so it never claims to be now. A dated measurement is as true
-    // next year as today. A live figure without a date is the thing that rots — so
-    // the two are rendered differently and cannot be mistaken for one another.
     const source = live ? snap.figures : (snap.historical || []);
     rows.className = live ? '' : 'historic';
 
@@ -1562,55 +1352,27 @@
       v.className = 'lval' + (live ? '' : ' hist');
       v.textContent = fmt(f.value, f.unit);
       const l = document.createElement('div'); l.className = 'llab'; l.textContent = f.label;
-        // WHERE IN THE PIPELINE, as a chip beside the label. Operator, 2026-08-23:
-        // "label where the late, underrun frames are exactly in the system clearer".
-        // "Late frames" reads as "frames were late to air"; it means the clock thread
-        // woke late and the card's buffer absorbed it. The provenance said so in prose,
-        // which a reader has to open. This says it on the row.
-        //
-        // Optional by design: absent renders NOTHING. The historical rows carry no stage
-        // and must not grow an empty chip, and an older snapshot.json predating the field
-        // must still render — the page is fetched live, so it meets both.
         if (live && f.stage) {
           const st = document.createElement('span');
           st.className = 'lstage';
           st.textContent = f.stage;
           l.append(' ', st);
         }
-      // SCOPE, ON EVERY ROW. This panel used to interleave three per-run figures with
-      // three campaign sums and say nothing about which was which. With one unbroken
-      // run every figure coincides, so the mixing was invisible — it would first have
-      // shown itself at a restart, as "0 late frames" against a multi-million campaign
-      // total. The panel is now this run only, and the tag is what keeps it honest:
-      // if a campaign figure is ever added back, it will have to wear a label that
-      // does not match its neighbours.
       if (live && f.scope) {
         const sc = document.createElement('span');
         sc.className = 'lscope' + (f.scope === 'now' ? ' now' : '');
-        // Unknown scopes render VERBATIM, never as 'this run' — the tag exists so a
-        // figure with a new scope looks different from its neighbours, and a fallback
-        // dressing it as 'this run' would defeat exactly that protection.
         sc.textContent = f.scope === 'now' ? 'now'
                        : f.scope === 'run' ? 'this run'
                        : String(f.scope);
         l.append(' ', sc);
       }
       const s = document.createElement('div'); s.className = 'lsrc';
-      // The date is not decoration. It is what makes showing this honest.
       s.textContent = live ? f.provenance : f.when + ' \u00B7 ' + f.provenance;
       el.append(v, l, s);
-      // The underrun row gets its TIMING drawn beneath it. The sentence says "none
-      // since priming"; this lets a reader CHECK that rather than take it — the marks
-      // sit on a run-proportional axis, so where a mark IS answers whether it landed
-      // in start-up or ten minutes ago. Live panel only: the durable record has no
-      // run for a position to be proportional to.
       if (live && f.label === 'Frame underruns') {
         const t = underrunTimeline(snap.underruns);
         if (t) el.append(t);
       }
-      // NOT gated on `live`, unlike the timeline above: this describes a run that has
-      // already finished, so a dead engine does not invalidate it — and the state the
-      // page is now permanently in is exactly the one where it must still show.
       if (f.label === 'Clock phase, median per-second peak') {
         const p = phaseLadder(snap.phase_dist);
         if (p) el.append(p);
@@ -1618,13 +1380,6 @@
       rows.append(el);
     }
 
-    // Trend sparklines. ONE SERIES EACH, so the row label is the legend and the line
-    // wears the accent; text stays in ink tokens. Absent series (dead sampler, stale
-    // source) hides the strip entirely — no data must never render as a flat line,
-    // which is itself a measurement claim. A gap in the samples BREAKS the line for
-    // the same reason: drawing across it claims measurements nobody made.
-    // Deliberately axis-less: these answer "is it steady?", and the current value and
-    // the range ride the label and the SVG title.
     const tr = document.getElementById('trends');
     const ser = (live && snap.series) ? snap.series : null;
     if (tr) {
@@ -1656,12 +1411,6 @@
         svg.setAttribute('preserveAspectRatio', 'none');
         svg.setAttribute('role', 'img');
         const ttl = document.createElementNS(NS, 'title');
-        // ONE DURATION, THREE RENDERINGS. This used to be (x1 - x0) / 3600 \u2014 the span
-        // between the first and last BUCKET CENTROID. read_series() downsamples by
-        // time-bucket mean, so that is systematically one bucket short of the window
-        // the chart is drawn from: it read "last 130.0 h" beside "Soak elapsed 131.3 h"
-        // and "131.5 h into the run", three answers to one question. The window is
-        // snap.elapsed_s and every one of the three now renders it.
         const spanH = (snap.elapsed_s ? snap.elapsed_s / 3600 : (x1 - x0) / 3600);
         ttl.textContent = sdef.label + ' \u2014 last ' + spanH.toFixed(1)
           + ' h \u00b7 range ' + fmtv(y0) + '\u2013' + fmtv(y1) + ' ' + sdef.unit;
@@ -1692,15 +1441,6 @@
       }
     }
 
-    // THE LABEL DESCRIBES THE FIGURES ON SCREEN, NOT THE FETCH. It used to branch on
-    // `stale`, which is a property of the FILE, so a fresh file over a dead engine read
-    // "measured 3 min ago" directly beside figures from a run that ended days earlier.
-    // The age of the download is not the age of the numbers, and the panel is showing
-    // the numbers. It branches on `live` now: an age is only shown when the figures
-    // beside it are the thing that was measured.
-    //
-    // Minutes, not hours: with a 15-minute push cadence an hour-granular label would
-    // read "measured moments ago" for its entire healthy life and carry no information.
     const mins = Math.round(ageHours * 60);
     fresh.className = 'freshness ' + (live ? 'ok' : 'stale');
     fresh.textContent = !live
@@ -1709,11 +1449,6 @@
                      : mins < 60 ? mins + ' min'
                      : Math.round(ageHours) + ' h') + ' ago';
 
-    // THE REASON THERE IS NO LIVE SOAK, when the engine side has ruled one. It is a
-    // published string written on rig 1 (soak_snapshot.py, NO_LIVE_SOAK marker) with its
-    // date first, so it is a DATED claim and cannot rot. Shown only when not live: a
-    // no-soak reason under a lit tally would be two claims contradicting each other on
-    // one panel. Absent key, empty string or a live tally all hide it.
     const reasonEl = document.getElementById('reason');
     if (reasonEl) {
       const why = (!live && typeof snap.reason === 'string' && snap.reason.trim())
@@ -1722,10 +1457,6 @@
       reasonEl.hidden = !why;
     }
 
-    // THE LEDE SENTENCE IS RENDERED, NOT TYPED. The prose copy of the frame counter
-    // went stale within hours of being written \u2014 7,296,650 in the sentence while the
-    // panel beside it said 7,656,700. One source of truth, and the no-JS fallback in
-    // the HTML is dated so it cannot claim to be current.
     const lede = document.getElementById('lede-soak');
     const frames = snap.figures.find(f => f.label === 'Frames produced');
     const late = snap.figures.find(f => f.label === 'Late frames');
@@ -1739,17 +1470,6 @@
         const b2 = document.createElement('strong');
         b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
         lede.append(' with ', b2);
-        // A BARE "1 late" READS AS A DROPPED FRAME AND IT IS NOT ONE. The sentence used
-        // to stop there, so the first non-zero count the page ever published arrived
-        // with no definition attached and the worst reading available — a viewer losing
-        // a frame — was the one a reader would reach for. The term is defined here, at
-        // the first place it appears, and the card's own independent count follows it.
-        //
-        // The card figure is rendered, never typed: it is the same quantity the panel
-        // below publishes, and a second hand-written copy is how the hero went stale the
-        // first time. It is also rendered ONLY when it is genuinely zero — an assertion
-        // that nothing reached the output late must never survive the day it stops
-        // being true, and the fallback prose says nothing rather than something weaker.
         if (late.value > 0) {
           lede.append(' — a clock wake that arrived behind schedule, absorbed by the ' +
                       'card’s output buffer rather than lost from the picture');
@@ -1762,7 +1482,6 @@
       }
       lede.append('.');
     } else {
-      // No fresh figures: say when the last ones were from, or say nothing numeric.
       const d = snap.measured_at ? new Date(snap.measured_at) : null;
       const when = d ? d.toLocaleDateString('en-GB',
         { day: 'numeric', month: 'long', year: 'numeric' }) : null;
@@ -1772,13 +1491,6 @@
         b1.textContent = fmt(fv, 'frames');
         lede.append('By ' + when + ' the first unit had produced ', b1,
           ' in its then-current soak');
-        // ASYMMETRIC DISCLOSURE, FIXED 2026-08-12. This branch used to render the
-        // clause only when the count was ZERO and silently omit it otherwise — so the
-        // first time soak.json went stale with a non-zero count, the hero would have
-        // read "...had delivered 23,000,000+ frames" and simply not mentioned the late
-        // frame the evidence table below discusses at length. The bad news must not be
-        // the only case that can go missing; the live branch above already renders
-        // both, and this one now matches it.
         if (late && late.value != null) {
           const b2 = document.createElement('strong');
           b2.textContent = late.value === 0 ? 'none late' : fmt(late.value) + ' late';
@@ -1790,30 +1502,13 @@
       }
     }
 
-    // ONE SOURCE OF TRUTH for the phase figure. The scale bar and the headline used
-    // to carry a hand-typed 175 ns while the panel below showed 45 — two different
-    // quantities (median of the per-second PEAK, versus mean magnitude) wearing the
-    // same word "typical", differing 4x. Both are now rendered from the single live
-    // value, so they cannot disagree again.
     const phase = snap.figures.find(f => f.label === 'Clock phase, typical');
-    // WITH NO LIVE SOAK THIS DREW NOTHING: the caption read "typical phase error —"
-    // beside a 2px stub of a bar, which is the least flattering possible rendering of
-    // the best number on the page. The concluded run has a real, dated typical value —
-    // the median of its per-second worst ticks — and the snapshot already carries it.
-    // Fall back to that and SAY which run it is (its date, from phase_dist.when), rather
-    // than an em dash — and never "last run", which went false at the next restart.
     const pvLive = !!(live && phase && phase.value != null);
     const pvHist = (snap.phase_dist && Array.isArray(snap.phase_dist.steps)
       ? (snap.phase_dist.steps.find((x) => x && /median/i.test(x.label)) || {}).ns
       : null);
     const pv = pvLive ? phase.value
              : (typeof pvHist === 'number' ? pvHist : null);
-    // A FRAME LENGTH IS FORMAT-SPECIFIC. 20 ms is 1080p50; at 59.94 it is 16.683 ms,
-    // and the engine's own config is per-channel. The headline and this caption both
-    // used to state 20 ms flat, which reads as a universal. The caption is now
-    // rendered FROM the constant so the two cannot drift apart — the same
-    // duplicate-constant trap already hit here with Theil-Sen, read_cpu_temp,
-    // LOCK_TOLERANCE_US and fmtPhase.
     const FRAME_NS = 20e6, FRAME_FMT = '1080p50';
     document.getElementById('scale-frame').textContent =
       'one frame · ' + FRAME_FMT + ' · ' + FRAME_NS.toLocaleString('en-GB') + ' ns';
@@ -1835,11 +1530,6 @@
       tail.textContent = 'We hold it to ' + order + '.';
     }
 
-    // The prose carries the same three-way split as the tally, for the same reason:
-    // "No soak reporting" is a claim about the engine and must only be made when the
-    // feed was actually READ. The dated records are shown in every non-live state \u2014
-    // they are honest in all of them, because each one carries the date it was
-    // established \u2014 but the sentence introducing them is not interchangeable.
     const DATED = 'These are dated records from the engineering log, not current '
                 + 'readings \u2014 each carries the date it was established. ';
     const SRC = {
@@ -1853,35 +1543,15 @@
     document.getElementById('live-src').textContent = SRC;
   }
 
-  // `current` starts as the embedded snapshot and is replaced by whatever the fetch
-  // returns. The embedded copy is a FALLBACK, not a default to fall back to silently:
-  // it is stale by construction, so once it ages past STALE_HOURS the page shows the
-  // dated historical record instead of pretending. A failed fetch therefore degrades
-  // to "SOAK OFF", never to a confident stale number.
   let current = SNAPSHOT;
-  let frozen = null;   // set by the demo buttons; suspends live rendering
-  // WHAT THE LAST FETCH ACTUALLY DID — 'pending' until one has settled, then 'ok' or
-  // 'unreachable'. Without this the page cannot tell "we read the file and the soak is
-  // dark" from "we never got the file", and on 2026-08-17 it reported the second as the
-  // first for two and a half hours. It is deliberately about the FETCH and not about
-  // the data: a successful fetch of a stale file is still 'ok', because we read it, and
-  // "the published file has stopped moving" is a claim we can support.
+  let frozen = null;
   let feed = 'pending';
 
   const ageHoursOf = (snap) =>
     Math.max(0, (Date.now() - new Date(snap.measured_at).getTime()) / 3.6e6);
 
-  // Skip repaints that would change nothing. render() rebuilds the row list and
-  // rewrites the tally's live-region text; doing that every 30 s with identical
-  // content makes some screen readers re-announce an unchanged status and discards
-  // any text selection in the panel. Minute granularity matches the freshness label,
-  // so no visible state can change inside a skipped repaint.
   let lastPaintKey = null;
   function paint() {
-    // `feed` IS PART OF THE KEY. It has to be: the whole point of the state is that it
-    // changes what the tally says while the snapshot and its age stay exactly the same,
-    // so a key without it would skip the repaint and the page would keep displaying the
-    // previous claim — the repaint-skip silently reintroducing the bug this change fixes.
     const key = frozen
       ? 'frozen|' + frozen.age + '|' + (frozen.forceNull ? 1 : 0) + '|'
         + (frozen.feed || 'ok') + '|' + frozen.snap.measured_at
@@ -1894,31 +1564,20 @@
   }
 
   function refresh() {
-    // cache: 'no-store' on OUR request only; the CDN's own max-age=300 still governs
-    // what the edge hands back, so this cannot be used to hammer GitHub.
     fetch(SOAK_URL, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
       .then((snap) => {
-        // A payload with no measured_at cannot be aged, and an un-ageable figure is
-        // exactly what STALE_HOURS exists to catch. Reject it rather than render it.
         if (!snap || !snap.measured_at) throw new Error('no measured_at');
         current = snap;
         feed = 'ok';
         paint();
       })
-      // Keep the last good snapshot — staleness still retires it — but RECORD that the
-      // fetch failed, and repaint. Before this, the catch was silent and the page went
-      // on rendering "SOAK OFF": a network failure wearing the words of an engine
-      // failure. A payload that arrives but cannot be aged lands here too, and that is
-      // correct — an un-ageable file is one we could not usefully read.
       .catch(() => { feed = 'unreachable'; paint(); });
   }
 
   paint();
   refresh();
   setInterval(refresh, POLL_MS);
-  // Re-paint between fetches so the "measured N h ago" label and the lamp keep
-  // tracking wall-clock even when no new file has arrived.
   setInterval(paint, 30 * 1000);
 })();
 </script>

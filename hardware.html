@@ -25,9 +25,6 @@
 <meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
 <style>
-  /* The home page's colour, type and spacing tokens, value for value, as on tools.html.
-     System font stacks only: this page requests nothing from any other host. Dark mode is
-     written the way archive.css writes it: on screen only, so print is always black on white. */
   :root {
     color-scheme: light;
     --ground:      #F6F8FA;
@@ -66,7 +63,6 @@
     }
   }
 
-  /* ── base: tools.html's ───────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
@@ -100,7 +96,6 @@
   }
   .skip:focus { top: .75rem; }
 
-  /* ── masthead: the home page's, with the logo linking home ──────── */
   header.top {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: .75rem 1.5rem; flex-wrap: wrap;
@@ -121,7 +116,6 @@
   main { display: block; }
   main:focus { outline: none; }
 
-  /* ── page intro: tools.html's ─────────────────────────────────── */
   .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
   .page-eyebrow {
     font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
@@ -132,7 +126,6 @@
   .page-body + .page-body { margin-top: 1rem; }
   .page-body strong { color: var(--ink); }
 
-  /* ── sections: the home page's rhythm and h2 ──────────────────── */
   .hw-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
   [id] { scroll-margin-top: 1.25rem; }
   .sec-head { margin-bottom: 2rem; max-width: var(--measure); }
@@ -144,9 +137,6 @@
   .after-table { margin-top: 1.25rem; max-width: var(--measure); color: var(--ink-soft); font-size: .9375rem; }
   .after-table + .after-table { margin-top: .75rem; }
 
-  /* ── tables: drawn like the home page's evidence table (mono capital heads, soft rules),
-     each in a scroll box so a phone scrolls the table and never the page. The parts tables
-     have two columns and fit a phone; the wider two scroll ─────────── */
   .tbl-scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: .875rem; }
   table.versions { min-width: 40rem; }
@@ -161,12 +151,10 @@
   td.asof { font-family: var(--mono); font-size: .75rem; color: var(--ink-soft); white-space: nowrap; }
   .cell-note { display: block; margin-top: .2rem; font-weight: 400; font-size: .8125rem; color: var(--ink-soft); }
 
-  /* ── what each unit does: a dated list, one entry per unit ──────── */
   .duty { list-style: none; padding: 0; max-width: var(--measure); border-top: 1px solid var(--rule-soft); }
   .duty li { padding: 1rem 0; border-bottom: 1px solid var(--rule-soft); color: var(--ink-soft); }
   .duty li strong { color: var(--ink); }
 
-  /* ── known fault: tools.html's known-issues box, the colours of "What we don't claim" ── */
   .known-issues {
     margin-top: clamp(2rem, 5vw, 3rem);
     padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 1.4rem;
@@ -182,7 +170,6 @@
   .ki-list li::marker { color: var(--warn); }
   .ki-list li strong { color: var(--ink); }
 
-  /* ── footer: the home page's ──────────────────────────────────── */
   footer.site {
     border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
     color: var(--ink-soft); font-size: .875rem;
@@ -199,7 +186,6 @@
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
 
-  /* ── print: archive.css's palette, no navigation, link targets written out ── */
   @media print {
     :root {
       color-scheme: light;

@@ -25,9 +25,6 @@
 <meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
 <style>
-  /* The home page's colour, type and spacing tokens, value for value. System font
-     stacks only: this page requests nothing from any other host. Dark mode is written
-     the way archive.css writes it: on screen only, so print is always black on white. */
   :root {
     color-scheme: light;
     --ground:      #F6F8FA;
@@ -66,7 +63,6 @@
     }
   }
 
-  /* ── base ─────────────────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
@@ -100,7 +96,6 @@
   }
   .skip:focus { top: .75rem; }
 
-  /* ── masthead: the home page's, with the logo linking home ──────── */
   header.top {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: .75rem 1.5rem; flex-wrap: wrap;
@@ -121,7 +116,6 @@
   main { display: block; }
   main:focus { outline: none; }
 
-  /* ── page intro ───────────────────────────────────────────────── */
   .page-header { padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2.5rem, 6vw, 4rem); }
   .page-eyebrow {
     font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em;
@@ -130,7 +124,6 @@
   .page-title { margin-bottom: 1.25rem; }
   .page-body { font-size: 1.125rem; color: var(--ink-soft); max-width: var(--measure); }
 
-  /* ── one section per tool ─────────────────────────────────────── */
   .tool-section { padding: clamp(2.75rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--rule); }
   [id] { scroll-margin-top: 1.25rem; }
   .tool-header {
@@ -182,11 +175,6 @@
   }
   .feature-list strong { color: var(--ink); }
 
-  /* ── usage samples: every line wraps, as on the page this replaces ──
-     A sample line can be a published limitation or the only sample output, so none of it
-     may sit past the box edge. A token too long for the line breaks inside itself rather
-     than hide; overflow-x stays only as a fallback. Not pre-wrap: the markup has a source
-     newline after every line-break tag, which pre-wrap would render as a second break. */
   .usage-block { border: 1px solid var(--rule); background: var(--ground-2); }
   .usage-bar {
     font-family: var(--mono); font-size: .6875rem; letter-spacing: .05em;
@@ -203,9 +191,6 @@
   .t-path { color: var(--ink); }
   .t-val { color: var(--ink); font-weight: 600; }
 
-  /* ── downloads ────────────────────────────────────────────────── */
-  /* max-width: in one column (below 55rem) the note would otherwise run to ~100
-     characters a line; the home page holds prose to the measure. */
   .download-block {
     background: var(--ground-2); border: 1px solid var(--rule);
     padding: clamp(1.25rem, 3vw, 1.75rem); max-width: var(--measure);
@@ -219,7 +204,6 @@
     padding: .8rem 1rem; background: var(--ground); color: var(--ink); text-decoration: none;
     border: 1px solid var(--accent); border-radius: 3px;
   }
-  /* hover and focus as the home page's download links: accent fill, ground text */
   .download-btn:hover, .download-btn:focus-visible { background: var(--accent); color: var(--ground); }
   .download-btn:hover .download-btn-meta, .download-btn:focus-visible .download-btn-meta,
   .download-btn:hover .download-arrow, .download-btn:focus-visible .download-arrow { color: inherit; }
@@ -236,7 +220,6 @@
   }
   .download-note strong { color: var(--ink); }
 
-  /* ── known issues: the colours of "What we don't claim" ────────── */
   .known-issues {
     margin-top: clamp(2rem, 5vw, 3rem);
     padding: 1.25rem clamp(1rem, 3vw, 1.5rem) 1.4rem;
@@ -252,7 +235,6 @@
   .ki-list li::marker { color: var(--warn); }
   .ki-list li strong { color: var(--ink); }
 
-  /* ── footer: the home page's ──────────────────────────────────── */
   footer.site {
     border-top: 1px solid var(--rule); padding: 2.5rem 0 3.5rem;
     color: var(--ink-soft); font-size: .875rem;
@@ -269,7 +251,6 @@
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
 
-  /* ── print: archive.css's palette, no navigation, download targets written out ── */
   @media print {
     :root {
       color-scheme: light;
@@ -331,7 +312,6 @@
   </p>
 </div>
 
-<!-- opx-probe -->
 <div class="tool-section" id="opx-probe">
   <div class="tool-header">
     <div class="tool-title-block">
@@ -461,7 +441,6 @@
   </div>
 </div>
 
-<!-- opx-loudness -->
 <div class="tool-section unavailable" id="opx-loudness">
   <div class="tool-header">
     <div class="tool-title-block">
@@ -479,7 +458,6 @@
   </div>
 </div>
 
-<!-- opx-drift -->
 <div class="tool-section" id="opx-drift">
   <div class="tool-header">
     <div class="tool-title-block">
@@ -609,7 +587,6 @@
   </div>
 </div>
 
-<!-- opx-verify -->
 <div class="tool-section unavailable" id="opx-verify">
   <div class="tool-header">
     <div class="tool-title-block">
