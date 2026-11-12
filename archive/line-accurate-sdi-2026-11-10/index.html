@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Line-accurate SDI: what the card does, what the CPU does — Karhu TV</title>
+<meta name="description" content="Why the line timing of an SDI output is the card&#x27;s work, what a playout computer has to get right, and what our single-processor test machines read.">
+<link rel="canonical" href="https://karhu.tv/archive/line-accurate-sdi-2026-11-10/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Karhu TV">
+<meta property="og:url" content="https://karhu.tv/archive/line-accurate-sdi-2026-11-10/">
+<meta property="og:title" content="Line-accurate SDI: what the card does, what the CPU does">
+<meta property="og:description" content="Why the line timing of an SDI output is the card&#x27;s work, what a playout computer has to get right, and what our single-processor test machines read.">
+<meta property="og:image" content="https://karhu.tv/og-card-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Karhu TV — software broadcast playout, measured: a public register of what we don't claim.">
+<meta property="og:locale" content="en_GB">
+<meta property="article:published_time" content="2026-11-10">
+<meta property="article:section" content="Archive">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Line-accurate SDI: what the card does, what the CPU does">
+<meta name="twitter:description" content="Why the line timing of an SDI output is the card&#x27;s work, what a playout computer has to get right, and what our single-processor test machines read.">
+<meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
+
+<meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/archive/archive.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Line-accurate SDI output: what the card does, and what the computer has to do",
+ "description": "Why the line timing of an SDI output is the card's work, what a playout computer has to get right, and what our single-processor test machines read.",
+ "datePublished": "2026-11-10",
+ "inLanguage": "en-GB",
+ "url": "https://karhu.tv/archive/line-accurate-sdi-2026-11-10/",
+ "mainEntityOfPage": "https://karhu.tv/archive/line-accurate-sdi-2026-11-10/",
+ "image": "https://karhu.tv/og-card-v1.png",
+ "proficiencyLevel": "Expert",
+ "isPartOf": {
+  "@type": "CollectionPage",
+  "name": "Karhu TV archive",
+  "url": "https://karhu.tv/archive/"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "url": "https://karhu.tv/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Karhu TV",
+  "legalName": "Bear Media Services LTD",
+  "url": "https://karhu.tv/"
+ },
+ "temporalCoverage": "2026-09-27/2026-11-12"
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the entry</a>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">
+      <svg class="logo-mark" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.25" opacity=".35"/>
+        <path d="M4 22 L9 22 L9 8 L14 8 L14 22 L19 22 L19 15 L26 15"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
+        <circle cx="26" cy="15" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="logo-word">karhu<span>.tv</span></span><span class="visually-hidden"> home</span>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#rytmi">Rytmi</a>
+      <a href="/player.html">Player</a>
+      <a href="/#evidence">Evidence</a>
+      <a href="/as-run.html">As-run</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/archive/" aria-current="true">Archive</a>
+      <a href="/#register">What we don't claim</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="entry-title">
+      <header class="entry-head">
+        <p class="eyebrow"><a href="/archive/">Archive</a> · <time datetime="2026-11-10">10 Nov 2026</time></p>
+        <h1 id="entry-title">Line-accurate SDI output: what the card does, and what the computer has to do</h1>
+        <p class="dek">We are often told that line-accurate HD-SDI playout needs a server with two processors. On SDI the output card clocks out every line; the computer&rsquo;s job is to have the right frame ready in time. What our two single-processor desktops read on 12 November 2026 shows how much room that leaves.</p>
+        <p class="stamp">Written once, on the date above. Corrections are added at the end as dated addenda, and nothing above them is changed silently.</p>
+      </header>
+
+      <div class="entry-body">
+<section id="claim">
+<h2>The claim</h2>
+<p>We hear it often, from people who have run playout for years: line-accurate HD-SDI output needs a server with two Xeon processors. The reason behind it is real. The conclusion does not follow from it, and this entry says why, with what our own two machines read on 12 November 2026.</p>
+</section>
+<section id="lines">
+<h2>Who draws the lines</h2>
+<p>An SDI output is a serial stream: every sample of every line, the blanking between lines, and the sound and data packets carried in that blanking, clocked out at a fixed rate by the output card&rsquo;s own hardware. The computer never times a line. It hands the card complete frames, each picture with its sound and ancillary data, and the card plays each one in its slot.</p>
+<p>The rate the card clocks at comes from one of two places. Running free, from its own oscillator. Genlocked, from a house reference on its reference input, so that its frames and lines start in step with every other device on that reference. The second is what &ldquo;line-accurate&rdquo; usually means in a facility: the output&rsquo;s timing held against the house reference. That is a property of the card and the reference. The processor driving the card is not in that loop, whatever its socket count.</p>
+</section>
+<section id="computer">
+<h2>What the computer has to get right</h2>
+<p>Three things, and none of them is timing a line.</p>
+<ul>
+<li><strong>Never be late.</strong> The card must hold the next frame before its slot comes round. Our engine keeps eight frames queued on the card, 160&nbsp;ms at 1080p50, so a computer that is slow for a moment does not reach the output.</li>
+<li><strong>The right frame in each slot.</strong> Which picture airs in which frame is arithmetic on a clock: the engine schedules on the machine&rsquo;s TAI time, and each item starts on a frame of the output&rsquo;s grid.</li>
+<li><strong>Do each frame&rsquo;s work in time.</strong> Decoding, converting the picture to the card&rsquo;s format, the sound and the ancillary data, every 20&nbsp;ms on each 1080p50 channel. That is a question of capacity. More cores buy capacity. They do not make a deadline more certain: the threads that keep time have to be kept clear of everything else, on any number of processors.</li>
+</ul>
+<p>So the useful questions about a playout computer are how close its work comes to the frame period, and whether anything it does can make a frame late. Both can be measured, and the engine measures them on every frame.</p>
+</section>
+<section id="measured">
+<h2>What our two machines read</h2>
+<p>Both are built from retail desktop parts, one processor each; the parts are on our <a href="/hardware.html">hardware page</a>. We read the figures below from each engine&rsquo;s own interface on 12 November 2026 at 16:16 UTC. Each is a reading of that afternoon, not a claim about any other.</p>
+<table class="facts">
+<thead><tr><th scope="col">Measurement</th><th scope="col">Value</th><th scope="col">When and how</th></tr></thead>
+<tbody>
+<tr><th scope="row">Processor sockets</th><td class="v">1 in each machine</td><td class="src">Read from the operating system on both, 12 Nov 2026</td></tr>
+<tr><th scope="row">Second unit: channels</th><td class="v">4, each 1080p50</td><td class="src">One per SDI output; the <a href="/hardware.html">hardware page</a></td></tr>
+<tr><th scope="row">Second unit: engine run at the reading</th><td class="v">183 h</td><td class="src">Started 5 Nov 2026 00:43 UTC, read 12 Nov 2026 16:16 UTC: 33,039,150 frame ticks</td></tr>
+<tr><th scope="row">Second unit: frames queued on the card</th><td class="v">8 on each channel</td><td class="src">The engine&rsquo;s reading of the card, 12 Nov 2026 16:16 UTC</td></tr>
+<tr><th scope="row">Second unit: clock-thread wakes more than 0.5&nbsp;ms late</th><td class="v">0</td><td class="src">Every frame tick of the run, read 12 Nov 2026 16:16 UTC</td></tr>
+<tr><th scope="row">Second unit: latest wake of the clock thread</th><td class="v">4.7&nbsp;&micro;s</td><td class="src">The worst of every frame tick of the run, against a 20&nbsp;ms frame</td></tr>
+<tr><th scope="row">Second unit: the clock thread&rsquo;s work at a tick</th><td class="v">1.57&nbsp;ms typical, 5.77&nbsp;ms at the 99.9th percentile, 7.89&nbsp;ms at worst</td><td class="src">Every frame tick of the run, all four channels together, against a 20&nbsp;ms frame</td></tr>
+<tr><th scope="row">First unit: two channels on the current engine</th><td class="v">8 frames queued; 0 late wakes; latest wake 1.8&nbsp;&micro;s; work at a tick 1.8&nbsp;&micro;s typical, 62&nbsp;&micro;s at worst</td><td class="src">A run of 48&nbsp;h at the reading: started 10 Nov 2026 15:53 UTC, read 12 Nov 2026 16:16 UTC</td></tr>
+</tbody>
+</table>
+<p>The clock thread is the one that keeps time: at every frame tick it hands each channel its next frame, and decoding and conversion run on other cores. Its work at a tick is the share of the frame period that thread spends before it sleeps again. The first unit runs a newer engine, which hands a decoded frame on without copying it. The two machines differ in engine, processor and channel count, so we compare neither with the other; each reading stands for its own machine.</p>
+</section>
+<section id="origin">
+<h2>Where the two-socket advice comes from</h2>
+<p>The advice has a sound origin. Playout has long done in software what no card does for it: decoding several streams, drawing graphics, often on a general-purpose operating system with no real-time care taken. There, a frame not ready in time went to air, and more cores were the cheapest insurance against it. That insurance buys capacity, and capacity is worth having. It does not touch the output&rsquo;s line timing, which the card owns.</p>
+<p>The worst timing events in our own record were two wakes of the clock thread more than half a millisecond late, in a fourteen-day run in August on a machine playing one channel. Neither reached the output: the card had its queue. Chasing them took us into where Linux places a sleeping thread&rsquo;s timer, not into a shortage of processing; that work, and what it did and did not settle, is in <a href="/archive/late-wakes-2026-08/">its own entry</a>.</p>
+</section>
+<aside class="open">
+<h2>What remains open</h2>
+<ul>
+<li><strong>Line timing against a house reference.</strong> Our machines run free: every channel on both read as unlocked on 12 Nov 2026. On 27 Sep 2026 both locked to a 720p50 reference and did not lock to 1080i50 (<a href="/archive/genlock-2026-09-27/">the genlock entry</a>). Would earn it: a reference on both units, lock observed on every channel, and the output&rsquo;s timing against the reference read on an instrument of its own.</li>
+<li><strong>A measurement from outside the machine.</strong> Every figure above is the engine&rsquo;s own reading or the card&rsquo;s. Would earn it: a waveform monitor or SDI analyser on an output, beside the reference it is timed to.</li>
+<li><strong>The frame rate of a free-running card.</strong> The engine schedules on TAI time and a free-running card plays at its own crystal&rsquo;s rate, so the engine discards a surplus frame now and then to keep pace: 217 on each channel of the second unit in the 183&nbsp;h run above. It is a frame-rate matter, not a line-timing one, and no processor changes it; the genlock entry measures how a reference changed it.</li>
+<li><strong>More channels or UHD on one machine.</strong> Four 1080p50 channels is the most we have run on one of these machines. Would earn more: the same readings with the channels or the format raised.</li>
+</ul>
+</aside>
+<p class="record">Written on 10 November 2026, its readings taken again on 12 November 2026, the day it was published, from the record: the two engines&rsquo; own readings of that afternoon, both machines&rsquo; processor counts, the genlock test of 27 September 2026, and the August late wakes (RET-130).</p>
+      </div>
+
+      <footer class="entry-foot">
+        <a href="/archive/">All archive entries</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site">
+    <p>Karhu TV &mdash; Bear Media Services LTD · <a href="mailto:otso@karhu.tv">otso@karhu.tv</a> · <a href="/privacy.html">Privacy</a></p>
+    <p>Bear Media Services LTD, trading as Karhu TV. Registered in England and Wales, company number 11824349. Registered office: Suite 16, Enterprise House, Telford Road, Bicester, Oxon, England, OX26 4LD.</p>
+    <p>Every figure in this archive is dated or marked a floor (&ge;), because a number for a quantity that moves stops being true the moment it moves. Entries are not rewritten after they are published; corrections are dated addenda.</p>
+  </footer>
+</div>
+</body>
+</html>
