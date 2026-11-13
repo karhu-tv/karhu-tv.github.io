@@ -279,7 +279,7 @@
       one alone, mute one, or hear left and right as mono, without changing what is measured. A source with more
       channels than the speakers is folded to them by ITU-R&nbsp;BS.775, and the stream panel says so.</li>
     <li><strong>Subtitles and captions.</strong> Text subtitles (SRT, WebVTT, MP4 text, and ASS and SSA as plain
-      text) and the CEA-608 captions carried in the video (H.264, HEVC and MPEG-2), each of its four channels on
+      text) and the CEA-608 captions carried in the video (H.264 and MPEG-2), each of its four channels on
       its own; from a local file they are read on a timeline of their own, so a jump to any frame shows what is on
       screen there. Since 10 Nov 2026, teletext subtitles from a local file, read by a decoder of our own: page 888
       of an MXF&rsquo;s OP-47 track (SMPTE&nbsp;436M), and from a transport stream&rsquo;s DVB teletext the page its
@@ -315,23 +315,22 @@
       graphics hardware. Most hardware-decoded frames are drawn without being copied back to the processor: on
       Linux with Intel graphics, and on Windows since 26 Oct 2026, where each frame is copied once within the
       graphics processor (seen on Intel graphics, and on AMD graphics since 5 Nov 2026). Some are still copied
-      back: on Linux HEVC 4:2:2, a layout the graphics driver does not offer and every NVDEC frame, and on
+      back: on Linux every NVDEC frame, and on
       Windows a frame of an odd size.</li>
-    <li><strong>HEVC on the graphics hardware only, never in software.</strong> Since 10 Nov 2026: one of
-      HEVC&rsquo;s patent pools told us in November 2026 that a program decoding HEVC itself is licensed per copy,
-      a free one included. On a computer with no graphics decoder an HEVC file does not open, and the player says
-      why; nor does a file whose HEVC stream the graphics processor does not take (10-bit 4:2:2 on many graphics
-      cards, for one, or monochrome on any), a local file refused as it opens with the stream&rsquo;s format named.
-      Software decoding cannot be chosen for HEVC, so what the player says of damage in an HEVC file is what the
-      hardware decoder says.</li>
+    <li><strong>HEVC is not decoded in this release.</strong> Since 13 Nov 2026: a file whose only picture is
+      HEVC does not open. A file with an HEVC picture beside one the player can decode plays the decodable
+      picture, and the player says the HEVC stream was passed over. The same patent-pool letter of November 2026
+      that led to the graphics-hardware-only restriction in rc.5 led to the complete removal in rc.6 and rc.7: a
+      free program that includes an HEVC decoder requires a licence per copy, and the player no longer includes
+      one.</li>
   </ul>
 </section>
 
 <section class="hw-section" id="plays" aria-labelledby="plays-title">
   <div class="sec-head">
     <h2 class="sec-title" id="plays-title">What it plays</h2>
-    <p>As of 10 Nov 2026. Every codec below is compiled into our build and checked to be there;
-      H.264, HEVC, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
+    <p>As of 13 Nov 2026. Every codec below is compiled into our build and checked to be there;
+      H.264, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
       also played by tests of ours, and since 6 and 9 Nov 2026 MP2, AC-3, DTS&rsquo;s core, TrueHD and
       SMPTE&nbsp;302M.</p>
   </div>
@@ -344,7 +343,7 @@
           <td>Local files; an MPEG-TS multicast over UDP; HLS; a plain http or https file as it downloads. Not
             MPEG-TS over RTP (SMPTE&nbsp;ST&nbsp;2022-2), SRT, RTMP, RTSP, MPEG-DASH or NDI</td></tr>
         <tr><th scope="row">Video</th>
-          <td>H.264, H.265/HEVC (on the graphics hardware only, never in software), VP9 and AV1; MPEG-2 (its
+          <td>H.264, VP9 and AV1; MPEG-2 (its
             4:2:2 profile included), ProRes&nbsp;422, DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and
             VP8</td></tr>
         <tr><th scope="row">Pictures shown</th>
@@ -492,9 +491,9 @@
         4:2:2 H.264 reached at most 62&nbsp;% of their rate (30 Oct 2026). On the AMD mini PC, 4K 59.94
         ProRes&nbsp;HQ and DNxHR&nbsp;HQX played at 58&ndash;60 frames a second, dropping about 1&ndash;2&nbsp;% of
         their frames (5 Nov 2026).</li>
-      <li><strong>No HEVC without a graphics decoder for it.</strong> Since 10 Nov 2026 HEVC is decoded on the
-        graphics hardware only: a computer without a decoder for the file&rsquo;s HEVC does not open it, and
-        software decoding, the better choice for checking a file for damage, cannot be chosen for HEVC.</li>
+      <li><strong>HEVC is not decoded.</strong> Since 13 Nov 2026 a file whose only picture is HEVC does not
+        open. A file with HEVC beside a decodable picture plays the decodable one, and the player says the HEVC
+        stream was passed over.</li>
       <li><strong>On 24 Oct 2026 the sound reached the listener 10&nbsp;ms (Ubuntu) and 22&nbsp;ms
         (Windows) after its picture</strong> on the set-up we measured, by latency that no device
         reported to us. The Windows build has changed how it draws since then. It has been measured once since,
