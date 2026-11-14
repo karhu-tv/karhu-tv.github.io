@@ -257,13 +257,15 @@
 <section class="hw-section" id="does" aria-labelledby="does-title">
   <div class="sec-head">
     <h2 class="sec-title" id="does-title">What it does</h2>
-    <p>As of 10 Nov 2026, in the build we test.</p>
+    <p>As of 14 Nov 2026, in the build we test.</p>
   </div>
   <ul class="duty">
     <li><strong>Frame-accurate transport.</strong> Step one frame back or forward, seek to a frame, a
       timecode or a time, and land on exactly that frame, B-frames and long GOPs included, in MP4,
-      Matroska and HLS. A plain MPEG-TS file has no index to seek by: a seek in one lands on the
-      first keyframe after the frame asked for. SMPTE timecode is read from the file, drop-frame included.
+      Matroska, HLS and, since 11 Nov 2026, a plain MPEG-TS file, which has no index to seek by. A quick seek,
+      as when scrubbing, lands on the keyframe at or before the point asked for (in a local MPEG-TS file since
+      14 Nov 2026); in an MPEG-TS file read over the network, on the keyframe after it. SMPTE timecode is read from
+      the file, drop-frame included.
       A file opens paused on its first picture; play, pause, an A&ndash;B loop, and J-K-L shuttle, forward only,
       from a quarter speed to eight times, with sound kept at its own pitch from half speed to double.</li>
     <li><strong>Loudness by EBU&nbsp;R128, in EBU Mode.</strong> Momentary and short-term loudness with
@@ -283,12 +285,15 @@
       its own; from a local file they are read on a timeline of their own, so a jump to any frame shows what is on
       screen there. Since 10 Nov 2026, teletext subtitles from a local file, read by a decoder of our own: page 888
       of an MXF&rsquo;s OP-47 track (SMPTE&nbsp;436M), and from a transport stream&rsquo;s DVB teletext the page its
-      descriptor names, or else 888. Bitmap subtitles (DVB, Blu-ray, DVD) and CEA-708 captions are named and not
-      shown.</li>
+      descriptor names, or else 888. Since 11 Nov 2026, bitmap subtitles (DVB, Blu-ray and DVD), drawn where the
+      stream places them, and a Cavena 890 subtitle file added beside the picture. CEA-708 captions are named and
+      not shown.</li>
     <li><strong>The picture as decoded.</strong> Paused, the Y&prime;CbCr and RGB values of the pixel
       under the cursor; and any frame saved as a PNG. Each frame is drawn with the colour matrix its file
       declares; BT.2020 and P3 standard-dynamic-range pictures are converted to BT.709&rsquo;s gamut,
-      and the stream panel says when they were.</li>
+      and the stream panel says when they were. Since 13 Nov 2026, PQ and HLG high-dynamic-range pictures whose
+      file tags their transfer are tone mapped to standard range from their own primaries, and the stream panel
+      says so.</li>
     <li><strong>What the file says against what it does.</strong> Codec, size, pixel format, colour
       tags and frame rate, with the frame rate the file declares checked against the one it
       actually runs at. For MXF, what the wrapper says (its operational pattern, field order and
@@ -329,7 +334,7 @@
 <section class="hw-section" id="plays" aria-labelledby="plays-title">
   <div class="sec-head">
     <h2 class="sec-title" id="plays-title">What it plays</h2>
-    <p>As of 13 Nov 2026. Every codec below is compiled into our build and checked to be there;
+    <p>As of 14 Nov 2026. Every codec below is compiled into our build and checked to be there;
       H.264, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
       also played by tests of ours, and since 6 and 9 Nov 2026 MP2, AC-3, DTS&rsquo;s core, TrueHD and
       SMPTE&nbsp;302M.</p>
@@ -344,12 +349,13 @@
             MPEG-TS over RTP (SMPTE&nbsp;ST&nbsp;2022-2), SRT, RTMP, RTSP, MPEG-DASH or NDI</td></tr>
         <tr><th scope="row">Video</th>
           <td>H.264, VP9 and AV1; MPEG-2 (its
-            4:2:2 profile included), ProRes&nbsp;422, DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and
+            4:2:2 profile included), ProRes&nbsp;422 and 4444, DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and
             VP8</td></tr>
         <tr><th scope="row">Pictures shown</th>
-          <td>Planar 4:2:0 and 4:2:2 at 8 and 10 bits, and packed 8-bit 4:2:2 (uncompressed 2vuy),
-            limited or full range. Planar 4:2:2 since 25 Oct 2026, packed since 26 Oct 2026; drawn as
-            it is coded, each line with its own colour</td></tr>
+          <td>Planar 4:2:0, 4:2:2 and 4:4:4 at 8, 10 and 12 bits, and packed 8-bit 4:2:2 (uncompressed 2vuy),
+            limited or full range. Planar 4:2:2 since 25 Oct 2026, packed since 26 Oct 2026, 4:4:4 and 12-bit since
+            14 Nov 2026 (ProRes&nbsp;4444 and 4444&nbsp;XQ, DNxHR&nbsp;444, H.264 and VP9 at 4:4:4, FFV1 among them; an
+            alpha channel is not shown); drawn as it is coded, each line with its own colour</td></tr>
         <tr><th scope="row">Audio</th>
           <td>AAC, MP3, MP2, AC-3 (as mastered, with no dynamic range compression), FLAC, Opus and Vorbis; PCM in
             every common form, and SMPTE&nbsp;302M; DTS&rsquo;s core (a DTS-HD Master Audio track plays its core, a
@@ -358,8 +364,9 @@
             track as SMPTE&nbsp;337 data, is named and muted, never played or measured as the noise it is</td></tr>
         <tr><th scope="row">Subtitles</th>
           <td>Shown: SRT, WebVTT, MP4 text, ASS and SSA (as plain text), CEA-608 captions in the video, and
-            teletext subtitles (OP-47 in MXF, DVB teletext in MPEG-TS) from a local file. Named and not shown: DVB,
-            Blu-ray and DVD subtitles, and CEA-708 captions</td></tr>
+            teletext subtitles (OP-47 in MXF, DVB teletext in MPEG-TS) from a local file; since 11 Nov 2026 DVB,
+            Blu-ray and DVD subtitles, and a Cavena 890 file added beside the picture. Named and not shown: CEA-708
+            captions</td></tr>
       </tbody>
     </table>
   </div>
@@ -512,11 +519,14 @@
         file, no real OP-47 file and no broadcast transport stream&rsquo;s teletext has been read. Teletext has
         been read on a screen once, on 10 Nov 2026.</li>
       <li><strong>Seeking in MXF</strong> is not covered by our frame-accuracy test.</li>
-      <li><strong>Not every picture is shown.</strong> 4:4:4 (ProRes&nbsp;4444, DNxHR&nbsp;444),
-        12-bit, RGB, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound,
-        timecode and loudness, and the picture area names the format it could not show. HDR (PQ and HLG) is not
-        tone mapped, and the stream panel says so. Interlaced video is shown as it is coded, both fields
-        in one frame, not deinterlaced.</li>
+      <li><strong>Not every picture is shown.</strong> RGB pictures (DNxHR&nbsp;444 in RGB, FFV1&rsquo;s RGB),
+        4:1:1, 16-bit, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound,
+        timecode and loudness, and the picture area names the format it could not show. 4:4:4 and 12-bit pictures,
+        drawn since 14 Nov 2026, are checked by our tests and have not been looked at on a screen. Since 13 Nov
+        2026 HDR (PQ and HLG) is tone mapped only when the file tags its transfer; a file that does not is drawn as it
+        is coded, flat, and the stream panel says what it declares. The tone mapping is checked on test patterns, not
+        on HDR programme material. Interlaced video is shown as it is coded, both fields in one frame, not
+        deinterlaced.</li>
       <li><strong>The Windows program is not code-signed.</strong> Windows&rsquo; Smart App Control
         judges an unsigned program file by file. On our Intel mini PC it refused one of our test programs on
         25 Oct 2026 and allowed it five minutes later, and it refused our unsigned installer on 27 Oct and on
@@ -526,10 +536,9 @@
         graphics hardware: a development build of 30 Oct 2026 drew its picture again, opened the file again where
         it was and played on. The picture was gone for about 4.5 seconds after the loss, and frames were dropped
         in the graphics stall before it. On Linux it has survived only a graphics device destroyed on purpose; a
-        real driver reset there has not been tried. The build we test has not been through a real driver reset,
-        and by our reading of its code, if no graphics decoder is there when it opens the file again, an HEVC
-        file is not opened again and its picture stays as the loss left it to the end, its sound playing on,
-        where another codec comes back decoded in software.</li>
+        real driver reset there has not been tried. The build we test has not been through a real driver reset;
+        by our reading of its code, if no graphics decoder is there when it opens the file again, the file comes
+        back decoded in software.</li>
       <li><strong>Sound on Windows after its audio service restarts.</strong> If Windows&rsquo; audio service
         is restarted while the player runs, the player stays silent until it is started again.</li>
       <li><strong>No macOS</strong>, and on Linux the native Wayland window is not measured: every
