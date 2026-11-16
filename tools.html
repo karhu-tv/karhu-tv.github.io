@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <title>opx-* Tools — Karhu TV</title>
-<meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
+<meta name="description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Karhu TV">
 <meta property="og:url" content="https://karhu.tv/tools.html">
 <meta property="og:title" content="opx-* Tools — Karhu TV">
-<meta property="og:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
+<meta property="og:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta property="og:image" content="https://karhu.tv/og-card-v1.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="opx-* Tools — Karhu TV">
-<meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
+<meta name="twitter:description" content="Free broadcast engineering tools from Karhu TV — opx-probe and opx-drift, binary-only for Linux and Windows, with their known issues listed; opx-verify in development; opx-loudness designed, not built.">
 <meta name="twitter:image" content="https://karhu.tv/og-card-v1.png">
 <link rel="canonical" href="https://karhu.tv/tools.html">
 <meta name="theme-color" content="#0A5C7A" media="(prefers-color-scheme: light)">
@@ -396,7 +396,9 @@
         </div>
         <div class="download-note">
           <strong>Both downloads</strong> carry FFmpeg 6.1.6, which we build ourselves, licensed LGPL
-          version 2.1 or later, and its source is on the release page. Each also carries the tool’s licence
+          version 2.1 or later, and its source is on the release page. It leaves out four of FFmpeg’s own
+          components &mdash; the E-AC-3 decoder and encoder, the Dolby E decoder and the DTS decoder &mdash; so
+          those streams are named, not decoded. Each also carries the tool’s licence
           (<code>LICENCE.txt</code>: free for any purpose, commercial included, no warranty) and the
           licences of the parts made by others. Since 10 Nov 2026, v0.2.1.<br><br>
           <strong>Linux:</strong> needs 64-bit Linux with glibc 2.35 or later, as Ubuntu 22.04 and later
@@ -452,9 +454,9 @@
         publisher, and the archive’s README.txt runs the trading name together as one word. The publisher
         is Bear Media Services LTD, trading as Karhu TV. The <code>--help</code> text is fixed in source;
         the published archive is unchanged. Fixed in v0.2.1, 10 Nov 2026.</li>
-      <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
-        “Ubuntu 24.04+”. Of Ubuntu releases, only 24.04 LTS is supported, as this page states.
-        Since v0.2.1, 10 Nov 2026, the archive carries its own FFmpeg, and its README states what it needs.</li>
+      <li><strong>Supported systems.</strong> The README.txt inside the 0.2.0 Linux archive says
+        “Ubuntu 24.04+”. Of Ubuntu releases, only 24.04 LTS could run 0.2.0, which used the computer’s own
+        FFmpeg 6. Since v0.2.1, 10 Nov 2026, the archive carries its own FFmpeg, and its README states what it needs.</li>
     </ul>
   </div>
 </div>
@@ -557,8 +559,9 @@
         </div>
         <div class="download-note">
           <strong>Both downloads</strong> carry FFmpeg 6.1.6, which we build ourselves, licensed LGPL
-          version 2.1 or later, and its source is on the release page. Each also carries the tool&rsquo;s
-          licence (<code>LICENCE.txt</code>: free for any purpose, commercial included, no warranty) and the
+          version 2.1 or later, and its source is on the release page. It leaves out four of FFmpeg&rsquo;s
+          own components &mdash; the E-AC-3 decoder and encoder, the Dolby E decoder and the DTS decoder
+          &mdash; so those streams are named, not decoded. Each also carries the tool&rsquo;s licence (<code>LICENCE.txt</code>: free for any purpose, commercial included, no warranty) and the
           licences of the parts made by others. Since 10 Nov 2026, v0.2.3.<br><br>
           <strong>Linux:</strong> needs 64-bit Linux with glibc 2.35 or later, as Ubuntu 22.04 and later
           have; tested on Ubuntu 24.04. No <code>apt install</code> needed: FFmpeg is in the archive&rsquo;s
@@ -616,9 +619,10 @@
         publisher, and the archive&rsquo;s README.txt runs the trading name together as one word. The
         publisher is Bear Media Services LTD, trading as Karhu TV. Both are fixed in source; the published
         archives are unchanged. Fixed in v0.2.3, 10 Nov 2026.</li>
-      <li><strong>Supported systems.</strong> The README.txt inside the Linux archive says
+      <li><strong>Supported systems.</strong> The README.txt inside the 0.2.2 Linux archive says
         <code>sudo apt install ffmpeg (Ubuntu/Debian)</code>. No current Debian release ships FFmpeg 6;
-        of Ubuntu releases, only 24.04 LTS is supported. Since v0.2.3, 10 Nov 2026, the archive carries its
+        of Ubuntu releases, only 24.04 LTS could run 0.2.2, which used the computer&rsquo;s own FFmpeg 6. Since
+        v0.2.3, 10 Nov 2026, the archive carries its
         own FFmpeg, and its README states what it needs.</li>
     </ul>
   </div>
