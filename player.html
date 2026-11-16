@@ -250,19 +250,22 @@
     <strong>It is not released: there is no download and no date.</strong> This page says what it
     does today, what it plays, what we have measured, and what we do not claim, so that when it is
     released it can be checked against what was said here. Everything on this page is as of
-    10 Nov 2026 unless it carries another date.
+    16 Nov 2026 unless it carries another date.
   </p>
 </div>
 
 <section class="hw-section" id="does" aria-labelledby="does-title">
   <div class="sec-head">
     <h2 class="sec-title" id="does-title">What it does</h2>
-    <p>As of 14 Nov 2026, in the build we test.</p>
+    <p>As of 16 Nov 2026, in our development build. What is dated after 13 Nov 2026 below is in no package yet:
+      the last, 1.0.0-rc.7 of 13 Nov 2026, is for Linux.</p>
   </div>
   <ul class="duty">
     <li><strong>Frame-accurate transport.</strong> Step one frame back or forward, seek to a frame, a
       timecode or a time, and land on exactly that frame, B-frames and long GOPs included, in MP4,
-      Matroska, HLS and, since 11 Nov 2026, a plain MPEG-TS file, which has no index to seek by. A quick seek,
+      Matroska, HLS whose segments are MPEG-TS and, since 11 Nov 2026, a plain MPEG-TS file, which has no index to
+      seek by. An HLS stream whose segments are fMP4 plays but cannot be sought: FFmpeg cannot seek it, and a seek
+      ends the stream. A quick seek,
       as when scrubbing, lands on the keyframe at or before the point asked for (in a local MPEG-TS file since
       14 Nov 2026); in an MPEG-TS file read over the network, on the keyframe after it. SMPTE timecode is read from
       the file, drop-frame included.
@@ -283,17 +286,18 @@
     <li><strong>Subtitles and captions.</strong> Text subtitles (SRT, WebVTT, MP4 text, and ASS and SSA as plain
       text) and the CEA-608 captions carried in the video (H.264 and MPEG-2), each of its four channels on
       its own; from a local file they are read on a timeline of their own, so a jump to any frame shows what is on
-      screen there. Since 10 Nov 2026, teletext subtitles from a local file, read by a decoder of our own: page 888
-      of an MXF&rsquo;s OP-47 track (SMPTE&nbsp;436M), and from a transport stream&rsquo;s DVB teletext the page its
+      screen there. Since 10 Nov 2026, teletext subtitles from a local file, read by a decoder of our own: OP-47 from
+      an MXF&rsquo;s SMPTE&nbsp;436M track and, since 11 Nov 2026, from an MPEG-TS&rsquo;s SMPTE&nbsp;2038 stream, page
+      888, else the page it marks as subtitles; and from a transport stream&rsquo;s DVB teletext the page its
       descriptor names, or else 888. Since 11 Nov 2026, bitmap subtitles (DVB, Blu-ray and DVD), drawn where the
       stream places them, and a Cavena 890 subtitle file added beside the picture. CEA-708 captions are named and
       not shown.</li>
     <li><strong>The picture as decoded.</strong> Paused, the Y&prime;CbCr and RGB values of the pixel
       under the cursor; and any frame saved as a PNG. Each frame is drawn with the colour matrix its file
       declares; BT.2020 and P3 standard-dynamic-range pictures are converted to BT.709&rsquo;s gamut,
-      and the stream panel says when they were. Since 13 Nov 2026, PQ and HLG high-dynamic-range pictures whose
+      and the stream panel says when they were. Since 14 Nov 2026, PQ and HLG high-dynamic-range pictures whose
       file tags their transfer are tone mapped to standard range from their own primaries, and the stream panel
-      says so.</li>
+      says so (a first form, of 13 Nov, took every such picture as BT.2020 and drew HLG far too dark).</li>
     <li><strong>What the file says against what it does.</strong> Codec, size, pixel format, colour
       tags and frame rate, with the frame rate the file declares checked against the one it
       actually runs at. For MXF, what the wrapper says (its operational pattern, field order and
@@ -319,15 +323,17 @@
       less damage than a software one, so for checking a file for damage the player can be kept off the
       graphics hardware. Most hardware-decoded frames are drawn without being copied back to the processor: on
       Linux with Intel graphics, and on Windows since 26 Oct 2026, where each frame is copied once within the
-      graphics processor (seen on Intel graphics, and on AMD graphics since 5 Nov 2026), and on Linux an NVDEC frame,
+      graphics processor (seen on Intel graphics, on AMD graphics since 5 Nov 2026 and on the NVIDIA card since 14 Nov 2026), and on
+      Linux an NVDEC frame,
       kept on the NVIDIA card when the window is on it (since 14 Nov 2026 when asked for, by default since 15 Nov 2026).
       Some are still copied back: on Windows and from NVDEC a frame of an odd size, and on Linux a frame decoded on
       another graphics card than the window&rsquo;s.</li>
     <li><strong>HEVC is not decoded in this release.</strong> Since 13 Nov 2026: a file whose only picture is
       HEVC does not open. A file with an HEVC picture beside one the player can decode plays the decodable
-      picture, and the player says the HEVC stream was passed over. The same patent-pool letter of November 2026
-      that led to the graphics-hardware-only restriction in rc.5 led to the complete removal in rc.6 and rc.7: a
-      free program that includes an HEVC decoder requires a licence per copy, and the player no longer includes
+      picture, and the player says the HEVC stream was passed over. The patent-pool letter of November 2026 led
+      first, on 10 Nov, to HEVC decoded on the graphics hardware only (rc.1 to rc.5; from rc.5 the FFmpeg libraries
+      themselves could not decode it in software), and on 13 Nov to its removal (rc.6 and rc.7, packaged for Linux
+      only so far): a free program that includes an HEVC decoder requires a licence per copy, and the player no longer includes
       one.</li>
   </ul>
 </section>
@@ -335,8 +341,8 @@
 <section class="hw-section" id="plays" aria-labelledby="plays-title">
   <div class="sec-head">
     <h2 class="sec-title" id="plays-title">What it plays</h2>
-    <p>As of 14 Nov 2026. Every codec below is compiled into our build and checked to be there;
-      H.264, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
+    <p>As of 16 Nov 2026. Every codec below is compiled into our build and checked to be there;
+      H.264, VP9, AV1, MPEG-2, ProRes, DNxHD and DNxHR, v210, MPEG-4 Part&nbsp;2, VP8, AAC, Opus and PCM are
       also played by tests of ours, and since 6 and 9 Nov 2026 MP2, AC-3, DTS&rsquo;s core, TrueHD and
       SMPTE&nbsp;302M.</p>
   </div>
@@ -350,8 +356,8 @@
             MPEG-TS over RTP (SMPTE&nbsp;ST&nbsp;2022-2), SRT, RTMP, RTSP, MPEG-DASH or NDI</td></tr>
         <tr><th scope="row">Video</th>
           <td>H.264, VP9 and AV1; MPEG-2 (its
-            4:2:2 profile included), ProRes&nbsp;422 and 4444, DNxHD and DNxHR, and v210; MPEG-4 Part&nbsp;2, H.263 and
-            VP8</td></tr>
+            4:2:2 profile included), ProRes&nbsp;422 and 4444, DNxHD and DNxHR, v210 and FFV1; MPEG-4 Part&nbsp;2, H.263
+            and VP8</td></tr>
         <tr><th scope="row">Pictures shown</th>
           <td>Planar 4:2:0, 4:2:2 and 4:4:4 at 8, 10 and 12 bits, and packed 8-bit 4:2:2 (uncompressed 2vuy),
             limited or full range. Planar 4:2:2 since 25 Oct 2026, packed since 26 Oct 2026, 4:4:4 and 12-bit since
@@ -365,7 +371,8 @@
             track as SMPTE&nbsp;337 data, is named and muted, never played or measured as the noise it is</td></tr>
         <tr><th scope="row">Subtitles</th>
           <td>Shown: SRT, WebVTT, MP4 text, ASS and SSA (as plain text), CEA-608 captions in the video, and
-            teletext subtitles (OP-47 in MXF, DVB teletext in MPEG-TS) from a local file; since 11 Nov 2026 DVB,
+            teletext subtitles (OP-47 in MXF and, since 11 Nov 2026, in an MPEG-TS&rsquo;s SMPTE&nbsp;2038 stream; DVB
+            teletext in MPEG-TS) from a local file; since 11 Nov 2026 DVB,
             Blu-ray and DVD subtitles, and a Cavena 890 file added beside the picture. Named and not shown: CEA-708
             captions</td></tr>
       </tbody>
@@ -373,8 +380,9 @@
   </div>
   <p class="after-table">Its media libraries are FFmpeg&rsquo;s, built by us from FFmpeg&rsquo;s own
     source under the GNU Lesser General Public License (LGPL) version&nbsp;2.1, with nothing
-    licensed under the GPL inside them. Their source and the script that built them will be published beside each
-    download. Why we build them ourselves is in the archive:
+    licensed under the GPL inside them. Since 16 Nov 2026 our Linux build changes two of FFmpeg&rsquo;s files, so
+    that NVIDIA&rsquo;s decoder hands back a picture of an odd size as it was decoded; the change is published with
+    the source. Their source and the script that built them will be published beside each download. Why we build them ourselves is in the archive:
     <a href="/archive/lgpl-ffmpeg-build-2026-10-25/">why we build our own FFmpeg</a>. On Linux the download also
     carries libva, the runtime of VA-API, built by us from Intel&rsquo;s release, under the MIT licence.</p>
 </section>
@@ -434,8 +442,9 @@
         <tr><th scope="row">4K at full screen on a small computer under Windows
             <span class="cell-note">frames dropped or repeated</span></th>
           <td class="ver">0 of 132,004</td>
-          <td>26 Oct 2026, the Intel mini PC below, a development build: four 4K HEVC test files, at 50 and 60 frames a
-            second, 8-bit and 10-bit, ten minutes each at full screen on a monitor set to the file&rsquo;s rate,
+          <td>26 Oct 2026, the Intel mini PC below, a development build: four 4K HEVC test files (HEVC, which the player has
+            not decoded since 13 Nov 2026; this has not been measured again on another codec under Windows), at 50 and
+            60 frames a second, 8-bit and 10-bit, ten minutes each at full screen on a monitor set to the file&rsquo;s rate,
             decoded on the graphics hardware and drawn in place. Before drawing in place, the same files played at
             about a quarter of their rate there.</td></tr>
         <tr><th scope="row">Hours of play, nothing growing
@@ -443,14 +452,15 @@
           <td class="ver">6 of 760,851 dropped<br>0 of 273,725 dropped</td>
           <td>7 Nov 2026, the AMD mini PC below, nobody at the machine, each file looped by the player&rsquo;s own
             A&ndash;B marks, with AMD Software&rsquo;s background service stopped: 3.5 hours of a 4K 59.94 10-bit
-            HEVC file decoded on the graphics hardware, and 3 hours of an MPEG-2 4:2:2 1080p25 file of ours with sound,
+            HEVC file decoded on the graphics hardware (a build of before 13 Nov 2026, when HEVC was still decoded there), and 3 hours of an MPEG-2 4:2:2 1080p25 file of ours with sound,
             decoded in software. Neither repeated a frame. Memory, handles and threads held level from the first
             quarter of each run to the last.</td></tr>
         <tr><th scope="row">Files we damaged ourselves
             <span class="cell-note">bytes overwritten at a chosen frame</span></th>
           <td class="ver">0 crashed or hung<br>46 of 74 reported</td>
           <td>6 Nov 2026. 91 files made from nine clean clips (H.264, HEVC and AV1 in MP4, MPEG-2 4:2:2 in MXF,
-            ProRes and DNxHD in MOV, H.264 in MPEG-TS, and H.264 in Matroska with MP2 or with AC-3 sound), read by
+            ProRes and DNxHD in MOV, H.264 in MPEG-TS, and H.264 in Matroska with MP2 or with AC-3 sound; HEVC was then decoded, and since 13 Nov 2026
+            such a file is refused), read by
             the engine alone, with no screen: on the laptop below in software and with its hardware decoder, and
             the H.264, HEVC and AV1 files with the graphics hardware of both mini PCs under Windows. None crashed,
             hung or stalled; two MOV files cut short, whose index sits at the end, did not open. Of the 74 faults
@@ -466,15 +476,16 @@
   <div class="sec-head">
     <h2 class="sec-title" id="machines-title">Where it is tested</h2>
     <p>As of 16 Nov 2026, on three machines and one NVIDIA graphics card: two machines with Intel graphics, one
-      with AMD graphics since 5 Nov 2026, and the card, in an enclosure, since 14 Nov 2026. Until 7 Oct 2026 it was
-      developed on a laptop with AMD Radeon Vega graphics under Linux.</p>
+      with AMD graphics since 5 Nov 2026, and the card, in an enclosure, since 14 Nov 2026. On 14 Nov 2026 the card also ran our
+      checks, with no screen, in a desktop computer&rsquo;s PCIe slot under Ubuntu. Until 7 Oct 2026 it was developed
+      on a laptop with AMD Radeon Vega graphics under Linux.</p>
   </div>
   <ul class="duty">
     <li><strong>A laptop</strong>, a Lenovo ThinkPad E16 Gen&nbsp;3 with an Intel Core Ultra&nbsp;7 255H, under
       Ubuntu 24.04&nbsp;LTS: where it is developed, and where every change is tested.</li>
     <li><strong>An Intel mini PC</strong>, a GMKtec NucBox&nbsp;G3 with an Intel N100, under Windows&nbsp;11
-      and under Ubuntu 24.04&nbsp;LTS: where the Windows build is tested, and where the sound and picture above
-      were measured.</li>
+      and under Ubuntu 24.04&nbsp;LTS: where the Windows build was first tested (the AMD mini PC with it since 5 Nov
+      2026), and where the sound and picture above were measured.</li>
     <li><strong>An AMD mini PC</strong>, a GMKtec M6 Ultra with an AMD Ryzen&nbsp;5 7640HS and Radeon&nbsp;760M
       graphics, under Windows&nbsp;11 since 5 Nov 2026, and since 9 Nov 2026 under Ubuntu 24.04&nbsp;LTS as its
       installer sets it up by default, which has no VA-API driver: there it decoded in software until 12 Nov 2026,
@@ -488,16 +499,19 @@
 
   <div class="known-issues" id="dont-claim">
     <h3 class="ki-title">What we don&rsquo;t claim</h3>
-    <div class="ki-date">As of 10 Nov 2026</div>
+    <div class="ki-date">As of 16 Nov 2026</div>
     <ul class="ki-list">
       <li><strong>One NVIDIA card, mostly through an enclosure.</strong> It is tested on Intel graphics under Linux
-        and Windows, and on AMD graphics under Windows; on AMD graphics under Linux its decoding is measured, and its
-        picture drawn on the Radeon is not yet shown. On NVIDIA graphics, since 14 Nov 2026, it is tested on one card,
+        and Windows, and on AMD graphics under Windows; on AMD graphics under Linux its decoding has been measured (16 Nov
+        2026, with no screen), and its picture drawn on the Radeon is not yet shown. On NVIDIA graphics, since 14 Nov 2026, it is tested on one card,
         an RTX 4060&nbsp;Ti: in an enclosure on the AMD mini PC under Windows and Linux, and for one evening in a desktop
-        PC&rsquo;s slot. Under Linux through the enclosure the card ran only with its driver&rsquo;s GSP firmware off,
-        and the desktop had to be set to draw on it. Two 10-minute runs at 4K, 60 frames a second, on it each missed a
-        few frames (5 and 7); we read that as the screen&rsquo;s 59.996&nbsp;Hz refresh, which no control run has
-        shown. No other NVIDIA card. (Updated 16 Nov 2026: this item said it had never run on NVIDIA graphics.)</li>
+        PC&rsquo;s slot under Linux, with no screen. Under Linux through the enclosure the card ran only with
+        NVIDIA&rsquo;s closed driver and its GSP firmware off, and the desktop (GNOME) had to be told to draw on the card,
+        without which 4K played at about 25 frames a second. Two 10-minute runs at 4K, 60 frames a second, on it
+        dropped 5 and 7 frames (14 Nov 2026) on a screen running at 59.996&nbsp;Hz; we read the drops as the
+        screen&rsquo;s rate, not the decoder&rsquo;s, and have not run the control that would show it. No other NVIDIA
+        card. (Updated 16 Nov 2026: until then this item said it had never run on NVIDIA graphics, which was so until
+        14 Nov.)</li>
       <li><strong>What it says about damage is what the decoder says.</strong> In the files we damaged ourselves
         (6 Nov 2026, above), 28 of the 74 faults that showed went unreported in software decoding. No graphics
         hardware decoder we have tried flags a damaged picture, and the AMD mini PC&rsquo;s held the last good
@@ -527,7 +541,9 @@
       <li><strong>Captions and teletext are tested on files we made.</strong> The captions&rsquo; text and times
         are checked against what the bytes say, through FFmpeg&rsquo;s own CEA-608 decoder, in each of 608&rsquo;s
         modes and on each of its four channels; the teletext on files of our own making. No captioned broadcast
-        file, no real OP-47 file and no broadcast transport stream&rsquo;s teletext has been read. Teletext has
+        file has been read, and no broadcast teletext with a subtitle on it: two channels&rsquo; playout captures
+        carrying OP-47 in SMPTE&nbsp;2038 were read on 11 Nov 2026 and their subtitle pages found, with no subtitle on
+        air in either. Teletext has
         been read on a screen once, on 10 Nov 2026.</li>
       <li><strong>Seeking in MXF</strong> is not covered by our frame-accuracy test.</li>
       <li><strong>Not every picture is shown.</strong> RGB pictures (DNxHR&nbsp;444 in RGB, FFV1&rsquo;s RGB),
@@ -536,7 +552,9 @@
         drawn since 14 Nov 2026, are checked by our tests and have not been looked at on a screen. Since 13 Nov
         2026 HDR (PQ and HLG) is tone mapped only when the file tags its transfer; a file that does not is drawn as it
         is coded, flat, and the stream panel says what it declares. The tone mapping is checked on test patterns, not
-        on HDR programme material. Interlaced video is shown as it is coded, both fields in one frame, not
+        on HDR programme material. It assumes a 1,000-nit peak whatever the file says, and draws brighter PQ white;
+        the RGB the pixel probe shows for a tone-mapped picture can differ from the screen by up to 29 levels. It has
+        not been looked at on a screen since its changes of 14 Nov 2026. Interlaced video is shown as it is coded, both fields in one frame, not
         deinterlaced.</li>
       <li><strong>The Windows program is not code-signed.</strong> Windows&rsquo; Smart App Control
         judges an unsigned program file by file. On our Intel mini PC it refused one of our test programs on
