@@ -384,9 +384,10 @@
   <div class="sec-head">
     <h2 class="sec-title" id="software-title">Software versions</h2>
     <p>The operating system, kernel, DeckLink driver and card firmware, FFmpeg and the Intel media
-      driver, per unit, as of 29 Oct 2026; the second unit&rsquo;s card firmware was read on
+      driver, per unit, as of 16 Nov 2026; the second unit&rsquo;s card firmware was read on
       5&ndash;6 Sep 2026, the first unit&rsquo;s on its replacement card on 29 Oct 2026. Of the
-      versions in this table, the two units differ only in the kernel build.</p>
+      versions in this table, the two units differ in the kernel build and in Ubuntu&rsquo;s point release:
+      the first unit&rsquo;s updates of 31 Oct 2026 took it to 24.04.5.</p>
   </div>
   <div class="tbl-scroll" role="region" aria-label="Software versions table" tabindex="0">
     <table class="versions">
@@ -396,21 +397,21 @@
       <tbody>
         <tr><th scope="row">Operating system
             <span class="cell-note">Ubuntu, long-term support release</span></th>
-          <td class="ver">Ubuntu 24.04.4 LTS</td><td class="ver">Ubuntu 24.04.4 LTS</td>
-          <td class="asof">29 Oct 2026</td></tr>
+          <td class="ver">Ubuntu 24.04.5 LTS<span class="cell-note">since its updates of 31 Oct 2026</span></td><td class="ver">Ubuntu 24.04.4 LTS</td>
+          <td class="asof">16 Nov 2026</td></tr>
         <tr><th scope="row">Linux kernel
             <span class="cell-note">Ubuntu&rsquo;s own kernel package, generic flavour, as published
               in Ubuntu&rsquo;s archive; not rebuilt or patched by us</span></th>
           <td class="ver">6.8.0-134-generic</td><td class="ver">6.8.0-147-generic
             <span class="cell-note">The second unit moved to this kernel from 6.8.0-139 when it
-              restarted after a power cut on 27 Oct 2026. The first unit is held on its kernel; the
-              second starts on the newest one installed.</span></td>
-          <td class="asof">29 Oct 2026</td></tr>
+              restarted after a power cut on 27 Oct 2026, and it has been held on it since 31 Oct 2026, as
+              the first unit is held on its own.</span></td>
+          <td class="asof">16 Nov 2026</td></tr>
         <tr><th scope="row">Blackmagic Desktop Video
             <span class="cell-note">The DeckLink driver and SDK library. Blackmagic&rsquo;s own
               package, not Ubuntu&rsquo;s.</span></th>
           <td class="ver">15.3.1a4</td><td class="ver">15.3.1a4</td>
-          <td class="asof">29 Oct 2026</td></tr>
+          <td class="asof">16 Nov 2026</td></tr>
         <tr><th scope="row">DeckLink Duo 2 firmware
             <span class="cell-note">As Blackmagic&rsquo;s updater reports it</span></th>
           <td class="ver">0x128</td><td class="ver">0x128</td>
@@ -420,20 +421,19 @@
               libavformat 60, libavutil 58, libswresample 4. Ubuntu&rsquo;s own packages.</span></th>
           <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
           <td class="ver">6.1.1<span class="cell-note">7:6.1.1-3ubuntu5</span></td>
-          <td class="asof">29 Oct 2026</td></tr>
+          <td class="asof">16 Nov 2026</td></tr>
         <tr><th scope="row">Intel media driver
             <span class="cell-note">The VA-API driver for hardware video decode on the built-in
               graphics. Ubuntu&rsquo;s own package.</span></th>
           <td class="ver">24.1.0+ds1-1</td><td class="ver">24.1.0+ds1-1</td>
-          <td class="asof">29 Oct 2026</td></tr>
+          <td class="asof">16 Nov 2026</td></tr>
       </tbody>
     </table>
   </div>
   <p class="after-table">Everything in this table except Blackmagic&rsquo;s driver and the
     card&rsquo;s firmware is Ubuntu&rsquo;s own package, as Ubuntu publishes it. The FFmpeg
-    versions are the ones the engine uses: on the first unit, read from the libraries the running
-    engine has loaded; on the second, from the libraries its engine binary resolves to on that
-    machine. Other Ubuntu packages, which this table does not list, are not all at the same
+    versions are the ones the engine uses, read on both units from the libraries the running engine
+    has loaded. Other Ubuntu packages, which this table does not list, are not all at the same
     revision on the two units.</p>
   <p class="after-table">As of 29 Sep 2026, both units had run the same Rytmi source since
     18 Sep 2026, each built on its own machine. That stopped on 3 Oct 2026, when the first unit
