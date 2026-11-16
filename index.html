@@ -793,8 +793,8 @@
         <div class="reg-item">
           <h3>HEVC / H.265 in Rytmi</h3>
           <p class="reg-why">Out of scope in Rytmi on patent-licensing grounds since April 2026: not
-            claimed, tested or marketed for playout. Karhu Player decodes HEVC on the computer&rsquo;s
-            graphics hardware only, never in software (<a href="/player.html">its page</a>).</p>
+            claimed, tested or marketed for playout. Karhu Player does not decode HEVC
+            either, since 13 Nov 2026 (<a href="/player.html">its page</a>).</p>
           <p class="reg-earn"><span>Would earn it:</span> licences from the HEVC patent pools and a
             hardware test pass. Neither is planned.</p>
         </div>
@@ -1213,10 +1213,11 @@
       <p class="eyebrow">Tools</p>
       <h2>The instruments, and what else runs on the clock</h2>
       <p>The <span class="inline-code">opx-*</span> tools exist because we needed them to prove
-        Rytmi correct. They're free and binary-only, for Linux; the two released ones list their
+        Rytmi correct. They're free and binary-only, for Linux and Windows; the two released ones list their
         known issues, dated, on the tools page. We withdrew the Windows
         builds on 29 Sep 2026: they bundled a GPL-licensed FFmpeg without its licence text or an
-        offer of its source. Published checksums;
+        offer of its source. Since 10 Nov 2026 both tools&rsquo; downloads carry an LGPL FFmpeg we build
+        ourselves, its source and the tools&rsquo; own licence. Published checksums;
         <span class="inline-code">--version</span> on every one, because that's the first thing a
         support conversation asks. The last card is neither an instrument nor finished — it is
         here because some of its timing code began as a copy of Rytmi's, and we would rather show it early than
@@ -1224,7 +1225,7 @@
     </div>
     <div class="tools">
       <div class="tool">
-        <div class="tool-top"><span class="tool-name">opx-probe</span><span class="tag live">v0.2.0 · available</span></div>
+        <div class="tool-top"><span class="tool-name">opx-probe</span><span class="tag live">v0.2.1 · available</span></div>
         <p><strong>What is this file?</strong> Container, codec, exact rational frame rate,
           audio config, an MXF's XML sidecar (matched by file name). And
           <span class="inline-code">--house</span> pre-flights frame rate, audio sample rate and
@@ -1233,7 +1234,7 @@
         <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-probe/releases/latest/download/opx-probe-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a class="alt" href="/tools.html#opx-probe-issues">Known issues</a><a class="alt" href="https://github.com/karhu-tv/opx-probe/releases">All releases &amp; checksums</a></p>
       </div>
       <div class="tool">
-        <div class="tool-top"><span class="tool-name">opx-drift</span><span class="tag live">v0.2.2 · available</span></div>
+        <div class="tool-top"><span class="tool-name">opx-drift</span><span class="tag live">v0.2.3 · available</span></div>
         <p><strong>Is its timeline sane?</strong> PTS drift and A/V sync drift from exact rational
           arithmetic — 29.97 is 30000/1001, and rounding it is how drift gets designed in.</p>
         <p class="tool-dl"><a href="https://github.com/karhu-tv/opx-drift/releases/latest/download/opx-drift-linux-x86_64.tar.gz">Linux&nbsp;x86-64</a><a class="alt" href="/tools.html#opx-drift-issues">Known issues</a><a class="alt" href="https://github.com/karhu-tv/opx-drift/releases">All releases &amp; checksums</a></p>
