@@ -314,14 +314,15 @@
       live, or a plain http or https file as it downloads, opened from the command line or from a field in the
       window.</li>
     <li><strong>Hardware decoding</strong> where the graphics hardware offers it: D3D11VA on Windows, VA-API on
-      Linux, and on Linux NVIDIA&rsquo;s NVDEC where no VA-API driver opens, built on 10 Nov 2026 and run on an
-      NVIDIA graphics card since 14 Nov 2026. Software decoding where it does not, and by choice: a hardware decoder reports far
+      Linux, and on Linux NVIDIA&rsquo;s NVDEC, first when the window is on an NVIDIA card and wherever no VA-API
+      driver opens, built on 10 Nov 2026 and run on an NVIDIA graphics card since 14 Nov 2026. Software decoding where it does not, and by choice: a hardware decoder reports far
       less damage than a software one, so for checking a file for damage the player can be kept off the
       graphics hardware. Most hardware-decoded frames are drawn without being copied back to the processor: on
       Linux with Intel graphics, and on Windows since 26 Oct 2026, where each frame is copied once within the
-      graphics processor (seen on Intel graphics, and on AMD graphics since 5 Nov 2026), and on Linux an NVDEC frame
-      since 14 Nov 2026, kept on the NVIDIA card when the window is on it. Some are still copied back: a frame of an
-      odd size, and on Linux an NVDEC frame whose window is on another graphics card.</li>
+      graphics processor (seen on Intel graphics, and on AMD graphics since 5 Nov 2026), and on Linux an NVDEC frame,
+      kept on the NVIDIA card when the window is on it (since 14 Nov 2026 when asked for, by default since 15 Nov 2026).
+      Some are still copied back: on Windows and from NVDEC a frame of an odd size, and on Linux a frame decoded on
+      another graphics card than the window&rsquo;s.</li>
     <li><strong>HEVC is not decoded in this release.</strong> Since 13 Nov 2026: a file whose only picture is
       HEVC does not open. A file with an HEVC picture beside one the player can decode plays the decodable
       picture, and the player says the HEVC stream was passed over. The same patent-pool letter of November 2026
@@ -464,8 +465,8 @@
 <section class="hw-section" id="machines" aria-labelledby="machines-title">
   <div class="sec-head">
     <h2 class="sec-title" id="machines-title">Where it is tested</h2>
-    <p>As of 16 Nov 2026, on three machines: two with Intel graphics, and one with AMD graphics since
-      5 Nov 2026, to which an NVIDIA graphics card is attached since 14 Nov 2026. Until 7 Oct 2026 it was
+    <p>As of 16 Nov 2026, on three machines and one NVIDIA graphics card: two machines with Intel graphics, one
+      with AMD graphics since 5 Nov 2026, and the card, in an enclosure, since 14 Nov 2026. Until 7 Oct 2026 it was
       developed on a laptop with AMD Radeon Vega graphics under Linux.</p>
   </div>
   <ul class="duty">
@@ -476,11 +477,12 @@
       were measured.</li>
     <li><strong>An AMD mini PC</strong>, a GMKtec M6 Ultra with an AMD Ryzen&nbsp;5 7640HS and Radeon&nbsp;760M
       graphics, under Windows&nbsp;11 since 5 Nov 2026, and since 9 Nov 2026 under Ubuntu 24.04&nbsp;LTS as its
-      installer sets it up by default, where it decodes on the Radeon through VA-API. (Corrected 16 Nov 2026:
-      this line said Ubuntu there had no VA-API driver and decoded in software. It has one.)</li>
+      installer sets it up by default, which has no VA-API driver: there it decoded in software until 12 Nov 2026,
+      when Mesa&rsquo;s VA-API driver was added, and since then it decodes on the Radeon. (Updated 16 Nov 2026: this
+      line said it decodes in software.)</li>
     <li><strong>An NVIDIA graphics card</strong>, an MSI GeForce RTX 4060&nbsp;Ti with 16&nbsp;GB, in a Razer Core
-      X&nbsp;V2 enclosure (USB4) on the AMD mini PC, since 14 Nov 2026: under Windows&nbsp;11 it decodes on the
-      card through D3D11VA, and under Ubuntu on the card&rsquo;s NVDEC.</li>
+      X&nbsp;V2 enclosure (USB4), since 14 Nov 2026, mostly on the AMD mini PC: under Windows&nbsp;11 it decodes on
+      the card through D3D11VA, and under Ubuntu on the card&rsquo;s NVDEC.</li>
   </ul>
   <p class="after-table">The mini PCs are tested on ordinary computer monitors, 4K among them.</p>
 
@@ -488,11 +490,14 @@
     <h3 class="ki-title">What we don&rsquo;t claim</h3>
     <div class="ki-date">As of 10 Nov 2026</div>
     <ul class="ki-list">
-      <li><strong>One NVIDIA card, through an enclosure.</strong> It is tested on Intel graphics under Linux and
-        Windows, and on AMD graphics under Windows and Linux. On NVIDIA graphics, since 14 Nov 2026, it is tested on
-        one card, an RTX 4060&nbsp;Ti in an enclosure on the AMD mini PC, under Windows and Linux: no other NVIDIA
-        card. (Corrected 16 Nov 2026: this item said it had never run on NVIDIA graphics, and under Linux had run
-        on AMD graphics only in software decoding.)</li>
+      <li><strong>One NVIDIA card, mostly through an enclosure.</strong> It is tested on Intel graphics under Linux
+        and Windows, and on AMD graphics under Windows; on AMD graphics under Linux its decoding is measured, and its
+        picture drawn on the Radeon is not yet shown. On NVIDIA graphics, since 14 Nov 2026, it is tested on one card,
+        an RTX 4060&nbsp;Ti: in an enclosure on the AMD mini PC under Windows and Linux, and for one evening in a desktop
+        PC&rsquo;s slot. Under Linux through the enclosure the card ran only with its driver&rsquo;s GSP firmware off,
+        and the desktop had to be set to draw on it. Two 10-minute runs at 4K, 60 frames a second, on it each missed a
+        few frames (5 and 7); we read that as the screen&rsquo;s 59.996&nbsp;Hz refresh, which no control run has
+        shown. No other NVIDIA card. (Updated 16 Nov 2026: this item said it had never run on NVIDIA graphics.)</li>
       <li><strong>What it says about damage is what the decoder says.</strong> In the files we damaged ourselves
         (6 Nov 2026, above), 28 of the 74 faults that showed went unreported in software decoding. No graphics
         hardware decoder we have tried flags a damaged picture, and the AMD mini PC&rsquo;s held the last good
