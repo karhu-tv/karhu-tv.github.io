@@ -859,8 +859,8 @@
 
         <div class="reg-item">
           <h3>Sound in step with its picture</h3>
-          <p class="reg-why">Three faults of ours have put a clip&rsquo;s sound out of step with its picture,
-            and none has been measured on the wire. At the decoder&rsquo;s output, read without a card on
+          <p class="reg-why">Four faults of ours have put sound out of step with its picture, and only the
+            fourth has been measured on the wire, though not on a unit. At the decoder&rsquo;s output, read without a card on
             4 Oct 2026, a clip&rsquo;s sound ran one frame behind its picture (20&nbsp;ms at 50p, 40&nbsp;ms at
             25p) and its first frame was silent; the first unit has carried a fix since 9 Oct 2026. A frame
             the engine discards to absorb the card&rsquo;s drift, on 25p or 29.97 material on a 50p channel,
@@ -872,7 +872,14 @@
             group of pictures &mdash; a playlist joined in progress, a trimmed start, the cut-in after a
             restart &mdash; aired its sound two frames behind its picture, read without a card on 9 Nov 2026;
             the first unit has carried a fix since that day, and none of its schedules had such a start on
-            air when we looked. The second unit has none of these fixes. Every figure here is the
+            air when we looked. And the output&rsquo;s sound was placed by when its stream began, not tied to
+            its pictures, so each start of the engine set its own offset and kept it. We measured it on the wire
+            on 17 Nov 2026, with the first unit&rsquo;s own engine on a development laptop&rsquo;s card, its output
+            cabled back into its input, in the first unit&rsquo;s two formats: at 1080p50 the sound was
+            80&nbsp;ms early at one start in four and 2.4&ndash;2.7&nbsp;ms late at the other three; at 1080i50 it
+            was 77 or 160&nbsp;ms early at every start. EBU R37 lets sound lead its picture by at most
+            40&nbsp;ms. The first unit has carried a fix since 18 Nov 2026; its own outputs have not been
+            measured on the wire. The second unit has none of these fixes. Every other figure here is the
             engine&rsquo;s or the card&rsquo;s own.</p>
           <p class="reg-earn"><span>Would earn it:</span> the output&rsquo;s sound measured against its
             picture on the SDI output, at a clip&rsquo;s start, across a discard and at a start part-way
@@ -906,8 +913,8 @@
             on the second unit pages us too.
             Separately, the first unit&rsquo;s engine crashed four times at a planned stop, after its output had
             ended, inside the SDI card&rsquo;s library (1 Aug&ndash;3 Nov 2026); its as-run log came through each.
-            Since 6 Nov 2026 that engine waits for its card threads before it exits, and each of its eight
-            planned stops from then to 14 Nov 2026 was clean. The second unit has no such change.</p>
+            Since 6 Nov 2026 that engine waits for its card threads before it exits, and each of its twelve
+            planned stops from then to 20 Nov 2026 was clean. The second unit has no such change.</p>
           <p class="reg-earn"><span>Would earn it:</span> the same fixes on the second unit, and the 90 days of
             uptime the row below asks for.</p>
         </div>
@@ -937,14 +944,15 @@
             subtitles a file holds into its SDI output&rsquo;s ancillary data, one packet a frame, beside the
             timecode, and its as-run log records each airing that carried them. The only file in that
             channel&rsquo;s schedule that holds subtitles is a test pattern of our own, a teletext page of nine
-            subtitles over ten seconds, which airs each time the engine starts. That day the unit read the
+            subtitles over ten seconds, which airs each time the engine starts; since 17 Nov 2026 it airs a
+            second time straight after, cut short inside its third subtitle. On 10 Nov 2026 the unit read the
             page back off its own output, through a cable into one of its own inputs: all nine subtitles and
-            the clear, in order, over 250 frames, a packet on each. That is the card reading itself, not a
-            decoder downstream, and not a real programme&rsquo;s subtitles; whether each subtitle sits on its
-            own picture was read from the first packet on, so a constant offset would not show. If an airing ends
-            part-way through a subtitle, the engine on the unit leaves that subtitle on screen over the next item; no
-            airing in that schedule ends so, and the fix is not yet on the unit. The first channel and the second unit
-            carry none.</p>
+            the clear, in order, over 250 frames, a packet on each. Since 17 Nov 2026 the engine on the unit
+            clears a subtitle still on screen when its airing ends part-way through it; read back the same way
+            that day, the cut subtitle was cleared on the next item&rsquo;s first frame. That is the card reading
+            itself, not a decoder downstream, and not a real programme&rsquo;s subtitles; whether each subtitle
+            sits on its own picture was read from the first packet on, so a constant offset would not show. The
+            first channel and the second unit carry none.</p>
           <p class="reg-earn"><span>Would earn it:</span> a real programme&rsquo;s subtitles, read by a
             decoder on the output, each on its own picture.</p>
         </div>
