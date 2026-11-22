@@ -257,8 +257,7 @@
 <section class="hw-section" id="does" aria-labelledby="does-title">
   <div class="sec-head">
     <h2 class="sec-title" id="does-title">What it does</h2>
-    <p>As of 16 Nov 2026, in our development build. What is dated after 13 Nov 2026 below is in no package yet:
-      the last, 1.0.0-rc.7 of 13 Nov 2026, is for Linux.</p>
+    <p>As of 16 Nov 2026, in our development build.</p>
   </div>
   <ul class="duty">
     <li><strong>Frame-accurate transport.</strong> Step one frame back or forward, seek to a frame, a
@@ -332,9 +331,8 @@
       HEVC does not open. A file with an HEVC picture beside one the player can decode plays the decodable
       picture, and the player says the HEVC stream was passed over. The patent-pool letter of November 2026 led
       first, on 10 Nov, to HEVC decoded on the graphics hardware only (rc.1 to rc.5; from rc.5 the FFmpeg libraries
-      themselves could not decode it in software), and on 13 Nov to its removal (rc.6 and rc.7, packaged for Linux
-      only so far): a free program that includes an HEVC decoder requires a licence per copy, and the player no longer includes
-      one.</li>
+      themselves could not decode it in software), and on 13 Nov to its removal: a free program that includes an
+      HEVC decoder requires a licence per copy, and the player no longer includes one.</li>
   </ul>
 </section>
 
@@ -380,9 +378,9 @@
   </div>
   <p class="after-table">Its media libraries are FFmpeg&rsquo;s, built by us from FFmpeg&rsquo;s own
     source under the GNU Lesser General Public License (LGPL) version&nbsp;2.1, with nothing
-    licensed under the GPL inside them. Since 16 Nov 2026 our Linux build changes two of FFmpeg&rsquo;s files, so
-    that NVIDIA&rsquo;s decoder hands back a picture of an odd size as it was decoded; the change is published with
-    the source. Their source and the script that built them will be published beside each download. Why we build them ourselves is in the archive:
+    licensed under the GPL inside them. Since 16 Nov 2026 our Linux build changes some of FFmpeg&rsquo;s files,
+    one change so that NVIDIA&rsquo;s decoder hands back a picture of an odd size as it was decoded. Their source,
+    with each of our changes, and the script that built them will be published beside each download. Why we build them ourselves is in the archive:
     <a href="/archive/lgpl-ffmpeg-build-2026-10-25/">why we build our own FFmpeg</a>. On Linux the download also
     carries libva, the runtime of VA-API, built by us from Intel&rsquo;s release, under the MIT licence.</p>
 </section>
@@ -475,8 +473,8 @@
 <section class="hw-section" id="machines" aria-labelledby="machines-title">
   <div class="sec-head">
     <h2 class="sec-title" id="machines-title">Where it is tested</h2>
-    <p>As of 16 Nov 2026, on three machines and one NVIDIA graphics card: two machines with Intel graphics, one
-      with AMD graphics since 5 Nov 2026, and the card, in an enclosure, since 14 Nov 2026. On 14 Nov 2026 the card also ran our
+    <p>As of 16 Nov 2026, on three machines: two with Intel graphics, and one with AMD graphics since 5 Nov 2026.
+      From 14 to 17 Nov 2026 it was also tested on one NVIDIA graphics card, in an enclosure. On 14 Nov 2026 the card also ran our
       checks, with no screen, in a desktop computer&rsquo;s PCIe slot under Ubuntu. Until 7 Oct 2026 it was developed
       on a laptop with AMD Radeon Vega graphics under Linux.</p>
   </div>
@@ -492,7 +490,7 @@
       when Mesa&rsquo;s VA-API driver was added, and since then it decodes on the Radeon. (Updated 16 Nov 2026: this
       line said it decodes in software.)</li>
     <li><strong>An NVIDIA graphics card</strong>, an MSI GeForce RTX 4060&nbsp;Ti with 16&nbsp;GB, in a Razer Core
-      X&nbsp;V2 enclosure (USB4), since 14 Nov 2026, mostly on the AMD mini PC: under Windows&nbsp;11 it decodes on
+      X&nbsp;V2 enclosure (USB4), from 14 to 17 Nov 2026, mostly on the AMD mini PC: under Windows&nbsp;11 it decodes on
       the card through D3D11VA, and under Ubuntu on the card&rsquo;s NVDEC.</li>
   </ul>
   <p class="after-table">The mini PCs are tested on ordinary computer monitors, 4K among them.</p>
@@ -503,15 +501,17 @@
     <ul class="ki-list">
       <li><strong>One NVIDIA card, mostly through an enclosure.</strong> It is tested on Intel graphics under Linux
         and Windows, and on AMD graphics under Windows; on AMD graphics under Linux its decoding has been measured (16 Nov
-        2026, with no screen), and its picture drawn on the Radeon is not yet shown. On NVIDIA graphics, since 14 Nov 2026, it is tested on one card,
+        2026, with no screen), and its picture drawn on the Radeon is not yet shown. On NVIDIA graphics it was tested from 14 to 17 Nov 2026 on one card,
         an RTX 4060&nbsp;Ti: in an enclosure on the AMD mini PC under Windows and Linux, and for one evening in a desktop
         PC&rsquo;s slot under Linux, with no screen. Under Linux through the enclosure the card ran only with
         NVIDIA&rsquo;s closed driver and its GSP firmware off, and the desktop (GNOME) had to be told to draw on the card,
         without which 4K played at about 25 frames a second. Two 10-minute runs at 4K, 60 frames a second, on it
-        dropped 5 and 7 frames (14 Nov 2026) on a screen running at 59.996&nbsp;Hz; we read the drops as the
-        screen&rsquo;s rate, not the decoder&rsquo;s, and have not run the control that would show it. No other NVIDIA
-        card. (Updated 16 Nov 2026: until then this item said it had never run on NVIDIA graphics, which was so until
-        14 Nov.)</li>
+        dropped 5 and 7 frames (14 Nov 2026) on a screen running at 59.996&nbsp;Hz. Runs of the same length under
+        GNOME on 16 and 17 Nov 2026 dropped 32 to 62, on a screen at exactly 60&nbsp;Hz too: the drops are not the
+        screen&rsquo;s rate but the desktop&rsquo;s, each after a stall in GNOME&rsquo;s own drawing, as in the GNOME item
+        below. No other NVIDIA card. (Updated 16 Nov 2026: until then this item said it had never run on NVIDIA
+        graphics, which was so until 14 Nov. Updated 22 Nov 2026: until then it read the drops as the screen&rsquo;s
+        rate and said the control had not been run.)</li>
       <li><strong>What it says about damage is what the decoder says.</strong> In the files we damaged ourselves
         (6 Nov 2026, above), 28 of the 74 faults that showed went unreported in software decoding. No graphics
         hardware decoder we have tried flags a damaged picture, and the AMD mini PC&rsquo;s held the last good
@@ -549,12 +549,13 @@
       <li><strong>Not every picture is shown.</strong> RGB pictures (DNxHR&nbsp;444 in RGB, FFV1&rsquo;s RGB),
         4:1:1, 16-bit, and semi-planar 4:2:2 pictures (NV16, P210) are not drawn: the file plays, with its sound,
         timecode and loudness, and the picture area names the format it could not show. 4:4:4 and 12-bit pictures,
-        drawn since 14 Nov 2026, are checked by our tests and have not been looked at on a screen. Since 13 Nov
+        drawn since 14 Nov 2026, are checked by our tests, and on 16 Nov 2026 they were looked at once on one
+        screen: test patterns, drawn by the NVIDIA card under Linux, with nothing wrong seen. Since 13 Nov
         2026 HDR (PQ and HLG) is tone mapped only when the file tags its transfer; a file that does not is drawn as it
         is coded, flat, and the stream panel says what it declares. The tone mapping is checked on test patterns, not
         on HDR programme material. It assumes a 1,000-nit peak whatever the file says, and draws brighter PQ white;
-        the RGB the pixel probe shows for a tone-mapped picture can differ from the screen by up to 29 levels. It has
-        not been looked at on a screen since its changes of 14 Nov 2026. Interlaced video is shown as it is coded, both fields in one frame, not
+        the RGB the pixel probe shows for a tone-mapped picture can differ from the screen by up to 29 levels. Since its
+        changes of 14 Nov 2026 it has been looked at on a screen once, in the same look of 16 Nov 2026. Interlaced video is shown as it is coded, both fields in one frame, not
         deinterlaced.</li>
       <li><strong>The Windows program is not code-signed.</strong> Windows&rsquo; Smart App Control
         judges an unsigned program file by file. On our Intel mini PC it refused one of our test programs on
@@ -570,8 +571,8 @@
         back decoded in software.</li>
       <li><strong>Sound on Windows after its audio service restarts.</strong> If Windows&rsquo; audio service
         is restarted while the player runs, the player stays silent until it is started again.</li>
-      <li><strong>No macOS</strong>, and on Linux the native Wayland window is not measured: every
-        measurement on Linux has been taken through X11 on Xwayland.</li>
+      <li><strong>No macOS</strong>, and on Linux the sound against its picture has been measured only through
+        X11 on Xwayland, not in a native Wayland window.</li>
       <li><strong>Computer displays only.</strong> The picture goes to the computer&rsquo;s own
         displays: there is no SDI or IP output, and AFD is not shown.</li>
     </ul>
