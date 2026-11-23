@@ -531,7 +531,8 @@
         <p class="note">
           Two limits, each in the register below: a 220&nbsp;ms stall on 14 Sep 2026 cost three outputs
           their card buffer, and stalls on 30 Oct 2026 on the second unit and on 2 Nov 2026 on the first did
-          the same, dropping frames at the output until the buffer refilled or we restarted the engine (open);
+          the same, dropping frames at the output until the buffer refilled or we restarted the engine (open;
+          a fix has run on the first unit since 22 Nov 2026, not yet seen catching a stall there);
           and a source faster than its channel&rsquo;s output rate airs slow on the second unit, while on the
           first unit, since 6 Nov 2026, it airs at its own speed with fewer of its frames.
         </p>
@@ -1114,7 +1115,13 @@
             it recurring, before we restarted its engine. Both stalls began while monitoring tools of our own
             were loading large log files into a machine short of free memory, and that is the cause we
             infer; it is not established. We have since made those tools read less, and set both units to
-            keep more memory free.</p>
+            keep more memory free. On 17 Nov 2026 we found why a lost buffer stayed lost: after a stall the
+            engine went on scheduling each frame for a moment the card had already played, so every frame
+            aired late from then on. Our fix moves the schedule back ahead of the card. On our bench, stalls
+            made on purpose of 0.2 and 0.5&nbsp;s then left at most one frame late, the fix&rsquo;s own, and
+            none after it, where the version before showed 25 to 50 frames a second late for good. The fix
+            has run on the first unit since 22 Nov 2026; in its first 24 hours there no stall came for it to
+            catch, so it is not yet seen working on a unit. The second unit does not have it yet.</p>
           <p class="reg-earn"><span>Would earn it:</span> the cause found, and a stall repeated on purpose
             that the outputs ride out without dropping frames.</p>
         </div>
