@@ -725,8 +725,8 @@
           </tr>
           <tr>
             <td>Longest continuous engine run</td>
-            <td class="v">433 h</td>
-            <td class="src">The second unit&rsquo;s current run, all four outputs, from 00:43:20&nbsp;UTC on 5 Nov 2026 &mdash; a floor, not a final figure: still running when read at 02:25&nbsp;UTC on 23 Nov 2026. Derived two ways that agree to within a minute: the service manager (systemd) records no restart since 2026-11-05T00:43:20Z, and the engine&rsquo;s own frame counter read 78,065,600 at 50&nbsp;fps (433.70&nbsp;h) on each of its four outputs; its as-run log has not been verified over that run. It passed the run before it on the same unit: 27 Sep&ndash;15 Oct 2026, 433.68&nbsp;h by the engine&rsquo;s frame counter, a final figure, ended at 15:43:56&nbsp;UTC on 15 Oct 2026 when the engine crashed (the crash row in the register below). The first unit&rsquo;s longest is 339&nbsp;h, 6&ndash;20 Aug 2026 &mdash; also a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the service manager (systemd) reports no restart across 2026-08-06T19:53:26Z&ndash;2026-08-20T23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
+            <td class="v" id="run-v">433 h</td>
+            <td class="src" id="run-src">The second unit&rsquo;s current run, all four outputs, from 00:43:20&nbsp;UTC on 5 Nov 2026 &mdash; a floor, not a final figure: still running when read at 02:25&nbsp;UTC on 23 Nov 2026. Derived two ways that agree to within a minute: the service manager (systemd) records no restart since 2026-11-05T00:43:20Z, and the engine&rsquo;s own frame counter read 78,065,600 at 50&nbsp;fps (433.70&nbsp;h) on each of its four outputs; its as-run log has not been verified over that run. It passed the run before it on the same unit: 27 Sep&ndash;15 Oct 2026, 433.68&nbsp;h by the engine&rsquo;s frame counter, a final figure, ended at 15:43:56&nbsp;UTC on 15 Oct 2026 when the engine crashed (the crash row in the register below). The first unit&rsquo;s longest is 339&nbsp;h, 6&ndash;20 Aug 2026 &mdash; also a final figure, not a floor: the run ended at 2026-08-20T23:16:43Z when the engine was stopped deliberately at the close of the campaign. Derived three independent ways that agree to within twenty seconds &mdash; one part in 61,000: the service manager (systemd) reports no restart across 2026-08-06T19:53:26Z&ndash;2026-08-20T23:16:43Z (339.3881&nbsp;h), the engine&rsquo;s own frame counter reached 61,088,850 at 50&nbsp;fps (339.3825&nbsp;h, read 14&nbsp;s before the stop), and the 1&nbsp;Hz diagnostic line spans 339.3861&nbsp;h. Rounded down to whole hours</td>
           </tr>
         </tbody>
       </table>
@@ -1678,6 +1678,35 @@
       checking: 'Fetching the current figures. ' + DATED + snap.unit,
     }[state];
     document.getElementById('live-src').textContent = SRC;
+    renderRun(snap, ageHours);
+  }
+
+  const RUN_RECORD_H = 433.678;
+  const runCells = { v: document.getElementById('run-v'), src: document.getElementById('run-src') };
+  const runStatic = { v: runCells.v && runCells.v.innerHTML, src: runCells.src && runCells.src.innerHTML };
+  const utc = (iso) => iso.replace('T', ' ').replace(/:\d\dZ$/, ' UTC');
+  function renderRun(snap, ageHours) {
+    if (!runCells.v || !runCells.src) return;
+    const pr = snap && snap.peer_run;
+    const readAge = pr && pr.read_at ? (Date.now() - new Date(pr.read_at).getTime()) / 3.6e6 : Infinity;
+    const live = pr && !pr.withheld && typeof pr.hours === 'number' && pr.hours > RUN_RECORD_H
+      && ageHours <= STALE_HOURS && readAge <= STALE_HOURS;
+    if (!live) {
+      runCells.v.innerHTML = runStatic.v;
+      runCells.src.innerHTML = runStatic.src;
+      return;
+    }
+    runCells.v.textContent = Math.floor(pr.hours) + '\u00a0h';
+    runCells.src.textContent = 'The second unit\u2019s current run, all ' + pr.outputs + ' outputs, from '
+      + utc(pr.since) + ' \u2014 a floor, not a final figure: still running when read at ' + utc(pr.read_at)
+      + ', live from the engine. Two derivations agree to within a minute: the service manager (systemd) records '
+      + (pr.restarts === 0 ? 'no restart since ' + utc(pr.since)
+        : 'this run\u2019s start at ' + utc(pr.since) + ', after ' + pr.restarts + ' automatic restart'
+          + (pr.restarts === 1 ? '' : 's') + ' before it')
+      + ', and the engine\u2019s own frame counter reads ' + pr.frames.toLocaleString('en-GB') + ' at '
+      + Math.round(1e9 / pr.frame_ns) + '\u00a0fps (' + pr.hours.toFixed(2) + '\u00a0h); its as-run log has not '
+      + 'been verified over it. It passed the run before it on the same unit, 433\u00a0h (27 Sep\u201315 Oct 2026, '
+      + '433.68\u00a0h), which ended in the engine crash in the register below.';
   }
 
   let current = SNAPSHOT;
