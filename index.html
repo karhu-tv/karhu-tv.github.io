@@ -1689,31 +1689,53 @@
   }
 
   const RUN_RECORD_H = 433.678;
+  const RUN_SINCE = '2026-11-05T00:43:20Z';
   const runCells = { v: document.getElementById('run-v'), src: document.getElementById('run-src') };
   const runStatic = { v: runCells.v && runCells.v.innerHTML, src: runCells.src && runCells.src.innerHTML };
   const utc = (iso) => iso.replace('T', ' ').replace(/:\d\dZ$/, ' UTC');
+  const isoOk = (s) => typeof s === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(s) && !isNaN(Date.parse(s));
+  const intIn = (n, lo, hi) => Number.isSafeInteger(n) && n >= lo && n <= hi;
+  function runReading(r) {
+    if (!r || typeof r !== 'object' || r.withheld) return null;
+    if (!isoOk(r.since) || !isoOk(r.read_at) || !intIn(r.outputs, 1, 16) || !intIn(r.frames, 0, Number.MAX_SAFE_INTEGER)
+        || !intIn(r.frame_ns, 1, 10000000000) || !intIn(r.restarts, 0, 1000000)
+        || typeof r.hours !== 'number' || !Number.isFinite(r.hours) || r.hours < 0) return null;
+    return r;
+  }
+  const hoursSince = (iso) => (Date.now() - Date.parse(iso)) / 3.6e6;
   function renderRun(snap, ageHours) {
     if (!runCells.v || !runCells.src) return;
-    const pr = snap && snap.peer_run;
-    const readAge = pr && pr.read_at ? (Date.now() - new Date(pr.read_at).getTime()) / 3.6e6 : Infinity;
-    const live = pr && !pr.withheld && typeof pr.hours === 'number' && pr.hours > RUN_RECORD_H
-      && ageHours <= STALE_HOURS && readAge <= STALE_HOURS;
-    if (!live) {
-      runCells.v.innerHTML = runStatic.v;
-      runCells.src.innerHTML = runStatic.src;
+    const pr = runReading(snap && snap.peer_run);
+    const snapAge = snap && typeof snap.measured_at === 'string' ? hoursSince(snap.measured_at) : NaN;
+    const fresh = pr && ageHours <= STALE_HOURS && snapAge >= -0.1 && hoursSince(pr.read_at) >= -0.1
+      && hoursSince(pr.read_at) <= STALE_HOURS;
+    const ended = runReading(snap && snap.peer_run_ended);
+    if (fresh && pr.since === RUN_SINCE && pr.hours > RUN_RECORD_H) {
+      runCells.v.textContent = Math.floor(pr.hours) + '\u00a0h';
+      runCells.src.textContent = 'The second unit\u2019s current run, all ' + pr.outputs + ' outputs, from '
+        + utc(pr.since) + ' \u2014 a floor, not a final figure: still running when read at ' + utc(pr.read_at)
+        + ', live from the engine. Two derivations agree to within a minute: the service manager (systemd) records '
+        + (pr.restarts === 0 ? 'no restart since ' + utc(pr.since)
+          : 'this run\u2019s start at ' + utc(pr.since) + ', after ' + pr.restarts + ' automatic restart'
+            + (pr.restarts === 1 ? '' : 's') + ' before it')
+        + ', and the engine\u2019s own frame counter reads ' + pr.frames.toLocaleString('en-GB') + ' at '
+        + Math.round(1e9 / pr.frame_ns) + '\u00a0fps (' + pr.hours.toFixed(2) + '\u00a0h); its as-run log has not '
+        + 'been verified over it. It passed the run before it on the same unit, 433\u00a0h (27 Sep\u201315 Oct 2026, '
+        + '433.68\u00a0h), which ended in the engine crash in the register below.';
       return;
     }
-    runCells.v.textContent = Math.floor(pr.hours) + '\u00a0h';
-    runCells.src.textContent = 'The second unit\u2019s current run, all ' + pr.outputs + ' outputs, from '
-      + utc(pr.since) + ' \u2014 a floor, not a final figure: still running when read at ' + utc(pr.read_at)
-      + ', live from the engine. Two derivations agree to within a minute: the service manager (systemd) records '
-      + (pr.restarts === 0 ? 'no restart since ' + utc(pr.since)
-        : 'this run\u2019s start at ' + utc(pr.since) + ', after ' + pr.restarts + ' automatic restart'
-          + (pr.restarts === 1 ? '' : 's') + ' before it')
-      + ', and the engine\u2019s own frame counter reads ' + pr.frames.toLocaleString('en-GB') + ' at '
-      + Math.round(1e9 / pr.frame_ns) + '\u00a0fps (' + pr.hours.toFixed(2) + '\u00a0h); its as-run log has not '
-      + 'been verified over it. It passed the run before it on the same unit, 433\u00a0h (27 Sep\u201315 Oct 2026, '
-      + '433.68\u00a0h), which ended in the engine crash in the register below.';
+    if (fresh && pr.since !== RUN_SINCE && ended && ended.since === RUN_SINCE && ended.hours > RUN_RECORD_H) {
+      runCells.v.textContent = Math.floor(ended.hours) + '\u00a0h';
+      runCells.src.textContent = 'The second unit\u2019s run from ' + utc(ended.since) + ', all ' + ended.outputs
+        + ' outputs \u2014 ENDED: its last reading, at ' + utc(ended.read_at) + ', was ' + ended.hours.toFixed(2)
+        + '\u00a0h by the engine\u2019s own frame counter (' + ended.frames.toLocaleString('en-GB') + ' at '
+        + Math.round(1e9 / ended.frame_ns) + '\u00a0fps), the service manager agreeing to within a minute; it ended '
+        + 'between that reading and ' + utc(pr.since) + ', when the unit\u2019s next run began, so this is a floor. It '
+        + 'passed the run before it, 433\u00a0h (27 Sep\u201315 Oct 2026, 433.68\u00a0h).';
+      return;
+    }
+    runCells.v.innerHTML = runStatic.v;
+    runCells.src.innerHTML = runStatic.src;
   }
 
   let current = SNAPSHOT;
